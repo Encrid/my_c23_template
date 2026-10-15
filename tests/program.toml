@@ -1,0 +1,9 @@
+[[case]]
+name = "hello"
+run = ["{out}/main{exe}"]
+claims = { status = 0, line = ["hello, c23"], files = { "{out}/package.txt" = "  main{exe}\n" } }
+
+[[case]]
+name = "a program linked with a library"
+run = ["{out}/greeter/greeter{exe}"]
+claims = { status = 0, line = ["hello from a library"] }

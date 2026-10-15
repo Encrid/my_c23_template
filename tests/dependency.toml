@@ -1,0 +1,5 @@
+[[case]]
+name = "a dependency that is not what its list states"
+run = ["{python}", "{script}", "fetch", "--root", "{root}", "--out", "{build}", "--set", "sample=tests/tampered"]
+claims = { status_not = 0, has = ["refused", "greeting.txt is not what"] }
+false = { run = ["{python}", "{script}", "fetch", "--root", "{root}", "--out", "{build}", "--set", "sample=tests/sample"] }
