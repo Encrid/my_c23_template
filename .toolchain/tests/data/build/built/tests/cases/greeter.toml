@@ -1,0 +1,5 @@
+[[case]]
+name = "greeter"
+run = ["{out}/greeter/greeter{exe}"]
+claims = { status = 0, line = ["hello from a library, on {system}"] }
+false = { run = ["{case}/alone/greeter{exe}"], folders = { "{case}/alone" = ["greeter"] } }

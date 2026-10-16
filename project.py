@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 COMMANDS = {'fetch': ['fetch.py'], 'build': ['build.py'], 'pack': ['build.py', '--pack'], 'test': ['test.py'],
-            'check': ['check.py'], 'cla': ['cla.py']}
+            'check': ['check.py'], 'clean': ['clean.py'], 'distclean': ['clean.py', '--all'], 'cla': ['cla.py']}
 
 
 def main():
@@ -14,8 +14,8 @@ def main():
     if command not in COMMANDS:
         sys.exit('project.py: name a command: ' + ' '.join(COMMANDS))
     tool, *first = COMMANDS[command]
-    tools = Path(__file__).resolve().parent / 'tools'
-    sys.exit(subprocess.run([sys.executable, str(tools / tool)] + first + sys.argv[2:]).returncode)
+    toolchain = Path(__file__).resolve().parent / '.toolchain' / 'tools'
+    sys.exit(subprocess.run([sys.executable, str(toolchain / tool)] + first + sys.argv[2:]).returncode)
 
 
 if __name__ == '__main__':
