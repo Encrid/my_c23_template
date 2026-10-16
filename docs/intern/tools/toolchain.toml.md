@@ -68,3 +68,15 @@ These keys are the limits of the style of the code. The check of the style reads
 | `arguments` | The maximum number of arguments of a function. |
 | `branches` | The maximum number of branches in one `if`. |
 | `depth` | The maximum depth of nested branches. |
+
+## [prose]
+
+These keys are the limits of the documents. The check of the documents, `tools/prose.py`, reads them.
+
+| Key | Value |
+| --- | --- |
+| `sentence` | The maximum number of words in a sentence. |
+| `step` | The maximum number of words in a sentence of an item of a numbered list. |
+| `paragraph` | The maximum number of sentences in a paragraph, in an item of a list and in a cell of a table. |
+| `description` | The maximum number of characters in the description of the readme. Standard Readme asks for fewer than 120. |
+| `refused` | The texts that no document contains. |
