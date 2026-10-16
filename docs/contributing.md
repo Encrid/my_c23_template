@@ -52,14 +52,21 @@ build/                   the output, which git ignores
 ```
 
 `include/`, `presets/`, `src/os/`, `tests/fixtures/`, `tests/data/` and `third_party/` are optional.
-Do not change a file that comes from the template: `.github/`, `.gitattributes`, `.gitignore`, `cla.md`, `license`, `project.py`, this document and `tools/`.
+Every other path of the tree is necessary.
+
+These files come from the template. Do not change them:
+
+- `.github/`, `.gitattributes`, `.gitignore`, `cla.md`, `license` and `project.py`
+- `tools/`, `tests/cases/tools/` and `tests/data/tools/`
+- this document, `docs/extern/project.py.md` and `docs/extern/project.toml.md`
+- `docs/intern/project.py.md`, `docs/intern/tools/` and `docs/intern/tests/cases/tools/`
 
 ## The documents
 
 - `docs/extern` is for the users of the project. `docs/intern` is for the developers.
 - Every file of `src/`, `tests/` (but not `tests/data/`), `tools/` and `third_party/` has a document in `docs/intern`.
 - Every file of `include/` and `presets/` has a document in `docs/extern`.
-- The document of `src/a.c` is `docs/intern/src/a.c.md`. Its first line is `# src/a.c`.
+- The document of `src/<file>` is `docs/intern/src/<file>.md`. Its first line is `# src/<file>`.
 - Every feature of the project has a description in a document.
 
 Write every document in Simplified Technical English (STE):
@@ -104,6 +111,7 @@ The sections of `readme.md` follow the order of Standard Readme.
 
 Fill in the template of the pull request.
 The workflow `ci` runs `check`, `test` and `test --break` on five platforms.
+The repository merges a pull request only by rebase. Thus no merge commit breaks the rules of the commits.
 Before your first pull request is merged, sign the agreement `cla.md`.
 
 ## The licence
