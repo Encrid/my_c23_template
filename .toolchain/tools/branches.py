@@ -272,6 +272,7 @@ def probed(config, values):
         if 'target' in artifact:
             continue
         _, mine = build.planned(config, values, artifact)
+        Path(mine['work']).parent.mkdir(parents=True, exist_ok=True)
         for source in mine['sources']:
             if source.startswith('src/') and source.endswith('.c') and source not in jobs:
                 jobs[source] = expanded(config['branches']['dump'], dict(mine, source=source))
