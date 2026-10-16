@@ -14,6 +14,7 @@ They check the files that `style.py` reads, and the exceptions.
 | an exception | An exception excuses G1 for `{case}/p/src/a.c`, which has no legal notice. `style.py` ends with 0. | No exception. |
 | an exception for one function | The body of `long_one` in `{case}/p/src/a.c` has 21 lines. An exception excuses F4 for `long_one`. `style.py` ends with 0. | The exception is for a different function. |
 | an exception that excuses nothing | An exception excuses F4 for `{case}/p/src/a.c`, which has no long function. `style.py` writes `the exception for 'src/a.c' excuses nothing`. | The body of a function of the file has 21 lines. |
+| an exception for a file that is not there | An exception excuses G1 for `{case}/p/src/gone.c`, which is not there. `{case}/p/src/a.c` has its legal notice. `style.py` writes `project.toml:1: G1 the exception for 'src/gone.c' excuses nothing`. | `{case}/p/src/gone.c` is there, with no legal notice. |
 | a file of tests/data | `{case}/p/tests/data/a.c` has no legal notice. `style.py` ends with 0. | The file is `{case}/p/src/a.c`. |
 
 ## Limits
