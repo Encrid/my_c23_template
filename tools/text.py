@@ -1,0 +1,55 @@
+# Copyright (C) 2026 Enkrid
+#
+# Under the GNU Affero General Public License, version 3 only: see license.
+import ast
+import io
+import re
+import tokenize
+
+from shared import arguments, config, files, ours, report
+
+QUOTED = re.compile(r'"""[\s\S]*?"""|\'\'\'[\s\S]*?\'\'\'|"(?:\\.|[^"\\\n])*"|\'[^\'\n]*\'|#')
+
+
+def notice(project):
+    return re.compile(r'# Copyright \(C\) \d{4} %s\n(?:# Copyright \(C\) \d{4} [^\n]+\n)*#\n# %s\n'
+                      % (re.escape(project['owner']), re.escape(project['licence'])))
+
+
+def python(text, notice):
+    start = notice.match(text)
+    last = text.count('\n', 0, start.end()) if start else 0
+    found = [] if start else [(1, 'the file does not start with the legal notice')]
+    found += [(token.start[0], 'a comment') for token in tokenize.generate_tokens(io.StringIO(text).readline)
+              if token.type == tokenize.COMMENT and token.start[0] > last]
+    return found + [(node.lineno, 'a string statement') for node in ast.walk(ast.parse(text))
+                    if isinstance(node, ast.Expr) and isinstance(node.value, ast.Constant)
+                    and isinstance(node.value.value, str)]
+
+
+def faults(path, data, notice, unicode):
+    text = data.decode('utf-8', 'replace')
+    found = [] if unicode else [(n, 'a character that is not ASCII')
+                                for n, line in enumerate(data.split(b'\n'), 1) if not line.isascii()]
+    if path.endswith('.py'):
+        found += python(text, notice)
+    if path.endswith(('.toml', '.yml')):
+        found += [(text.count('\n', 0, m.start()) + 1, 'a comment') for m in QUOTED.finditer(text) if m.group() == '#']
+    if path.endswith('.md'):
+        found += [(n, 'a comment') for n, line in enumerate(text.split('\n'), 1) if '<!--' in line]
+    return found
+
+
+def main():
+    root = arguments().root
+    settings = config(root)
+    paths = ours(root)
+    unicode = set(files(root, settings.get('check', {}).get('unicode', [])))
+    header = notice(settings['project'])
+    found = sorted((path, n, what) for path in paths
+                   for n, what in faults(path, (root / path).read_bytes(), header, path in unicode))
+    report(['%s:%d: %s' % fault for fault in found], len(paths))
+
+
+if __name__ == '__main__':
+    main()

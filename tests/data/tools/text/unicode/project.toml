@@ -1,0 +1,6 @@
+[project]
+owner = "Enkrid"
+licence = "Under the GNU Affero General Public License, version 3 only: see license."
+
+[check]
+unicode = ["docs/*.md"]

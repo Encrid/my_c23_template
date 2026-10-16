@@ -177,7 +177,7 @@ ELSE
 ENDIF
 CASE OF faults[1].line
    0 : CALL stop()
-   1 TO 9 : ratio <- count / 10
+   1 TO 9 : ratio <- (count + 1) / 10
    OTHERWISE : done <- TRUE
 ENDCASE
 ```
@@ -206,8 +206,9 @@ ENDPROCEDURE
 FUNCTION greeting(name : STRING) RETURNS STRING
    RETURN "hello, " & name
 ENDFUNCTION
+
 PROCEDURE greet()
-   CALL add(count, LENGTH(greeting("c23")))
+   CALL add(count, LENGTH(greeting(user())))
 ENDPROCEDURE
 ```
 
@@ -215,11 +216,12 @@ ENDPROCEDURE
 
 Each function that reads tokens gets the tokens `t` of a line and an index `i`.
 It gives the index after the last token that it read.
-It raises `ValueError` if the tokens do not have its form.
+It raises `ValueError` through `need` if the tokens do not have its form.
 
 | Function | Result |
 | --- | --- |
 | `at(t, i)` | Gives the token at `i`, or an empty text after the last token. |
+| `need(holds, i)` | Gives `i` if `holds` is true. Else it raises `ValueError`. |
 | `want(t, i, token)` | Reads the token `token`. |
 | `named(t, i)` | Reads a name. |
 | `listed(t, i, item, end)` | Reads items with a comma between two items, then the token `end`. `item` reads one item. |

@@ -25,7 +25,7 @@ The project `full` has these files, and the document of each file that needs one
 
 | Case | Claim | False variant |
 | --- | --- | --- |
-| a full project | `layout.py` checks `full`, writes `no fault in 39 files`, and ends with 0. | `full` also has `notes.txt`. |
+| a full project | `layout.py` checks `full`, writes `no fault in 38 files`, and ends with 0. `ours` leaves out the file of `tests/data`. | `full` also has `notes.txt`. |
 | a path that the layout does not allow | `notes.txt: the layout does not allow this file`. | No `notes.txt`. |
 | a file that the layout needs | A project with no `license`: `license: the layout needs this file`. | The project has `license`. |
 | the folders that the layout needs | A project with no file in `src`, `tests/cases` and `tools`: `src/: the layout needs this folder`, and the same line for `tests/cases/` and for `tools/`. | The project has a file in each of the three folders. |

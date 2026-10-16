@@ -131,3 +131,10 @@ functions = 5
 arguments = 4
 branches = 3
 depth = 2
+
+[prose]
+sentence = 25
+step = 20
+paragraph = 6
+description = 119
+refused = [".logs"]

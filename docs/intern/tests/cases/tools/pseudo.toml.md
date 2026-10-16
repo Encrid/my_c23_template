@@ -3,7 +3,6 @@
 The group `tools/pseudo` checks `tools/pseudo.py`.
 Each case writes the document `a.md` into `{case}/docs` with `files`, and runs `pseudo.py` on `{case}`.
 The document has one block of pseudo code, which starts on its line 3.
-Each project also has a `project.toml`, because `config` reads it.
 The false variant of a case changes the block.
 
 | Case | Claim | False variant |

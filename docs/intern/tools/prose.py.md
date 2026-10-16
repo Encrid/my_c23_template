@@ -12,7 +12,7 @@ It does not check `license` and `cla.md`, because they are legal texts.
 
 | Function | Result |
 | --- | --- |
-| `documents(root)` | Gives the paths of the documents that `prose.py` and `pseudo.py` check. |
+| `documents(root)` | Gives the path and the lines of each document that `prose.py` and `pseudo.py` check. |
 | `blocks(lines)` | Gives the first line, the last line and the tag of each block of code. `pseudo.py` uses it too. |
 | `units(lines)` | Gives each paragraph, each item of a list and each cell of a table, with its first line. |
 | `faults(lines, limits)` | Gives the faults of a document. |
