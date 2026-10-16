@@ -9,7 +9,7 @@ import sys
 import urllib.error
 import urllib.request
 
-from shared import HERE, config, die
+from shared import die
 
 SENTENCE = 'I have read cla.md and I sign it.'
 BRANCH, RECORD = 'cla-signatures', 'signatures.json'
@@ -24,9 +24,7 @@ To sign it, write a comment that contains only this sentence:
 '''
 
 
-def decide(author, holder, signed, by=None, said=None):
-    if author == holder:
-        return 'nothing', True, 'the holder needs no agreement'
+def decide(author, signed, by=None, said=None):
     if author in signed:
         return 'nothing', True, '%s has signed cla.md' % author
     if by == author and said is not None and said.strip() == SENTENCE:
@@ -75,8 +73,8 @@ def main():
     comment = event.get('comment', {})
     author, number, tip = pull['user']['login'], pull['number'], pull['head']['sha']
     signed, version = signatures()
-    what, passes, why = decide(author, config(HERE)['cla']['holder'], [one['name'] for one in signed],
-                               comment.get('user', {}).get('login'), comment.get('body'))
+    what, passes, why = decide(author, [one['name'] for one in signed], comment.get('user', {}).get('login'),
+                               comment.get('body'))
     if what == 'record':
         record(signed, version, author, number)
     question = ASK % (author, SENTENCE)
@@ -88,10 +86,9 @@ def main():
 
 if __name__ == '__main__':
     if sys.argv[1:2] == ['--decide']:
-        if len(sys.argv) not in (5, 7):
-            die('usage: cla.py --decide <author> <holder> <signed> [<by> <said>]')
-        what, passes, why = decide(sys.argv[2], sys.argv[3], [name for name in sys.argv[4].split(',') if name],
-                                   *sys.argv[5:7])
+        if len(sys.argv) not in (4, 6):
+            die('usage: cla.py --decide <author> <signed> [<by> <said>]')
+        what, passes, why = decide(sys.argv[2], [name for name in sys.argv[3].split(',') if name], *sys.argv[4:6])
         print('%s, %s: %s' % (what, 'passes' if passes else 'fails', why))
     else:
         main()

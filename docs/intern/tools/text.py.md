@@ -35,7 +35,7 @@ A file `.py` starts with the legal notice:
 `<year>` has four digits, and `<holder>` is a holder of the rights in the file.
 `<licence>` is `[project] licence` of `project.toml`.
 More lines `# Copyright (C) <year> <holder>` can follow the first line, one line for each holder.
-Thus the files of the template keep their lines in a project of a different owner.
+Thus each project keeps the lines of the template in the files of the template.
 
 A Python file has no other comment, and no string statement.
 A string statement is a statement that is only a string, for example a docstring.

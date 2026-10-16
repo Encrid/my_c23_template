@@ -5,7 +5,7 @@ It keeps the record of the authors who signed.
 
 ```sh
 python tools/cla.py
-python tools/cla.py --decide <author> <holder> <signed> [<by> <said>]
+python tools/cla.py --decide <author> <signed> [<by> <said>]
 ```
 
 The workflow `cla` runs `python project.py cla` when a pull request opens or changes, and when a person writes a comment on a pull request.
@@ -15,15 +15,13 @@ The workflow uses `cla.py` of the default branch. `cla.py` reads the pull reques
 
 | Author | Action | The pull request |
 | --- | --- | --- |
-| The holder of the repository | Nothing | passes |
 | A name of the record | Nothing | passes |
 | An author whose comment is only the sentence | Record | passes |
 | Each other author | Ask | fails |
 
 The sentence is `I have read cla.md and I sign it.`, with no other text in the comment.
 Only a comment of the author counts. A comment of a different person does not sign for the author.
-The holder is the login on GitHub that `[cla] holder` of `project.toml` gives.
-The owner of the repository can be an organization. Thus `cla.py` does not use the owner as the holder.
+Each author of a pull request signs, with no exception.
 
 ## The record
 
@@ -55,7 +53,6 @@ The description of the status is the reason of the decision.
 
 | Decision | Reason |
 | --- | --- |
-| The holder | `the holder needs no agreement` |
 | A name of the record | `<author> has signed cla.md` |
 | The sentence | `<author> signs cla.md` |
 | Each other author | `<author> has not signed cla.md` |
@@ -66,18 +63,18 @@ The description of the status is the reason of the decision.
 `<signed>` is the names of the record, with commas between them.
 `<by>` is the author of a comment, and `<said>` is its text.
 
-The output is `<action>, <passes or fails>: <reason>`, for example `nothing, passes: the holder needs no agreement`.
-With a different number of values, `cla.py` stops: `usage: cla.py --decide <author> <holder> <signed> [<by> <said>]`.
+The output is `<action>, <passes or fails>: <reason>`, for example `nothing, passes: ann has signed cla.md`.
+With a different number of values, `cla.py` stops: `usage: cla.py --decide <author> <signed> [<by> <said>]`.
 
 ## Functions
 
 | Function | Result |
 | --- | --- |
-| `decide(author, holder, signed, by, said)` | Gives the action, if the pull request passes, and the reason. |
+| `decide(author, signed, by, said)` | Gives the action, if the pull request passes, and the reason. |
 | `call(method, path, body)` | Sends one request to the API of GitHub for the repository. It gives nothing if the thing is not there. |
 | `signatures()` | Gives the record, and the version of its file. |
 | `record(signed, version, author, number)` | Adds the author to the record. The first time, it makes the branch. |
-| `main()` | Reads the event of GitHub and `[cla] holder`, decides, asks or records, and sets the status. |
+| `main()` | Reads the event of GitHub, decides, asks or records, and sets the status. |
 
 `call` stops if GitHub answers with an error that is not 404: `<method> <path> answered <code>: <text>`.
 

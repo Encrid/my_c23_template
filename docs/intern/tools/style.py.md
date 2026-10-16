@@ -98,7 +98,7 @@ Each source starts with the legal notice:
 `<year>` is the year of the first version of the file, and `<holder>` is a holder of the rights in the file.
 `<licence>` is `[project] licence` of `project.toml`.
 A file can have more lines of the copyright, one line for each holder.
-Thus the files of the template keep their lines in a project of a different owner.
+Thus each project keeps the lines of the template in the files of the template.
 If a file holds code of a different holder, add a line for that holder below the first line:
 
 ```text

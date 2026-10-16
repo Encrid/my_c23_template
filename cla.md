@@ -1,6 +1,6 @@
 # Contributor License Agreement
 
-Version 2.2
+Version 2.1
 
 Thank you for contributing to the Project. In this agreement, "the Project" means the project
 whose repository holds this file. This agreement sets out the terms under which your
@@ -40,9 +40,9 @@ to your Contributions.
 **"You"** means the copyright owner, or the legal entity authorised by the copyright owner,
 entering into this agreement.
 
-**"Project Owner"** means the holder of the rights in the Project, named as `owner` in the
-table `[project]` of the file `project.toml` of the Project: its author, and those the author
-transfers the rights to in writing, including any legal entity formed to hold the project. Who administers the account or the organisation the
+**"Project Owner"** means the holder of the rights in the Project, named in the copyright line
+of its notices: its author, and those the author transfers the rights to in writing, including
+any legal entity formed to hold the project. Who administers the account or the organisation the
 Project is published from does not decide it.
 
 **"Contribution"** means any original work of authorship, including any modification of or

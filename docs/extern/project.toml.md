@@ -58,7 +58,6 @@ They also stop if a list variable is a part of a text, and has no separator.
 | Key | Value |
 | --- | --- |
 | `name` | The name of the project. `package.txt` and the zip of `pack` use it. |
-| `owner` | The owner of the project. `cla.md` calls the owner the Project Owner. |
 | `licence` | The line of the licence, in the legal notice. |
 
 ## [layout]
@@ -258,14 +257,6 @@ The rule does not apply to the groups of `exempt`.
 
 The check of the messages reads each call of a writer in the files `.c` and `.h` of `src` and `include`.
 A case must write each message, and a document of `docs/extern` or `readme.md` must quote it.
-
-## [cla]
-
-| Key | Value |
-| --- | --- |
-| `holder` | The login on GitHub of the holder of the project. The holder needs no agreement. |
-
-The workflow `cla` reads it, because the owner of a repository can be an organization.
 
 ## [check]
 

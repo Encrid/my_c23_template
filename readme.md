@@ -17,7 +17,7 @@ The layout of the project is fixed.
 
 1. Install Python 3.11 or a later version.
 2. Copy this folder.
-3. In `project.toml`, set `name` and `owner` in `[project]`, and `holder` in `[cla]`. The holder is a login on GitHub.
+3. In `project.toml`, set `name` in `[project]`.
 4. Run `python project.py fetch`. The command downloads zig and the sources, and takes the dependencies.
 
 ## Usage
