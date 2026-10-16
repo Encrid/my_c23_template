@@ -237,6 +237,14 @@ The rule does not apply to the groups of `exempt`.
 The check of the messages reads each call of a writer in the files `.c` and `.h` of `src` and `include`.
 A case must write each message, and a document of `docs/extern` or `readme.md` must quote it.
 
+## [cla]
+
+| Key | Value |
+| --- | --- |
+| `holder` | The login on GitHub of the holder of the project. The holder needs no agreement. |
+
+The workflow `cla` reads it, because the owner of a repository can be an organization.
+
 ## [check]
 
 | Key | Value |

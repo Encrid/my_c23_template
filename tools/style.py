@@ -612,7 +612,7 @@ def main():
         if not excused:
             kept.append((path, line, rule, what))
     for entry in listed:
-        if not entry[3] and any(fnmatch.fnmatch(p, entry[1]) for p in paths):
+        if not entry[3]:
             kept.append(('project.toml', 1, entry[0], "the exception for '%s' excuses nothing" % entry[1]))
     shared.report(['%s:%d: %s %s' % fault for fault in sorted(kept)], len(paths))
 

@@ -44,7 +44,7 @@ The variant `plain` is unstamped.
 | an option with a value | `shared.arguments('--commits')` gets `--commits a..b`, and the program writes `a..b`. | No `--commits`, thus the program writes `None`. |
 | a report with faults | `shared.report` gets two faults. It writes them and `faults: 2`, and the status is 1. | No fault. |
 | a report with no fault | `shared.report` gets no fault, 12 and `commits`. It writes `no fault in 12 commits`, and the status is 0. | One fault. |
-| the files of a project, walked | `shared.ours` gives `{case}/w/a.txt` and `{case}/w/src/build/e.txt`. It leaves out `tests/data`, the folder `build` at the root and `__pycache__`. | `{case}/w/tests/b.txt` is also there. |
-| the files of a project, from git | The program makes `{case}/g` a repository of git. `shared.ours` gives `a.txt` and `.gitignore`, but not `tests/data` or a file that git ignores. | `{case}/g/tests/b.txt` is also there. |
+| the files of a project, walked | `shared.repository` writes `False` for `{case}/w`. `shared.ours` gives `{case}/w/a.txt` and `{case}/w/src/build/e.txt`. It leaves out `tests/data`, the folder `build` at the root and `__pycache__`. | `{case}/w/tests/b.txt` is also there. |
+| the files of a project, from git | The program makes `{case}/g` a repository of git, and `shared.repository` writes `True`. `shared.ours` gives `a.txt` and `.gitignore`, but not `tests/data` or a file that git ignores. | `{case}/g/tests/b.txt` is also there. |
 
 `docs/intern/tools/build.py.md` gives the limits of these cases.

@@ -102,14 +102,14 @@ false = { run = ["{python}", "-c", "import sys; sys.path.insert(0, sys.argv[1]);
 
 [[case]]
 name = "the files of a project, walked"
-run = ["{python}", "-c", "import sys; from pathlib import Path; sys.path.insert(0, sys.argv[1]); import shared; print('\\n'.join(shared.ours(Path(sys.argv[2]).resolve())))", "{root}/tools", "{case}/w"]
+run = ["{python}", "-c", "import sys; from pathlib import Path; sys.path.insert(0, sys.argv[1]); import shared; root = Path(sys.argv[2]).resolve(); print(shared.repository(root)); print('\\n'.join(shared.ours(root)))", "{root}/tools", "{case}/w"]
 files = { "{case}/w/a.txt" = "a", "{case}/w/src/build/e.txt" = "e", "{case}/w/tests/data/b.txt" = "b", "{case}/w/build/c.txt" = "c", "{case}/w/tools/__pycache__/d.txt" = "d" }
-claims = { status = 0, line = ["a.txt", "src/build/e.txt"], lacks = ["b.txt", "c.txt", "d.txt"] }
+claims = { status = 0, line = ["False", "a.txt", "src/build/e.txt"], lacks = ["b.txt", "c.txt", "d.txt"] }
 false = { files = { "{case}/w/tests/b.txt" = "b" } }
 
 [[case]]
 name = "the files of a project, from git"
-run = ["{python}", "-c", "import subprocess, sys; from pathlib import Path; sys.path.insert(0, sys.argv[1]); import shared; subprocess.run(['git', 'init', '-q', sys.argv[2]]); print('\\n'.join(shared.ours(Path(sys.argv[2]).resolve())))", "{root}/tools", "{case}/g"]
+run = ["{python}", "-c", "import subprocess, sys; from pathlib import Path; sys.path.insert(0, sys.argv[1]); import shared; subprocess.run(['git', 'init', '-q', sys.argv[2]]); root = Path(sys.argv[2]).resolve(); print(shared.repository(root)); print('\\n'.join(shared.ours(root)))", "{root}/tools", "{case}/g"]
 files = { "{case}/g/a.txt" = "a", "{case}/g/.gitignore" = "skip.txt\n", "{case}/g/skip.txt" = "s", "{case}/g/tests/data/b.txt" = "b" }
-claims = { status = 0, line = ["a.txt", ".gitignore"], lacks = ["b.txt", "skip.txt"] }
+claims = { status = 0, line = ["True", "a.txt", ".gitignore"], lacks = ["b.txt", "skip.txt"] }
 false = { files = { "{case}/g/tests/b.txt" = "b" } }

@@ -29,6 +29,7 @@ The tools import it. It does not run alone.
 | `sha256(data)` | Gives the SHA-256 digest of the bytes, in hexadecimal. |
 | `variables(config, args, target, zig)` | Gives the variables of a build, as the section *Variables* tells. |
 | `arguments(*valued, **flags)` | Reads the options of the command line. Each item of `valued` adds an option that has a value. Each item of `flags` adds an option that has no value. |
+| `repository(root)` | Tells if the root is the top folder of a git repository. |
 | `ours(root)` | Gives the files of the project, as the section *The files of the project* tells. |
 | `report(faults, count, items)` | Writes the faults of a check, and ends the check, as the section *The report of a check* tells. |
 
@@ -77,14 +78,15 @@ The default of `--root` is `HERE`. `arguments` makes the root an absolute path.
 
 ## The files of the project
 
-If the root is the top folder of a git repository, `ours` asks git for its files.
+If `repository` tells that the root is the top folder of a git repository, `ours` asks git for its files.
 These are the files that git tracks, and the files that git does not ignore.
 Else, `ours` walks the folders of the root, as `.gitignore` tells: it skips `build` at the root, and each `__pycache__`.
 `ours` gives only the files that exist, as paths from the root.
 It leaves out the files of `tests/data`, because no check reads them.
 
-`git -C <root> rev-parse --show-toplevel` gives the top folder of the repository of the root.
-Thus a project in a folder of a different repository, for example a case in `build`, gets the walk.
+`repository` asks `git -C <root> rev-parse --show-toplevel` for the top folder of the repository of the root.
+Thus a project in a folder of a different repository, for example a case in `build`, is not a repository.
+The check of the commits also uses `repository`.
 
 ## The report of a check
 

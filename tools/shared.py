@@ -141,9 +141,13 @@ def arguments(*valued, **flags):
     return args
 
 
-def ours(root):
+def repository(root):
     top = subprocess.run(['git', '-C', str(root), 'rev-parse', '--show-toplevel'], capture_output=True, text=True)
-    if not top.returncode and Path(top.stdout.strip()).resolve() == root:
+    return not top.returncode and Path(top.stdout.strip()).resolve() == Path(root).resolve()
+
+
+def ours(root):
+    if repository(root):
         found = subprocess.run(['git', 'ls-files', '-co', '--exclude-standard'], cwd=root, capture_output=True,
                                text=True).stdout.split('\n')
     else:
