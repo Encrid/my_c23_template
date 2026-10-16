@@ -1,10 +1,5 @@
 [project]
-name = "c23"
-
-[[artifact]]
-name = "sample"
-kind = "program"
-sources = ["src/*.c"]
+name = ""
 
 [test]
 timeout = 120

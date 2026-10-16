@@ -81,7 +81,7 @@ def built(config, values, artifact):
 
 def packaged(config, values, made):
     out = Path(values['out'])
-    lines = ['package %s' % config['project']['name'], 'target %s' % values['target']]
+    lines = ['package %s' % shared.project_name(config), 'target %s' % values['target']]
     lines += ['%s  %s' % (sha256(path.read_bytes()), path.relative_to(out).as_posix()) for path in dict.fromkeys(made)]
     out.mkdir(parents=True, exist_ok=True)
     (out / 'package.txt').write_text('\n'.join(lines) + '\n', encoding='utf-8', newline='\n')
@@ -90,10 +90,8 @@ def packaged(config, values, made):
 def packed(config, values):
     out, root = Path(values['out']), Path(values['root'])
     names = {name: out / name for name in ['package.txt'] + list(take.listed(out / 'package.txt')[1])}
-    names.update((name, root / name) for name in
-                 files(root, ['%s/**/*' % folder for folder in shared.public(config)]
-                       + ['license', 'third_party/*/license']))
-    zipped = Path(values['build']) / ('%s-%s.zip' % (config['project']['name'], values['target']))
+    names.update((name, root / name) for name in files(root, ['include/**/*.h', 'license', 'third_party/*/license']))
+    zipped = Path(values['build']) / ('%s-%s.zip' % (shared.project_name(config), values['target']))
     with zipfile.ZipFile(zipped, 'w', zipfile.ZIP_DEFLATED) as packing:
         for name, path in names.items():
             packing.write(path, name)

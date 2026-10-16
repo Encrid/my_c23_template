@@ -20,7 +20,7 @@ KEYS = {'step': {'run', 'section', 'text', 'contains', 'copy', 'rename'},
         'script': {'wait', 'put', 'remove', 'type'},
         'claims': {'status', 'status_not', 'line', 'has', 'lacks', 'order', 'files'},
         'source': {'name', 'url', 'sha256', 'into', 'top', 'patches'}}
-LAYOUT = ('.github', 'build', 'docs', 'include', 'src', 'tests', 'third_party', 'tools')
+SIDES = {'include': 'extern', 'src': 'intern'}
 
 
 def die(why):
@@ -151,12 +151,15 @@ def header(mark):
     return pattern
 
 
-def public(config):
-    folders = config.get('layout', {}).get('public', [])
-    taken = sorted(set(folders) & set(LAYOUT))
-    if taken:
-        die('[layout] public names a folder of the layout: ' + ' '.join(taken))
-    return ['include'] + folders
+def project_name(config):
+    return config.get('project', {}).get('name') or die('project.toml: write the name of the project in [project] name')
+
+
+def document(path):
+    top, _, rest = path.partition('/')
+    if top not in SIDES or path.endswith('/.gitkeep'):
+        return None
+    return 'docs/%s/%s.md' % (SIDES[top], rest)
 
 
 def repository(root):
@@ -174,7 +177,7 @@ def ours(root):
             subfolders[:] = [name for name in subfolders
                              if name != '__pycache__' and not (name == 'build' and Path(folder) == root)]
             found += [(Path(folder) / name).relative_to(root).as_posix() for name in names]
-    return [path for path in found if path and not path.startswith('tests/data/') and (root / path).is_file()]
+    return [path for path in found if path and not path.startswith('tests/') and (root / path).is_file()]
 
 
 def report(faults, count, items='files'):

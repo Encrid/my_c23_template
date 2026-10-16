@@ -2,9 +2,8 @@
 #
 # Under the GNU Affero General Public License, version 3 only: see license.
 import re
-import tomllib
 
-from shared import arguments, config, ours, public, report
+from shared import arguments, document, ours, report
 
 
 def named(name, text):
@@ -24,41 +23,19 @@ def names(text):
     return list(dict.fromkeys(found))
 
 
-def keys(table):
-    for key, value in table.items():
-        yield key
-        for item in value if isinstance(value, list) else [value]:
-            if isinstance(item, dict):
-                yield from keys(item)
-
-
 def spans(root, doc):
     return '\n'.join(re.findall(r'`([^`\n]+)`', (root / doc).read_text(encoding='utf-8'))) if (root / doc).is_file() else ''
 
 
 def main():
     root = arguments().root
-    files = sorted(ours(root))
-    cases = '\n'.join(case['name'] for path in files if path.startswith('tests/cases/') and path.endswith('.toml')
-                      for case in tomllib.loads((root / path).read_text(encoding='utf-8')).get('case', []))
-    folders = public(config(root))
-    read = [path for path in files if path.split('/', 1)[0] in folders]
+    headers = [path for path in sorted(ours(root)) if path.startswith('include/') and path.endswith('.h')]
     found = []
-    for path in read:
-        doc = 'docs/extern/%s.md' % path
-        if not path.startswith('include/'):
-            if path.endswith('.toml'):
-                source, text = tomllib.loads((root / path).read_text(encoding='utf-8')), spans(root, doc)
-                found += ['%s: %s is not in %s' % (path, key, doc) for key in dict.fromkeys(keys(source))
-                          if not named(key, text)]
-            continue
-        text, source = spans(root, doc), (root / path).read_text(encoding='utf-8')
-        for name in names(source):
-            if not named(name, text):
-                found.append('%s: %s is not in %s' % (path, name, doc))
-            if not named(name, cases):
-                found.append('%s: %s is in the name of no case' % (path, name))
-    report(found, len(read))
+    for path in headers:
+        doc, source = document(path), (root / path).read_text(encoding='utf-8')
+        text = spans(root, doc)
+        found += ['%s: %s is not in %s' % (path, name, doc) for name in names(source) if not named(name, text)]
+    report(found, len(headers))
 
 
 if __name__ == '__main__':

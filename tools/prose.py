@@ -3,7 +3,7 @@
 # Under the GNU Affero General Public License, version 3 only: see license.
 import re
 
-from shared import arguments, config, ours, report
+from shared import arguments, config, ours, project_name, report
 
 TAGS = ('pseudo', 'c', 'toml', 'sh', 'text')
 ORDER = {'Table of Contents': 0, 'Security': 1, 'Background': 2, 'Install': 3, 'Usage': 4, 'API': 6, 'Maintainer': 7,
@@ -19,7 +19,7 @@ WORD = re.compile(r'\S*[A-Za-z0-9]\S*')
 
 def documents(root):
     return [(path, (root / path).read_text(encoding='utf-8', errors='replace').split('\n')) for path in ours(root)
-            if path in ('readme.md', '.github/pull_request_template.md') or re.fullmatch(r'docs/.+\.md', path)]
+            if path == 'readme.md' or re.fullmatch(r'(?:docs|tools/docs)/.+\.md', path)]
 
 
 def blocks(lines):
@@ -101,7 +101,7 @@ def main():
     for path, lines in read:
         found += [(path, n, what) for n, what in faults(lines, settings['prose'])]
         if path == 'readme.md':
-            found += [(path, n, what) for n, what in readme(lines, settings['project']['name'],
+            found += [(path, n, what) for n, what in readme(lines, project_name(settings),
                                                            settings['prose']['description'])]
     report(['%s:%d: %s' % fault for fault in sorted(found)], len(read))
 

@@ -1,39 +1,19 @@
-# c23
-
-The template of a project in C23, with one layout, one entry point and the checks of the method.
-
-## Background
-
-A project starts as a copy of this folder.
-Its tools come from the project `c23-tools`, which also holds the cases of the tools.
-The compiler is zig, at one pinned version.
-A project builds for six targets: three operating systems on two types of processor.
-
-The layout of the project is fixed.
-`python project.py check` refuses a file or a folder that the layout does not allow.
-`docs/contributing.md` gives the layout, the flow of the work and every rule.
+# Project Name
 
 ## Install
 
-1. Install Python 3.11 or a later version.
-2. Copy this folder.
-3. In `project.toml`, set `name` in `[project]`.
-4. Run `python project.py fetch`. The command downloads zig and the sources, and takes the dependencies.
+Python 3.11 or a later version.
 
 ## Usage
 
 | Command | Result |
 | --- | --- |
-| `python project.py fetch` | Downloads zig and each source of `project.toml`, checks their digests, and takes the dependencies. |
-| `python project.py build` | Builds every artifact for this machine. |
-| `python project.py pack` | Puts the package of a target into one archive, for a release. |
-| `python project.py test` | Builds every artifact and runs every case. |
-| `python project.py test --break` | Runs the false variant of every case. Every case must then fail. |
-| `python project.py check` | Runs every check of the project: the layout, the text, the documents, the code and the commits. |
-| `python project.py cla` | Decides on the agreement of a pull request. Only the workflow `cla` runs it. |
-
-`docs/extern/project.py.md` describes the commands.
-`docs/extern/project.toml.md` describes the configuration.
+| `python project.py fetch` | Downloads what the build needs. |
+| `python project.py build` | Builds the project. |
+| `python project.py pack` | Packs the build for a release. |
+| `python project.py test` | Runs the tests. |
+| `python project.py test --break` | Runs the tests with their claims made false. Each test must fail. |
+| `python project.py check` | Checks the project. |
 
 ## Contributing
 
