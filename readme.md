@@ -4,8 +4,7 @@ The template of a project in C23, with one layout, one entry point and the check
 
 ## Background
 
-Every project of `Projects` in C starts as a copy of this folder.
-A module of Bridge also gets the overlay of its backend, for example `c23-native-module`.
+A project starts as a copy of this folder.
 The compiler is zig, at one pinned version.
 A project builds for six targets: three operating systems on two types of processor.
 
@@ -16,8 +15,9 @@ The layout of the project is fixed.
 ## Install
 
 1. Install Python 3.11 or a later version.
-2. Copy this folder, and give the project its name in `project.toml`.
-3. Run `python project.py fetch`. The command downloads zig and the sources, and takes the dependencies.
+2. Copy this folder.
+3. In `project.toml`, set `name` and `owner` in `[project]`, and `holder` in `[cla]`. The holder is a login on GitHub.
+4. Run `python project.py fetch`. The command downloads zig and the sources, and takes the dependencies.
 
 ## Usage
 
