@@ -52,11 +52,6 @@ The text after the first three backticks is the tag of the block.
 The tag is `pseudo`, `c`, `toml`, `sh` or `text`.
 The message is `<path>:<line>: the tag '<tag>' is not one of pseudo c toml sh text`.
 
-## Refused texts
-
-No document contains a text of `[prose] refused`.
-The message is `<path>:<line>: the refused text <text>`.
-
 ## The readme
 
 Standard Readme is a specification of the readme of a project: https://github.com/RichardLitt/standard-readme.

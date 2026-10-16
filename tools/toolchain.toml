@@ -137,4 +137,3 @@ sentence = 25
 step = 20
 paragraph = 6
 description = 119
-refused = [".logs"]

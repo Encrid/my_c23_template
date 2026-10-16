@@ -79,4 +79,3 @@ These keys are the limits of the documents. The check of the documents, `tools/p
 | `step` | The maximum number of words in a sentence of an item of a numbered list. |
 | `paragraph` | The maximum number of sentences in a paragraph, in an item of a list and in a cell of a table. |
 | `description` | The maximum number of characters in the description of the readme. Standard Readme asks for fewer than 120. |
-| `refused` | The texts that no document contains. |

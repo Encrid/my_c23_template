@@ -62,13 +62,6 @@ claims = { status = 1, line = ["docs/a.md:3: the tag 'python' is not one of pseu
 false = { files = { "{case}/docs/a.md" = "# a\n\n```sh\nx\n```\n" } }
 
 [[case]]
-name = "a refused text"
-run = ["{python}", "{root}/tools/prose.py", "--root", "{case}"]
-files = { "{case}/project.toml" = "", "{case}/docs/a.md" = "# a\n\nThe folder .logs is here.\n" }
-claims = { status = 1, line = ["docs/a.md:3: the refused text .logs"] }
-false = { files = { "{case}/docs/a.md" = "# a\n\nThe folder is here.\n" } }
-
-[[case]]
 name = "a title that is not the name"
 run = ["{python}", "{root}/tools/prose.py", "--root", "{case}"]
 files = { "{case}/project.toml" = "[project]\nname = \"sample\"\n", "{case}/readme.md" = "# other\n\nA sample.\n\n## Install\n\nInstall it.\n\n## Usage\n\nUse it.\n\n## Contributing\n\nRead the rules.\n\n## License\n\nThe licence.\n" }

@@ -71,8 +71,7 @@ def faults(lines, limits):
                               % (words, most)))
         if len(sentences) > limits['paragraph']:
             found.append((n, '%d sentences in a paragraph, and %d is the most' % (len(sentences), limits['paragraph'])))
-    return found + [(n, 'the refused text ' + refused) for n, line in enumerate(lines, 1)
-                    for refused in limits['refused'] if refused in line]
+    return found
 
 
 def readme(lines, name, most):
