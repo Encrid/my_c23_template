@@ -1,12 +1,10 @@
+# Copyright (C) 2026 Enkrid
+#
+# Under the GNU Affero General Public License, version 3 only: see license.
 import re
 import sys
-import tomllib
-from pathlib import Path
 
-HERE = Path.cwd()
-STYLE = tomllib.loads((HERE / 'build.config.toml').read_text(encoding='utf-8'))['style']
-ROOT = (HERE / STYLE['root']).resolve()
-OURS = tuple(STYLE['ours'])
+from style import ROOT, ours
 
 OLDER = [
     (r'\bNULL\b', 'nullptr'),
@@ -30,16 +28,14 @@ SILENT = re.compile(r'''/\*.*?\*/|//[^\n]*|"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])
 
 def main():
     found = 0
-    for pattern in OURS:
-        for path in sorted(ROOT.glob(pattern)):
-            text = path.read_text(encoding='utf-8')
-            code = SILENT.sub(lambda m: re.sub(r'[^\n]', ' ', m.group(0)), text)
-            for older, newer in OLDER:
-                for m in re.finditer(older, code, re.M):
-                    line = code.count('\n', 0, m.start()) + 1
-                    print('%s:%d: %s  ->  %s' % (path.relative_to(ROOT).as_posix(), line,
-                                                 m.group(0).strip(), newer))
-                    found += 1
+    for path in ours():
+        text = (ROOT / path).read_text(encoding='utf-8')
+        code = SILENT.sub(lambda m: re.sub(r'[^\n]', ' ', m.group(0)), text)
+        for older, newer in OLDER:
+            for m in re.finditer(older, code, re.M):
+                line = code.count('\n', 0, m.start()) + 1
+                print('%s:%d: %s  ->  %s' % (path, line, m.group(0).strip(), newer))
+                found += 1
     if found:
         sys.exit('FAIL: %d older spellings' % found)
     print('no older spelling in what is ours')

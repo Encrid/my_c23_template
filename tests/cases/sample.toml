@@ -1,0 +1,5 @@
+[[case]]
+name = "hello"
+run = ["{out}/sample{exe}"]
+claims = { status = 0, line = ["hello, c23"], files = { "{out}/package.txt" = "  sample{exe}\n" } }
+false = { run = ["{python}", "-c", "print('hello')"] }

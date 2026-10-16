@@ -1,18 +1,17 @@
+# Copyright (C) 2026 Enkrid
+#
+# Under the GNU Affero General Public License, version 3 only: see license.
 import fnmatch
-import os
 import re
-import subprocess
 import sys
-import tomllib
 from pathlib import Path
 
-HERE = Path.cwd()
-CONFIG = tomllib.loads((HERE / 'build.config.toml').read_text(encoding='utf-8'))
+import shared
+
+ROOT = shared.HERE
+CONFIG = shared.config(ROOT)
 PROJECT = CONFIG['project']
 STYLE = CONFIG['style']
-ROOT = (HERE / STYLE['root']).resolve()
-HELD = tuple(STYLE['held'])
-OURS = tuple(STYLE['ours'])
 
 COLUMNS = STYLE['columns']
 LINES = STYLE['lines']
@@ -536,18 +535,16 @@ def check(path, text, declared):
 
 
 def exceptions():
-    text = (ROOT / STYLE['exceptions']).read_text(encoding='utf-8')
     listed = []
-    for line in text.split('## Exceptions', 1)[1].split('\n'):
-        m = re.match(r'    `([A-Z]\d)` does not apply to `([^`]+)`\.', line)
-        if m:
-            where, _, function = m.group(2).partition(':')
-            listed.append([m.group(1), where, function, 0])
+    for exception in STYLE.get('exception', []):
+        where, _, function = exception['path'].partition(':')
+        listed.append([exception['rule'], where, function, 0])
     return listed
 
 
 def ours():
-    return sorted({p.relative_to(ROOT).as_posix() for pattern in OURS for p in ROOT.glob(pattern) if p.is_file()})
+    return sorted(path for path in shared.ours(ROOT)
+                  if path.endswith(('.c', '.h')) and not path.startswith('tests/data/'))
 
 
 def prototypes():
@@ -559,20 +556,8 @@ def prototypes():
     return names
 
 
-def listed_files():
-    git = subprocess.run(['git', 'ls-files'], cwd=ROOT, capture_output=True, text=True)
-    if not git.returncode:
-        return git.stdout.split('\n')
-    found = []
-    for folder, subfolders, names in os.walk(ROOT):
-        if Path(folder) == ROOT and CONFIG['build']['folder'] in subfolders:
-            subfolders.remove(CONFIG['build']['folder'])
-        found += [(Path(folder) / name).relative_to(ROOT).as_posix() for name in names]
-    return found
-
-
 def tracked():
-    listed = listed_files()
+    listed = shared.ours(ROOT)
     theirs = tuple(path.rsplit('/', 1)[0] + '/' for path in listed
                    if re.search(r'/(?:LICENSE|LICENCE|COPYING)[^/]*\Z', path))
     unwanted = re.compile(r'\.(?:o|obj|a|so|dll|dylib|exe|gch|d|pyc)\Z|~\Z|(?:\A|/)#[^/]*#\Z|(?:\A|/)a\.out\Z')
@@ -638,7 +623,7 @@ def main():
         sys.exit('FAIL: the checker itself: %s' % '; '.join(wrong))
     everything = '--all' in sys.argv[1:]
     given = [a for a in sys.argv[1:] if not a.startswith('--')]
-    paths = given or [p for p in ours() if everything or any(fnmatch.fnmatch(p, held) for held in HELD)]
+    paths = given or ours()
     declared = prototypes()
     listed = exceptions()
     found = tracked() if not given else []
@@ -655,7 +640,7 @@ def main():
             kept.append((path, line, rule, what))
     for entry in listed:
         if not entry[3] and any(fnmatch.fnmatch(p, entry[1]) for p in paths + [f[0] for f in found]):
-            kept.append((STYLE['exceptions'], 1, entry[0], "the exception for '%s' excuses nothing" % entry[1]))
+            kept.append(('project.toml', 1, entry[0], "the exception for '%s' excuses nothing" % entry[1]))
     if everything:
         counts = {}
         for _, _, rule, _ in kept:

@@ -1,0 +1,77 @@
+[[case]]
+name = "a program linked with a library"
+run = ["{python}", "{root}/tools/test.py", "--root", "{root}/tests/data/tools/build/built", "--out", "{case}/out"]
+claims = { status = 0, line = ["greeter: 1 cases: 1 as written"] }
+false = { run = ["{python}", "{root}/tools/test.py", "--root", "{root}/tests/data/tools/build/built", "--out", "{case}/out", "--break"] }
+
+[[case]]
+name = "a variant without its section"
+run = ["{python}", "{root}/tools/build.py", "--root", "{root}/tests/data/tools/build/built", "--out", "{case}/out", "--set", "said=first,second"]
+claims = { status_not = 0, has = ["plain.txt does not hold 'first,second'"] }
+false = { run = ["{python}", "{root}/tools/build.py", "--root", "{root}/tests/data/tools/build/built", "--out", "{case}/out"] }
+
+[[case]]
+name = "a build for debugging"
+run = ["{python}", "{root}/tools/build.py", "--root", "{root}/tests/data/tools/build/built", "--out", "{case}/out", "--debug"]
+claims = { status = 0, files = { "{case}/out/{target}-debug/package.txt" = "package built" } }
+false = { run = ["{python}", "{root}/tools/build.py", "--root", "{root}/tests/data/tools/build/built", "--out", "{case}/out"] }
+
+[[case]]
+name = "a package in a zip"
+run = ["{python}", "{root}/tools/build.py", "--root", "{root}/tests/data/tools/build/built", "--out", "{case}/out", "--pack"]
+claims = { status = 0, line = ["{case}/out/built-{target}.zip", "package.txt", "greeter/greet{library}", "include/greet.h", "presets/greet.toml", "license", "third_party/sample/license"] }
+false = { run = ["{python}", "{root}/tools/build.py", "--root", "{root}/tests/data/tools/build/built", "--out", "{case}/out"] }
+
+[[case]]
+name = "a variable that [variables] does not have"
+run = ["{python}", "{root}/tools/build.py", "--root", "{root}/tests/data/tools/build/copy", "--out", "{case}/out", "--set", "nowhere=1"]
+claims = { status_not = 0, has = ["--set nowhere=1: [variables] has no nowhere"] }
+false = { run = ["{python}", "{root}/tools/build.py", "--root", "{root}/tests/data/tools/build/copy", "--out", "{case}/out"] }
+
+[[case]]
+name = "a key in project.toml and in toolchain.toml"
+run = ["{python}", "{root}/tools/build.py", "--root", "{root}/tests/data/tools/build/twice", "--out", "{case}/out"]
+claims = { status_not = 0, has = ["project.toml states variables.language, and toolchain.toml states it too"] }
+false = { run = ["{python}", "{root}/tools/build.py", "--root", "{root}/tests/data/tools/build/copy", "--out", "{case}/out"] }
+
+[[case]]
+name = "a built-in variable in [variables]"
+run = ["{python}", "{root}/tools/build.py", "--root", "{root}/tests/data/tools/build/builtin", "--out", "{case}/out"]
+claims = { status_not = 0, has = ["[variables] names a built-in variable or a key of a target: root"] }
+false = { run = ["{python}", "{root}/tools/build.py", "--root", "{root}/tests/data/tools/build/copy", "--out", "{case}/out"] }
+
+[[case]]
+name = "a target that the toolchain does not have"
+run = ["{python}", "{root}/tools/build.py", "--root", "{root}/tests/data/tools/build/copy", "--out", "{case}/out", "--target", "nowhere"]
+claims = { status_not = 0, has = ["no target nowhere; the targets: "] }
+false = { run = ["{python}", "{root}/tools/build.py", "--root", "{root}/tests/data/tools/build/copy", "--out", "{case}/out"] }
+
+[[case]]
+name = "a tool that is not there"
+run = ["{python}", "{root}/tools/build.py", "--root", "{root}/tests/data/tools/build/copy", "--out", "{case}/out", "--set", "tool=nowhere"]
+claims = { status_not = 0, has = ["the tool interpreter is not at nowhere"] }
+false = { run = ["{python}", "{root}/tools/build.py", "--root", "{root}/tests/data/tools/build/copy", "--out", "{case}/out"] }
+
+[[case]]
+name = "sources that match no file"
+run = ["{python}", "{root}/tools/build.py", "--root", "{root}/tests/data/tools/build/copy", "--out", "{case}/out", "--set", "source=none.txt"]
+claims = { status_not = 0, has = ["no file matches the sources of copy.txt"] }
+false = { run = ["{python}", "{root}/tools/build.py", "--root", "{root}/tests/data/tools/build/copy", "--out", "{case}/out"] }
+
+[[case]]
+name = "a link that is not there"
+run = ["{python}", "{root}/tools/build.py", "--root", "{root}/tests/data/tools/build/copy", "--out", "{case}/out", "--set", "linked=missing.txt"]
+claims = { status_not = 0, has = ["missing.txt is not there, and copy.txt is linked with it"] }
+false = { run = ["{python}", "{root}/tools/build.py", "--root", "{root}/tests/data/tools/build/copy", "--out", "{case}/out"] }
+
+[[case]]
+name = "a variable that has no value"
+run = ["{python}", "{root}/tools/build.py", "--root", "{root}/tests/data/tools/build/unknown", "--out", "{case}/out"]
+claims = { status_not = 0, has = ["no variable "] }
+false = { run = ["{python}", "{root}/tools/build.py", "--root", "{root}/tests/data/tools/build/unknown", "--out", "{case}/out", "--set", "named=named.txt"] }
+
+[[case]]
+name = "a list variable in a text"
+run = ["{python}", "{root}/tools/build.py", "--root", "{root}/tests/data/tools/build/listed", "--out", "{case}/out"]
+claims = { status_not = 0, has = [" is a list inside a text: write "] }
+false = { run = ["{python}", "{root}/tools/build.py", "--root", "{root}/tests/data/tools/build/listed", "--out", "{case}/out", "--set", "named=named.txt"] }
