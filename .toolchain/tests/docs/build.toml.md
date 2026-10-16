@@ -6,7 +6,7 @@ The cases of the options, of the report and of the files of a project run a shor
 
 | Project | Content |
 | --- | --- |
-| `built` | The library `greet`, the program `greeter`, and the artifact `stamped` with its variant `plain`. |
+| `built` | The library `greet`, the program `greeter`, the archive `greet_static` (with the flag `-DGREETING`), the program `greeter_static` that links it, and the artifact `stamped` with its variant `plain`. |
 | `copy` | The artifact `copy.txt` of the kind `file`. The variables `tool`, `source` and `linked` give its tool, its source and its link. |
 | `twice` | `[variables] language`, a key that `.toolchain/toolchain.toml` also gives. |
 | `builtin` | `[variables] root`, the name of a variable that the tools give. |
@@ -27,7 +27,7 @@ The variant `plain` is unstamped.
 
 | Case | Claim | False variant |
 | --- | --- | --- |
-| a program linked with a library | `test` on `built` passes the case `greeter`. | `test --break`. |
+| a program linked with a library | `test` on `built` passes the cases `greeter` and `greeter_static`: the archive and its flag work. | `test --break`. |
 | a variant without its section | With `--set said=first,second`, `build` stops: `plain.txt does not hold 'first,second'`. | No `--set`. |
 | a build for debugging | With `--debug`, `package.txt` is in `{case}/out/{target}-debug`. | No `--debug`. |
 | a package in a zip | `build --pack` writes the path of the zip, and the names of the files in it. | No `--pack`. |

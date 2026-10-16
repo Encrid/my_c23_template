@@ -52,7 +52,7 @@ With `--pack`, it then writes the zip with `packed`.
 1. If the artifact gives a `target`, it uses the keys of that target and its name as `{target}`.
 2. It replaces the variables of the name, and finds the sources.
 3. It stops if no file matches the sources: `no file matches the sources of <name>`.
-4. It sets `{output}`, `{work}`, `{sources}`, `{defines}`, `{include}`, `{link}` and `{manifest}`.
+4. It sets `{output}`, `{work}`, `{sources}`, `{defines}`, `{include}`, `{flags}`, `{link}` and `{manifest}`.
 5. It makes the folder of the output, and the folder `obj`.
 6. If a file of `link` is not there, it does the `unlinked` steps of the kind.
 7. Else, it does the `steps` of the kind, and copies the `beside` files into the folder of the output.

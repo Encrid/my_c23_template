@@ -156,7 +156,7 @@ In these two cases, the tools do not change a file.
 ## [kinds.\<kind\>]
 
 A kind gives the steps that make an artifact.
-`.toolchain/toolchain.toml` gives the kinds `program`, `library` and `file`.
+`.toolchain/toolchain.toml` gives the kinds `program`, `library`, `archive` and `file`.
 `.toolchain/project.toml` can add more kinds.
 
 | Key | Value |
@@ -185,6 +185,7 @@ The steps can use these variables of the artifact:
 | `{sources}` | The files that match the patterns of `sources`. |
 | `{defines}` | Each item of `defines`, after `-D`. |
 | `{include}` | Each folder of `include`, after `-I`. |
+| `{flags}` | The items of `flags`. |
 | `{link}` | The files of `link`. |
 | `{manifest}` | The items of `manifest`. |
 
@@ -204,6 +205,7 @@ An artifact is a file that the build makes, for example a program, a library or 
 | `sources` | The patterns of the sources, from the folder of the project. |
 | `include` | Optional. The folders of the headers. |
 | `defines` | Optional. The macros, without `-D`. |
+| `flags` | Optional. More flags of the compiler, for example `-fvisibility=hidden`. They can contain variables. |
 | `link` | Optional. The files that the artifact links. |
 | `beside` | Optional. The files to copy into the folder of the artifact. |
 | `manifest` | Optional. A list of texts for the steps. |

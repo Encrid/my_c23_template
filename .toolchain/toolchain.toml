@@ -109,13 +109,19 @@ errno = "-fmath-errno"
 [kinds.program]
 output = "{name}{exe}"
 steps = [
-    { run = ["{zig}", "cc", "-target", "{triple}", "-mcpu={cpu}", "{optimize}", "{float}", "{errno}", "{language}", "{define}", "{defines}", "{include}", "{sources}", "{link}", "{rpath}", "-o", "{output}", "{stack}"] },
+    { run = ["{zig}", "cc", "-target", "{triple}", "-mcpu={cpu}", "{optimize}", "{float}", "{errno}", "{language}", "{define}", "{defines}", "{include}", "{flags}", "{sources}", "{link}", "{rpath}", "-o", "{output}", "{stack}"] },
 ]
 
 [kinds.library]
 output = "{name}{library}"
 steps = [
-    { run = ["{zig}", "cc", "-target", "{triple}", "-mcpu={cpu}", "-shared", "{pic}", "{soname}", "{optimize}", "{float}", "{errno}", "{language}", "{define}", "{defines}", "{include}", "{sources}", "-o", "{output}"] },
+    { run = ["{zig}", "cc", "-target", "{triple}", "-mcpu={cpu}", "-shared", "{pic}", "{soname}", "{optimize}", "{float}", "{errno}", "{language}", "{define}", "{defines}", "{include}", "{flags}", "{sources}", "-o", "{output}"] },
+]
+
+[kinds.archive]
+output = "{name}.a"
+steps = [
+    { run = ["{zig}", "build-lib", "-static", "-target", "{triple}", "-mcpu={cpu}", "-lc", "-femit-bin={output}", "-cflags", "{optimize}", "{float}", "{errno}", "{language}", "-Wno-unused-command-line-argument", "{define}", "{defines}", "{include}", "{flags}", "--", "{sources}"] },
 ]
 
 [kinds.file]

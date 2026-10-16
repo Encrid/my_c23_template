@@ -61,6 +61,7 @@ def built(config, values, artifact):
     mine.update(sources=sources, output=output.as_posix(), work=work.as_posix(),
                 defines=['-D' + define for define in expanded(artifact.get('defines', []), mine)],
                 include=['-I' + folder for folder in expanded(artifact.get('include', []), mine)],
+                flags=expanded(artifact.get('flags', []), mine),
                 link=expanded(artifact.get('link', []), mine), manifest=expanded(artifact.get('manifest', []), mine))
     output.parent.mkdir(parents=True, exist_ok=True)
     work.parent.mkdir(parents=True, exist_ok=True)

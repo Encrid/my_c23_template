@@ -21,6 +21,21 @@ include = ["include"]
 defines = ['GREETING="hello from a library"']
 
 [[artifact]]
+name = "greet_static"
+kind = "archive"
+sources = ["src/greet.c"]
+include = ["include"]
+flags = ['-DGREETING="hello from an archive"']
+
+[[artifact]]
+name = "greeter_static"
+kind = "program"
+folder = "greeter_static"
+sources = ["src/greeter.c", "src/{system}/*.c"]
+include = ["include", "src"]
+link = ["{out}/greet_static.a"]
+
+[[artifact]]
 name = "greeter"
 kind = "program"
 folder = "greeter"

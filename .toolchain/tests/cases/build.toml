@@ -1,7 +1,7 @@
 [[case]]
 name = "a program linked with a library"
 run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/build/built", "--out", "{case}/out"]
-claims = { status = 0, line = ["greeter: 1 cases: 1 as written"] }
+claims = { status = 0, line = ["greeter_static: as written", "greeter: 2 cases: 2 as written"] }
 false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/build/built", "--out", "{case}/out", "--break"] }
 
 [[case]]

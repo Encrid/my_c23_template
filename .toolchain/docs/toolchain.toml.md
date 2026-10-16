@@ -54,6 +54,7 @@ The `runs_on` of `aarch64-windows-gnu` is empty. Thus the tools build it, and do
 | --- | --- | --- |
 | `program` | `{name}{exe}` | `zig cc` compiles the sources, and links them with the files of `link`. |
 | `library` | `{name}{library}` | `zig cc -shared` compiles the sources into a shared library. |
+| `archive` | `{name}.a` | `zig build-lib -static` compiles the sources into a static library. It does not report a flag that it does not use. |
 | `file` | `{name}` | It copies the one source to the output. |
 
 ## [style]
