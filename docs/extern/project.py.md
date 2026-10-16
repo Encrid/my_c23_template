@@ -64,6 +64,7 @@ zig and its caches stay in the folder of `project.py`.
   A different project can take these files as a dependency.
 - `pack` writes one zip file, `<build>/<project>-<target>.zip`. `<project>` is the value of `[project] name`.
 - Each case runs in its own empty folder, `<build>/<target>/cases/<group>/<number>`.
+- `test` writes the output of the commands of all the cases into `<build>/<target>/said.txt`, but not with `--break`.
 - The caches of zig are in `build/zig-cache` of the folder of `project.py`. Thus a build does not use a cache of the machine.
 
 `build` writes the path of each artifact.

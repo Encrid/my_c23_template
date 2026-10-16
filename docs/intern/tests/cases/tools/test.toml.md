@@ -37,3 +37,4 @@ The other cases run `test.py` on a project in `{case}`. Their `folders` copy the
 | a false variant that still holds | `test --break` stops: `still as written with their claims made false: still`. | `passes.toml`. |
 | a target that does not run here | `test --target aarch64-windows-gnu` stops: `aarch64-windows-gnu does not run here`. | No `--target`. |
 | a case that needs what is not linked | `test` writes `compiled, not linked: later:`. Then it stops: `the cases need what is linked: later`. | `linked.txt` is there. |
+| the output of the cases | `test` runs the case `said`, and `{case}/out/{target}/said.txt` holds its output `ended after`. | `test --break`, which writes no `said.txt`. |

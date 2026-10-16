@@ -75,3 +75,15 @@ name = "a list variable in a text"
 run = ["{python}", "{root}/tools/build.py", "--root", "{root}/tests/data/tools/build/listed", "--out", "{case}/out"]
 claims = { status_not = 0, has = [" is a list inside a text: write "] }
 false = { run = ["{python}", "{root}/tools/build.py", "--root", "{root}/tests/data/tools/build/listed", "--out", "{case}/out", "--set", "named=named.txt"] }
+
+[[case]]
+name = "an artifact for a different target"
+run = ["{python}", "{root}/tools/build.py", "--root", "{root}/tests/data/tools/build/targeted", "--out", "{case}/out"]
+claims = { status = 0, files = { "{case}/out/{target}/package.txt" = "  far-aarch64-windows-gnu.txt\n" } }
+false = { run = ["{python}", "{root}/tools/build.py", "--root", "{root}/tests/data/tools/build/untargeted", "--out", "{case}/out"] }
+
+[[case]]
+name = "an option with a value"
+run = ["{python}", "-c", "import sys; sys.path.insert(0, sys.argv.pop(1)); import shared; print(shared.arguments('--commits').commits)", "{root}/tools", "--commits", "a..b"]
+claims = { status = 0, line = ["a..b"] }
+false = { run = ["{python}", "-c", "import sys; sys.path.insert(0, sys.argv.pop(1)); import shared; print(shared.arguments('--commits').commits)", "{root}/tools"] }

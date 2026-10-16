@@ -49,6 +49,8 @@ def put(path, data):
 def built(config, values, artifact):
     kind = config['kinds'][artifact['kind']]
     mine = dict(values)
+    if 'target' in artifact:
+        mine.update(config['targets'][artifact['target']], target=artifact['target'])
     name = expand(artifact['name'], mine)
     mine['name'] = name
     sources = files(Path(values['root']), [expand(pattern, mine) for pattern in artifact['sources']])

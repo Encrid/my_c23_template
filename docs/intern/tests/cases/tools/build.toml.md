@@ -1,7 +1,8 @@
 # tests/cases/tools/build.toml
 
-The group `tools/build` checks `tools/build.py`, and the configuration and the variables of `tools/shared.py`.
+The group `tools/build` checks `tools/build.py`, and the configuration, the variables and the options of `tools/shared.py`.
 Its cases run `build.py` or `test.py` on a project in `tests/data/tools/build`, with the output in `{case}/out`.
+The case of the options runs a short Python program that calls `shared.arguments`.
 
 | Project | Content |
 | --- | --- |
@@ -11,6 +12,8 @@ Its cases run `build.py` or `test.py` on a project in `tests/data/tools/build`, 
 | `builtin` | `[variables] root`, the name of a variable that the tools give. |
 | `unknown` | An artifact with the name `{named}`. The variable `named` is `{nothing}`, which has no value. |
 | `listed` | An artifact with the name `{named}`. The variable `named` is `{language}`, a list in a text. |
+| `targeted` | The artifact `near-{target}.txt`, and its variant `far-{target}.txt` with the target `aarch64-windows-gnu`. |
+| `untargeted` | The same artifact and variant, but the variant has no `target`. |
 
 In `built`, `greet` gets its greeting from `defines`.
 `greeter` includes `include/greet.h`, links `greet`, and has `greet` beside it in its folder.
@@ -37,5 +40,7 @@ The variant `plain` is unstamped.
 | a link that is not there | `--set linked=missing.txt` stops `build`: `missing.txt is not there, and copy.txt is linked with it`. | No `--set`. |
 | a variable that has no value | `build` on `unknown` stops: `no variable`. | `--set named=named.txt`. |
 | a list variable in a text | `build` on `listed` stops: `is a list inside a text`. | `--set named=named.txt`. |
+| an artifact for a different target | `build` on `targeted` lists `far-aarch64-windows-gnu.txt` in `package.txt`. No machine runs that target. | `build` on `untargeted`. |
+| an option with a value | `shared.arguments('--commits')` gets `--commits a..b`, and the program writes `a..b`. | No `--commits`, thus the program writes `None`. |
 
 `docs/intern/tools/build.py.md` gives the limits of these cases.

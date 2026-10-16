@@ -117,3 +117,10 @@ run = ["{python}", "{root}/tools/test.py", "--root", "{case}", "--out", "{case}/
 folders = { "{case}" = ["tests/data/tools/test/later/project.toml"] }
 claims = { status_not = 0, has = ["compiled, not linked: later: ", "the cases need what is linked: later"] }
 false = { files = { "{case}/linked.txt" = "here" } }
+
+[[case]]
+name = "the output of the cases"
+run = ["{python}", "{root}/tools/test.py", "--root", "{case}", "--out", "{case}/out"]
+folders = { "{case}" = ["tests/data/tools/test/project.toml"], "{case}/tests/cases" = ["tests/data/tools/test/said.toml"] }
+claims = { status = 0, files = { "{case}/out/{target}/said.txt" = "ended after" } }
+false = { run = ["{python}", "{root}/tools/test.py", "--root", "{case}", "--out", "{case}/out", "--break"] }

@@ -28,7 +28,7 @@ The tools import it. It does not run alone.
 | `this_target(targets)` | Gives the target whose `runs_on` is this machine, or nothing. |
 | `sha256(data)` | Gives the SHA-256 digest of the bytes, in hexadecimal. |
 | `variables(config, args, target, zig)` | Gives the variables of a build, as the section *Variables* tells. |
-| `arguments(**flags)` | Reads the options of the command line. Each item of `flags` adds an option that has no value. |
+| `arguments(*valued, **flags)` | Reads the options of the command line. Each item of `valued` adds an option that has a value. Each item of `flags` adds an option that has no value. |
 | `ours(root)` | Gives the files of the project, as the section *The files of the project* tells. |
 
 ## The configuration
@@ -67,7 +67,11 @@ A list value in a text needs a separator: `{<name>:<separator>}`. `expand` joins
 ## The options
 
 `arguments` reads the options `--root`, `--target`, `--debug`, `--out` and `--set`.
-A tool adds its own options, for example `arguments(pack='--pack')`.
+A tool adds its own options:
+
+- `arguments('--commits')` adds the option `--commits <value>`. Its value is in `args.commits`, or `None` if the option is not given.
+- `arguments(pack='--pack')` adds the option `--pack`, with no value. `args.pack` tells if the option is given.
+
 The default of `--root` is `HERE`. `arguments` makes the root an absolute path.
 
 ## The files of the project

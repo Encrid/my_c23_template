@@ -34,6 +34,10 @@
 3. It reads the groups.
 4. If there is no case, it writes `no case: tests/cases holds no case`, and ends.
 5. It runs the groups.
+6. In a run that is not `--break`, it checks the messages of the code with `checked` of `said.py`.
+
+`test` stops at step 5 if a case failed. Thus step 6 runs only if each case passed.
+`docs/intern/tools/said.py.md` gives the checks of step 6.
 
 The message of step 1 is `<target> does not run here: build it, and test it where it runs`.
 
@@ -83,7 +87,11 @@ For `files` and for `folders`, each path of `false` replaces only that path.
 `test` writes `<case>: <verdict>` for each case. With `--break`, it writes `<case>, made false: <verdict>`.
 For a case that fails, it writes the status and the output of each command.
 After each group, it writes the number of its cases and the number of the cases that passed.
-If a case failed, `test` stops with the names of the cases that failed.
+
+In a run that is not `--break`, `test` then writes `<out>/said.txt`.
+The file holds the output of each command and of each helper, in the order of the cases.
+`said.py` reads it. A run with `--break` writes no `said.txt`, because a false variant does not run as the project runs.
+If a case failed, `test` stops with the names of the cases that failed, after it writes `said.txt`.
 
 ## Claims
 

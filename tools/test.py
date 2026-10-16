@@ -158,11 +158,12 @@ def verdict(config, values, outputs, group, index, case, broken):
 
 
 def test(config, values, outputs, groups, broken):
-    wrong = []
+    wrong, texts = [], []
     for group, cases in groups:
         right = 0
         for index, case in enumerate(cases):
             ok, how, ends = verdict(config, values, outputs, group, index, case, broken)
+            texts += [said for _, said in ends]
             print('%s%s: %s' % (case['name'], ', made false' if broken else '', how))
             right += ok
             if not ok:
@@ -172,6 +173,8 @@ def test(config, values, outputs, groups, broken):
                                                                   said.rstrip()))
         print('%s: %d claims made false: %d cases failed' % (group, len(cases), right) if broken else
               '%s: %d cases: %d as written' % (group, len(cases), right))
+    if not broken:
+        (Path(values['out']) / 'said.txt').write_text('\n'.join(texts), encoding='utf-8', newline='\n')
     if wrong:
         die(('still as written with their claims made false: ' if broken else 'not as written: ') + ', '.join(wrong))
 

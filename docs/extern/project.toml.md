@@ -194,10 +194,13 @@ An artifact is a file that the build makes, for example a program, a library or 
 | `beside` | Optional. The files to copy into the folder of the artifact. |
 | `manifest` | Optional. A list of texts for the steps. |
 | `folder` | Optional. The folder of the artifact, in the output folder of the target. |
+| `target` | Optional. The target of the artifact, if it is not the target of the build. |
 | `variants` | Optional. The variants. Each variant has a `name`, and can have the other keys and `unstamped`. |
 
 A variant is a copy of the artifact with a different name and some different keys.
 A variant with `unstamped = true` does not do the `section` steps.
+An artifact with a `target` gets the keys of that target and the variable `{target}`, for example `{exe}` and `{triple}`.
+It stays in the output folder of the build.
 
 If a file of `link` is not there, the tools do the `unlinked` steps of the kind, and do not copy the `beside` files.
 Thus a build for a different target can compile the sources, and not link them.
