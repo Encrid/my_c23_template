@@ -52,6 +52,7 @@ If `tests/cases` holds no case, `test` writes `no case: tests/cases holds no cas
 | `folders` | The folders that `test` makes before the command starts. The key is the path. The value is a list of artifacts or files to copy into the folder. |
 | `claims` | The claims about the command. A case must make one claim or more. |
 | `false` | The false variant of the case. Each case must have one. |
+| `alone` | `true` if the case must not run at the same time as a copy of itself. Such a case runs one time with `--copies`. |
 
 Each case starts in an empty folder, `{case}`. The command runs in the folder of the project.
 `test` replaces the variables in all the texts of a case, also in the texts of `files`.
@@ -66,7 +67,10 @@ Each case starts in an empty folder, `{case}`. The command runs in the folder of
 | `line` | Each text of the list is a full line of the output. |
 | `has` | The output contains each text of the list. |
 | `lacks` | The output contains no text of the list. |
+| `matches` | Each regular expression of the list is found in the output. A `.` also matches a line end. |
+| `matches_not` | No regular expression of the list is found in the output. |
 | `order` | The output has each text of the list as a line, in this order. The spaces at the start and at the end of a line do not count. |
+| `output` | The output is the same as the text of this file of the project. |
 | `files` | After the command ends, each file contains its text. The key is the path, and the value is the text. |
 
 The output is the text that the command writes to its output and to its errors.
@@ -119,6 +123,19 @@ Thus the break run shows that each case can fail.
 
 `test` refuses a case that has no false variant, also without `--break`.
 
+## Run the tests
+
+| Command | Result |
+| --- | --- |
+| `python project.py test` | Runs each case. |
+| `python project.py test --break` | Runs the false variant of each case. Each case must fail. |
+| `python project.py test -k <part>` | Runs only the cases whose name contains `<part>`. |
+| `python project.py test --copies <number>` | Runs this number of copies of each case at the same time. Each copy must pass. |
+| `python project.py test --rounds <number>` | Runs all the cases this number of times, one round after the other. |
+
+The copies of a case compete for the processors and the memory. Thus they find a fault that shows only under load.
+A case that fails in some copies writes the number of these copies, for example `differs in 2 of 6 copies`.
+
 ## The settings
 
 `[test]` of `.toolchain/project.toml` holds the settings of the tests:
@@ -126,6 +143,7 @@ Thus the break run shows that each case can fail.
 | Key | Value |
 | --- | --- |
 | `timeout` | The maximum time of a case, in seconds. A case fails if its command does not end in time, also with `--break`. |
+| `copies` | The number of copies of each case that run at the same time. `--copies` replaces it. |
 | `rule` | The rules of the groups. Each `[[test.rule]]` has `lacks` and `exempt`. |
 | `writers` | The functions that write the messages of the code, for example `fprintf`. |
 

@@ -49,6 +49,9 @@ If the command is not in the table, `project.py` stops with the message
 | `--set <name>=<value>` | Gives a new value to a key of `[variables]`. You can use this option more than one time. |
 | `--pack` | Puts the package into a zip file. The command `pack` gives this option to `.toolchain/tools/build.py`. |
 | `--break` | Runs the false variant of each case. It is an option of `test` only. |
+| `-k <part>` | Runs only the cases whose name contains `<part>`. It is an option of `test` only. |
+| `--copies <number>` | Runs this number of copies of each case at the same time. It is an option of `test` only. |
+| `--rounds <number>` | Runs all the cases this number of times. It is an option of `test` only. |
 | `--toolchain` | Runs the cases of the toolchain, in place of the cases of the project. It is an option of `test` only. |
 | `--all` | Removes all of the output folder. The command `distclean` gives this option to `.toolchain/tools/clean.py`. |
 | `--commits <range>` | Checks the messages of the commits of this range of git. It is an option of `check` only. |

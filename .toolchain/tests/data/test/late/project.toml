@@ -3,3 +3,4 @@ name = "late"
 
 [test]
 timeout = 2
+copies = 1

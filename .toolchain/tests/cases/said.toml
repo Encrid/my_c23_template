@@ -51,6 +51,6 @@ false = { files = { "{case}/out/{target}/said.txt" = "the file a.txt is not ther
 name = "the messages after the cases"
 run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{case}/p", "--out", "{case}/out"]
 folders = { "{case}/p/tests/cases" = [".toolchain/tests/data/said/said.toml"] }
-files = { "{case}/p/.toolchain/project.toml" = "[project]\nname = \"said\"\n\n[test]\ntimeout = 60\nwriters = [\"say\"]\n", "{case}/p/src/p.c" = "say(\"the file %s is not there\\n\", path);\n", "{case}/p/readme.md" = "# p\n\n`the file <path> is not there`\n" }
+files = { "{case}/p/.toolchain/project.toml" = "[project]\nname = \"said\"\n\n[test]\ntimeout = 60\ncopies = 1\nwriters = [\"say\"]\n", "{case}/p/src/p.c" = "say(\"the file %s is not there\\n\", path);\n", "{case}/p/readme.md" = "# p\n\n`the file <path> is not there`\n" }
 claims = { status = 0, line = ["no fault in 1 messages"] }
 false = { files = { "{case}/p/readme.md" = "# p\n" } }

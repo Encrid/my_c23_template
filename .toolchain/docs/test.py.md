@@ -14,14 +14,17 @@
 | `ended(running, text)` | Writes the text, closes the input, and waits for the end of the command. It gives the status and the output. |
 | `ordered(wanted, lines)` | Tells if the lines have each wanted line, in order. |
 | `holding(path, text)` | Tells if a file is there and contains the text. |
+| `same(path, said)` | Tells if a file is there and holds the same text as the output. |
 | `holds(claims, lacks, code, said, values)` | Tells if each claim is true. |
 | `source_of(item, outputs, values)` | Gives the file of an artifact, or a file of the project. |
 | `placed(use, outputs, values)` | Writes the `files` of a case, and fills its `folders`. |
 | `scripted(running, script, outputs, values)` | Does the steps of a script. |
 | `made_false(case)` | Gives the false variant of a case. |
 | `tried(config, values, outputs, where, case, broken)` | Runs one case. |
-| `verdict(config, values, outputs, group, index, case, broken)` | Gives the verdict of one case. |
-| `test(config, values, outputs, groups, broken, said)` | Runs all the groups, and writes each verdict. With `said`, it writes `said.txt`. |
+| `judged(config, group, broken, run)` | Gives the verdict of one run of a case. |
+| `verdict(config, values, outputs, group, index, case, broken, copies)` | Runs the copies of one case at the same time, and gives their verdict. |
+| `test(config, values, outputs, groups, broken, said, copies)` | Runs all the groups, and writes each verdict. With `said`, it writes `said.txt`. |
+| `chosen(groups, part)` | Gives only the cases whose name contains `part`. It stops if no case has it: `no case has <part> in its name`. |
 | `groups_of(values, folder)` | Reads and checks the groups of a folder: `tests/cases`, or `.toolchain/tests/cases`. |
 | `main()` | Runs the command `test`. |
 
@@ -33,11 +36,14 @@
 2. It stops if an artifact is not linked: `the cases need what is linked: <names>`.
 3. It reads the groups of `tests/cases`, or of `.toolchain/tests/cases` with `--toolchain`.
 4. If there is no case, it writes `no case: <folder> holds no case`, and ends.
-5. It runs the groups.
-6. In a run with no `--break` and no `--toolchain`, it checks the messages of the code with `checked` of `said.py`.
+5. With `-k`, it keeps only the cases whose name contains the part.
+6. It runs the groups, one time for each round of `--rounds`. Before each round of 2 rounds or more, it writes `round <n> of <rounds>`.
+7. With no `--break`, `--toolchain` or `-k`, it checks the messages of the code with `checked` of `said.py`.
 
-`test` stops at step 5 if a case failed. Thus step 6 runs only if each case passed.
-`.toolchain/docs/said.py.md` gives the checks of step 6.
+The number of copies is `--copies`, or `[test] copies`. If neither gives it, `main` stops: `.toolchain/project.toml: write [test] copies`.
+
+`test` stops at step 6 if a case failed. Thus step 7 runs only if each case passed.
+`.toolchain/docs/said.py.md` gives the checks of step 7.
 
 The message of step 1 is `<target> does not run here: build it, and test it where it runs`.
 
@@ -56,7 +62,7 @@ A file with no case gives no group.
 
 `tried` runs one case:
 
-1. It empties the folder of the case, `<out>/cases/<group>/<number>`.
+1. It empties the folder of the case, `<out>/cases/<group>/<number>`, or `<out>/cases/<group>/<number>/<copy>` for a copy.
 2. It adds the variables `{case}` and `{port}`. `{port}` is a new free port.
 3. With `--break`, it uses the false variant of the case.
 4. It writes the files, and fills the folders of the case.
@@ -74,7 +80,9 @@ For `files` and for `folders`, each path of `false` replaces only that path.
 
 ## Verdicts
 
-`verdict` adds the `lacks` of each rule to the claims, but not the rules that exempt the group.
+`verdict` runs the copies of a case at the same time, in threads: `[test] copies` or `--copies` copies, or one copy if the case has `alone = true`.
+`judged` gives the verdict of each copy. It adds the `lacks` of each rule to the claims, but not the rules that exempt the group.
+The case passes only if each copy passes. If copies fail, the verdict of the first copy that failed ends with `in <failed> of <copies> copies`.
 
 | Run | The claims | Verdict | The case |
 | --- | --- | --- | --- |
@@ -88,7 +96,7 @@ For `files` and for `folders`, each path of `false` replaces only that path.
 For a case that fails, it writes the status and the output of each command.
 After each group, it writes the number of its cases and the number of the cases that passed.
 
-In a run with no `--break` and no `--toolchain`, `test` then writes `<out>/said.txt`.
+In a run with no `--break`, no `--toolchain` and no `-k`, `test` then writes `<out>/said.txt`.
 The file holds the output of each command and of each helper, in the order of the cases.
 `said.py` reads it. A run with `--break` writes no `said.txt`, because a false variant does not run as the project runs.
 If a case failed, `test` stops with the names of the cases that failed, after it writes `said.txt`.

@@ -29,7 +29,7 @@ The tools import it. It does not run alone.
 | `this_target(targets)` | Gives the target whose `runs_on` is this machine, or nothing. |
 | `sha256(data)` | Gives the SHA-256 digest of the bytes, in hexadecimal. |
 | `variables(config, args, target, zig)` | Gives the variables of a build, as the section *Variables* tells. |
-| `arguments(*valued, **flags)` | Reads the options of the command line. Each item of `valued` adds an option that has a value. Each item of `flags` adds an option that has no value. |
+| `arguments(*valued, **flags)` | Reads the options of the command line. Each item of `valued` adds an option that has a value. An item can be a pair of the option and the type of its value, for example `('--copies', int)`. Each item of `flags` adds an option that has no value. |
 | `header(mark)` | Gives the pattern of the legal notice of `.toolchain/header.txt`, each line after `mark`, as the section *The legal notice* tells. |
 | `project_name(config)` | Gives `[project] name`, as the section *The name of the project* tells. |
 | `document(path)` | Gives the document of a file, as the section *The documents* tells. |

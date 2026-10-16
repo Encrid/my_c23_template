@@ -1,7 +1,9 @@
 # Copyright (C) 2026 Enkrid
 #
 # Under the GNU Affero General Public License, version 3 only: see license.
+import concurrent.futures
 import os
+import re
 import shutil
 import socket
 import subprocess
@@ -81,6 +83,10 @@ def holding(path, text):
     return path.is_file() and text in path.read_text(encoding='utf-8')
 
 
+def same(path, said):
+    return path.is_file() and path.read_text(encoding='utf-8') == said
+
+
 def holds(claims, lacks, code, said, values):
     lines = said.split('\n')
     known(claims, 'claims', 'a case')
@@ -88,7 +94,10 @@ def holds(claims, lacks, code, said, values):
                 all(expand(line, values) in lines for line in claims.get('line', [])),
                 all(expand(text, values) in said for text in claims.get('has', [])),
                 all(expand(text, values) not in said for text in claims.get('lacks', []) + lacks),
+                all(re.search(expand(text, values), said, re.S) for text in claims.get('matches', [])),
+                not any(re.search(expand(text, values), said, re.S) for text in claims.get('matches_not', [])),
                 ordered([expand(line, values) for line in claims.get('order', [])], lines),
+                'output' not in claims or same(located(claims['output'], values), said),
                 all(holding(located(path, values), expand(text, values))
                     for path, text in claims.get('files', {}).items())])
 
@@ -147,8 +156,8 @@ def tried(config, values, outputs, where, case, broken):
     return ends, [use.get('claims', {})] + ([helper.get('claims', {})] if helper else []), mine
 
 
-def verdict(config, values, outputs, group, index, case, broken):
-    ends, claims, mine = tried(config, values, outputs, '%s/%d' % (group, index), case, broken)
+def judged(config, group, broken, run):
+    ends, claims, mine = run
     lacks = [rule['lacks'] for rule in config['test'].get('rule', []) if group not in rule.get('exempt', [])]
     if any(code is None for code, _ in ends):
         return False, 'did not end in %d seconds' % config['test']['timeout'], ends
@@ -158,12 +167,26 @@ def verdict(config, values, outputs, group, index, case, broken):
     return held, 'as written' if held else 'differs', ends
 
 
-def test(config, values, outputs, groups, broken, said):
+def verdict(config, values, outputs, group, index, case, broken, copies):
+    count = 1 if case.get('alone') else copies
+    where = '%s/%d' % (group, index)
+    wheres = [where] if count == 1 else ['%s/%d' % (where, copy) for copy in range(count)]
+    with concurrent.futures.ThreadPoolExecutor(count) as pool:
+        runs = list(pool.map(lambda where: tried(config, values, outputs, where, case, broken), wheres))
+    verdicts = [judged(config, group, broken, run) for run in runs]
+    bad = [one for one in verdicts if not one[0]]
+    if not bad:
+        return verdicts[0]
+    ok, how, ends = bad[0]
+    return ok, how + (' in %d of %d copies' % (len(bad), count) if count > 1 else ''), ends
+
+
+def test(config, values, outputs, groups, broken, said, copies):
     wrong, texts = [], []
     for group, cases in groups:
         right = 0
         for index, case in enumerate(cases):
-            ok, how, ends = verdict(config, values, outputs, group, index, case, broken)
+            ok, how, ends = verdict(config, values, outputs, group, index, case, broken, copies)
             texts += [said for _, said in ends]
             print('%s%s: %s' % (case['name'], ', made false' if broken else '', how))
             right += ok
@@ -196,8 +219,13 @@ def groups_of(values, folder):
     return [(group, cases) for group, cases in found if cases]
 
 
+def chosen(groups, part):
+    found = [(group, [case for case in cases if part in case['name']]) for group, cases in groups]
+    return [(group, cases) for group, cases in found if cases] or die('no case has %s in its name' % part)
+
+
 def main():
-    args = shared.arguments(broken='--break', toolchain='--toolchain')
+    args = shared.arguments('-k', ('--copies', int), ('--rounds', int), broken='--break', toolchain='--toolchain')
     if args.toolchain:
         config, values = build.prepared(args, True)
         made = []
@@ -210,8 +238,14 @@ def main():
     groups = groups_of(values, folder)
     if not groups:
         return print('no case: %s holds no case' % folder)
-    own = not (args.broken or args.toolchain)
-    test(config, values, {name: paths[0] for name, paths in made}, groups, args.broken, own)
+    groups = chosen(groups, args.k) if args.k else groups
+    copies = args.copies or config['test'].get('copies') or die('.toolchain/project.toml: write [test] copies')
+    own = not (args.broken or args.toolchain or args.k)
+    rounds = args.rounds or 1
+    for done in range(rounds):
+        if rounds > 1:
+            print('round %d of %d' % (done + 1, rounds))
+        test(config, values, {name: paths[0] for name, paths in made}, groups, args.broken, own, copies)
     if own:
         checked(Path(values['root']), Path(values['out']))
 

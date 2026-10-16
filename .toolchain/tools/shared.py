@@ -14,11 +14,11 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parents[2]
 NAME = re.compile(r'\{([a-z_][a-z0-9_]*)(?::([^{}]*))?\}')
 KEYS = {'step': {'run', 'section', 'text', 'contains', 'copy', 'rename'},
-        'case': {'name', 'run', 'env', 'stdin', 'script', 'helper', 'files', 'folders', 'claims', 'false'},
+        'case': {'name', 'run', 'env', 'stdin', 'script', 'helper', 'files', 'folders', 'claims', 'false', 'alone'},
         'false': {'run', 'env', 'stdin', 'script', 'helper', 'files', 'folders'},
         'helper': {'run', 'wait', 'stdin', 'claims'},
         'script': {'wait', 'put', 'remove', 'type'},
-        'claims': {'status', 'status_not', 'line', 'has', 'lacks', 'order', 'files'},
+        'claims': {'status', 'status_not', 'line', 'has', 'lacks', 'matches', 'matches_not', 'order', 'output', 'files'},
         'source': {'name', 'url', 'sha256', 'into', 'top', 'patches'}}
 SIDES = {'include': 'extern', 'src': 'intern'}
 
@@ -134,7 +134,8 @@ def arguments(*valued, **flags):
     ap.add_argument('--out', type=Path)
     ap.add_argument('--set', action='append', default=[], metavar='NAME=VALUE')
     for option in valued:
-        ap.add_argument(option)
+        name, kind = option if isinstance(option, tuple) else (option, str)
+        ap.add_argument(name, type=kind)
     for name, flag in flags.items():
         ap.add_argument(flag, dest=name, action='store_true')
     args = ap.parse_args()

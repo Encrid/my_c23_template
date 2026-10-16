@@ -3,6 +3,7 @@ name = "ruled"
 
 [test]
 timeout = 60
+copies = 1
 
 [[test.rule]]
 lacks = "ended after"

@@ -124,3 +124,70 @@ run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{case}", "--out
 folders = { "{case}/.toolchain" = [".toolchain/tests/data/test/project.toml"], "{case}/tests/cases" = [".toolchain/tests/data/test/said.toml"] }
 claims = { status = 0, files = { "{case}/out/{target}/said.txt" = "ended after" } }
 false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{case}", "--out", "{case}/out", "--break"] }
+
+[[case]]
+name = "a claim of a pattern"
+run = ["{python}", "-c", "print('first line'); print('second: 42')"]
+claims = { status = 0, matches = ["first.*second: \\d+"] }
+false = { run = ["{python}", "-c", "print('second: 42'); print('first line')"] }
+
+[[case]]
+name = "a claim of a pattern that is not found"
+run = ["{python}", "-c", "print('hop A'); print('hop B')"]
+claims = { status = 0, matches_not = ["hop A.*hop A"] }
+false = { run = ["{python}", "-c", "print('hop A'); print('hop A')"] }
+
+[[case]]
+name = "a claim of the whole output"
+run = ["{python}", "-c", "print('one'); print('two')"]
+claims = { status = 0, output = ".toolchain/tests/data/test/output.txt" }
+false = { run = ["{python}", "-c", "print('one')"] }
+
+[[case]]
+name = "copies of a case"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{case}", "--out", "{case}/out", "--copies", "3"]
+folders = { "{case}/.toolchain" = [".toolchain/tests/data/test/project.toml"], "{case}/tests/cases" = [".toolchain/tests/data/test/ran.toml"] }
+claims = { status = 0, files = { "{case}/out/{target}/cases/ran/0/2/ran.txt" = "ran" } }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{case}", "--out", "{case}/out"] }
+
+[[case]]
+name = "a case that runs alone"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{case}", "--out", "{case}/out", "--copies", "3"]
+folders = { "{case}/.toolchain" = [".toolchain/tests/data/test/project.toml"], "{case}/tests/cases" = [".toolchain/tests/data/test/lone.toml"] }
+claims = { status = 0, files = { "{case}/out/{target}/cases/lone/0/ran.txt" = "ran" } }
+false = { folders = { "{case}/tests/cases" = [".toolchain/tests/data/test/ran.toml"] } }
+
+[[case]]
+name = "copies that differ"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{case}", "--out", "{case}/out", "--copies", "2"]
+folders = { "{case}/.toolchain" = [".toolchain/tests/data/test/project.toml"], "{case}/tests/cases" = [".toolchain/tests/data/test/fails.toml"] }
+claims = { status_not = 0, has = ["fails: differs in 2 of 2 copies"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{case}", "--out", "{case}/out"] }
+
+[[case]]
+name = "rounds of the cases"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{case}", "--out", "{case}/out", "--rounds", "2"]
+folders = { "{case}/.toolchain" = [".toolchain/tests/data/test/project.toml"], "{case}/tests/cases" = [".toolchain/tests/data/test/passes.toml"] }
+claims = { status = 0, line = ["round 2 of 2"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{case}", "--out", "{case}/out"] }
+
+[[case]]
+name = "the cases of a part of a name"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{case}", "--out", "{case}/out", "-k", "second"]
+folders = { "{case}/.toolchain" = [".toolchain/tests/data/test/project.toml"], "{case}/tests/cases" = [".toolchain/tests/data/test/two.toml"] }
+claims = { status = 0, has = ["second case: as written"], lacks = ["first case"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{case}", "--out", "{case}/out", "-k", "first"] }
+
+[[case]]
+name = "a part of no name"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{case}", "--out", "{case}/out", "-k", "nothing"]
+folders = { "{case}/.toolchain" = [".toolchain/tests/data/test/project.toml"], "{case}/tests/cases" = [".toolchain/tests/data/test/two.toml"] }
+claims = { status_not = 0, has = ["no case has nothing in its name"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{case}", "--out", "{case}/out", "-k", "second"] }
+
+[[case]]
+name = "a project with no copies"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{case}", "--out", "{case}/out"]
+folders = { "{case}/.toolchain" = [".toolchain/tests/data/test/nocopies/project.toml"], "{case}/tests/cases" = [".toolchain/tests/data/test/passes.toml"] }
+claims = { status_not = 0, has = [".toolchain/project.toml: write [test] copies"] }
+false = { folders = { "{case}/.toolchain" = [".toolchain/tests/data/test/project.toml"] } }

@@ -38,3 +38,4 @@ variants = [{ name = "plain", unstamped = true }]
 
 [test]
 timeout = 60
+copies = 1
