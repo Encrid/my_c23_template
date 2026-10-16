@@ -51,7 +51,7 @@ tools/                   the tools of the template
 build/                   the output, which git ignores
 ```
 
-`include/`, the public folders, `src/os/`, `tests/fixtures/`, `tests/data/` and `third_party/` are optional.
+`include/`, the public folders, `src/`, `src/os/`, `tests/fixtures/`, `tests/data/` and `third_party/` are optional.
 Every other path of the tree is necessary.
 
 A public folder holds files that the package gives to its users, as `include/` does.
@@ -60,9 +60,12 @@ A public folder holds files that the package gives to its users, as `include/` d
 These files come from the template. Do not change them:
 
 - `.github/`, `.gitattributes`, `.gitignore`, `cla.md`, `license` and `project.py`
-- `tools/`, `tests/cases/tools/` and `tests/data/tools/`
+- `tools/`
 - this document, `docs/extern/project.py.md` and `docs/extern/project.toml.md`
-- `docs/intern/project.py.md`, `docs/intern/tools/` and `docs/intern/tests/cases/tools/`
+- `docs/intern/project.py.md` and `docs/intern/tools/`
+
+The project `c23-tools` holds the source of these files, and the cases of the tools.
+Make a change of these files in `c23-tools`. Then copy them into the template `c23`.
 
 ## The documents
 

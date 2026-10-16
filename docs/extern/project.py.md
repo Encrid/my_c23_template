@@ -83,7 +83,7 @@ zig and its caches stay in the folder of `project.py`.
 A case runs a command, and makes claims about its exit status and its output.
 A group is a file of cases in `tests/cases`, or in a folder of `tests/cases`.
 The name of a group is the path of the file in `tests/cases`, without `.toml`.
-For example, the name of the group `tests/cases/tools/build.toml` is `tools/build`.
+For example, the name of the group `tests/cases/<folder>/<name>.toml` is `<folder>/<name>`.
 The command `test` passes if the claims of each case are true.
 
 Each `[[case]]` has these keys:

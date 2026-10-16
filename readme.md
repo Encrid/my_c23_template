@@ -5,6 +5,7 @@ The template of a project in C23, with one layout, one entry point and the check
 ## Background
 
 A project starts as a copy of this folder.
+Its tools come from the project `c23-tools`, which also holds the cases of the tools.
 The compiler is zig, at one pinned version.
 A project builds for six targets: three operating systems on two types of processor.
 

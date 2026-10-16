@@ -28,7 +28,7 @@ The layout allows only the paths of this table.
 | `include/**.h` | The public headers. |
 | `<folder>/**` | The files of a public folder that `[layout] public` of `project.toml` names. |
 | `os.h` in `src/os`, and `src/os/<system>/<name>.c` | `<system>` is the `system` of a target, for example `posix` or `windows`. |
-| `src/**` | Needed: one file or more. The sources, the private headers and the other inputs of a build. This row does not include `src/os`. |
+| `src/**` | The sources, the private headers and the other inputs of a build. This row does not include `src/os`. |
 | `tests/cases/**.toml` | Needed: one file or more. The groups of cases. |
 | `tests/fixtures/<name>/**` | The files of the fixture `<name>`. |
 | `tests/data/**` | The files that the cases read. |
@@ -47,7 +47,7 @@ The messages are:
 ## The documents
 
 Each file of this table needs its documents.
-For example, the document of `src/sample.c` in `docs/intern` is `docs/intern/src/sample.c.md`.
+For example, the document of `src/<file>` in `docs/intern` is `docs/intern/src/<file>.md`.
 
 | File | Its documents |
 | --- | --- |

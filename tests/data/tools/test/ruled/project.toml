@@ -1,9 +1,0 @@
-[project]
-name = "ruled"
-
-[test]
-timeout = 60
-
-[[test.rule]]
-lacks = "ended after"
-exempt = ["free/said"]

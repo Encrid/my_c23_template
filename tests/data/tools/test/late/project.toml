@@ -1,5 +1,0 @@
-[project]
-name = "late"
-
-[test]
-timeout = 2

@@ -8,7 +8,7 @@ from shared import arguments, config, ours, public, report
 NEEDED = ('.github/workflows/ci.yml', '.github/workflows/release.yml', '.github/workflows/cla.yml',
           '.github/pull_request_template.md', '.gitattributes', '.gitignore', 'cla.md', 'license', 'project.py',
           'project.toml', 'readme.md', 'docs/contributing.md')
-FOLDERS = ('src', 'tests/cases', 'tools')
+FOLDERS = ('tests/cases', 'tools')
 ALLOWED = (r'docs/.+|include/.+\.h|src/os/os\.h|src/os/(?:%s)/[^/]+\.c|src/(?!os/).+'
            r'|tests/cases/.+\.toml|tests/fixtures/[^/]+/.+|third_party/[^/]+/(?:[^/]+\.patch|license)'
            r'|tools/[^/]+\.py|tools/toolchain\.toml')
