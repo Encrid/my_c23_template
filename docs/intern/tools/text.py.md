@@ -7,7 +7,7 @@ It reads the files that `ours` gives. `ours` leaves out the files of `tests/data
 
 | Function | Result |
 | --- | --- |
-| `notice(project)` | Gives the pattern of the legal notice, with the `owner` and the `licence` of `[project]`. |
+| `notice(project)` | Gives the pattern of the legal notice, with the `licence` of `[project]`. |
 | `python(text, notice)` | Gives the faults of a Python file: its notice, its comments and its string statements. |
 | `faults(path, data, notice, unicode)` | Gives the faults of one file. `unicode` is true if the file can hold characters that are not ASCII. |
 | `main()` | Runs the check. |
@@ -27,13 +27,15 @@ The message is `<path>:<line>: a character that is not ASCII`.
 A file `.py` starts with the legal notice:
 
 ```text
-# Copyright (C) <year> <owner>
+# Copyright (C) <year> <holder>
 #
 # <licence>
 ```
 
-`<year>` has four digits. `<owner>` and `<licence>` are the values of `[project]` in `project.toml`.
-More lines `# Copyright (C) <year> <owner>` can follow the first line, with a different owner.
+`<year>` has four digits, and `<holder>` is a holder of the rights in the file.
+`<licence>` is `[project] licence` of `project.toml`.
+More lines `# Copyright (C) <year> <holder>` can follow the first line, one line for each holder.
+Thus the files of the template keep their lines in a project of a different owner.
 
 A Python file has no other comment, and no string statement.
 A string statement is a statement that is only a string, for example a docstring.

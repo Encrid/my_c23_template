@@ -12,8 +12,7 @@ QUOTED = re.compile(r'"""[\s\S]*?"""|\'\'\'[\s\S]*?\'\'\'|"(?:\\.|[^"\\\n])*"|\'
 
 
 def notice(project):
-    return re.compile(r'# Copyright \(C\) \d{4} %s\n(?:# Copyright \(C\) \d{4} [^\n]+\n)*#\n# %s\n'
-                      % (re.escape(project['owner']), re.escape(project['licence'])))
+    return re.compile(r'(?:# Copyright \(C\) \d{4} [^\n]+\n)+#\n# %s\n' % re.escape(project['licence']))
 
 
 def python(text, notice):

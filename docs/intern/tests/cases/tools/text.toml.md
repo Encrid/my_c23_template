@@ -25,6 +25,7 @@ A Python file of a case has no legal notice if the fault of the case is a differ
 | a file that [check] unicode names | `[check] unicode` names `docs/*.md`, thus the letter U+00E9 in `a.md` is not a fault. | `project.toml` has no `[check]`. |
 | a Python file without the legal notice | `project.py:1: the file does not start with the legal notice`. | `text.py` checks `{case}/fixed`, which has the `project.py` of the template. |
 | a notice with two owners | A second line of copyright, with a different owner, is not a fault. | The second line has no `Copyright (C)`. |
+| a notice of a different holder | The line of copyright names `Someone`, not the `owner` of `project.toml`. It is not a fault. | The notice has no line of the licence. |
 | a comment in a Python file | `project.py:1: a comment`. | No comment. |
 | a string statement | A docstring: `project.py:1: a string statement`. | No docstring. |
 | a comment in a TOML file | `tests/cases/a.toml:1: a comment`. | The `#` is in the string. |

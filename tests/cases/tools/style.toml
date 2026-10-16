@@ -21,6 +21,32 @@ licence = "Under the licence of the case."
 '''
 
 [[case]]
+name = "a notice of a different holder"
+run = ["{python}", "{root}/tools/style.py", "--root", "{case}/p"]
+claims = { status = 0, line = ["no fault in 1 files"] }
+
+[case.files]
+"{case}/p/project.toml" = '''
+[project]
+owner = "Enkrid"
+licence = "Under the licence of the case."
+'''
+"{case}/p/src/a.c" = '''
+/*
+** Copyright (C) 2026 Someone
+**
+** Under the licence of the case.
+*/
+'''
+
+[case.false.files]
+"{case}/p/src/a.c" = '''
+/*
+** Copyright (C) 2026 Someone
+*/
+'''
+
+[[case]]
 name = "an exception"
 run = ["{python}", "{root}/tools/style.py", "--root", "{case}/p"]
 claims = { status = 0, line = ["no fault in 1 files"] }

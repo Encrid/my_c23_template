@@ -89,19 +89,21 @@ Each source starts with the legal notice:
 
 ```text
 /*
-** Copyright (C) <year> <owner>
+** Copyright (C) <year> <holder>
 **
 ** <licence>
 */
 ```
 
-`<year>` is the year of the first version of the file.
-`<owner>` is `[project] owner` of `project.toml`, and `<licence>` is `[project] licence`.
+`<year>` is the year of the first version of the file, and `<holder>` is a holder of the rights in the file.
+`<licence>` is `[project] licence` of `project.toml`.
+A file can have more lines of the copyright, one line for each holder.
+Thus the files of the template keep their lines in a project of a different owner.
 If a file holds code of a different holder, add a line for that holder below the first line:
 
 ```text
 /*
-** Copyright (C) 2026 Enkrid
+** Copyright (C) 2026 <holder>
 ** Copyright (C) 2005-2020 Rich Felker, et al. (musl, MIT)
 **
 ** Under the GNU Affero General Public License, version 3 only: see license.

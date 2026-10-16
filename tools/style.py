@@ -31,8 +31,8 @@ DECLARES = re.compile(r'(?:\[\[[^\]]*\]\]\s*)*(?:(?:%s)\s+)*(?:%s)\b(?:\s+(?:%s|
                       r'(?:[\s*]|const\b)*(?:\(\s*\*\s*)?(?P<name>[A-Za-z_]\w*)\s*'
                       r'(?:\)\s*\([^)]*\)\s*)?(?:\[[^\]]*\]\s*)*(?:=|,|\Z)'
                       % (QUALIFIER, ANY, BASE))
-HEADER = re.compile(r'/\*\n\*\* Copyright \(C\) \d{4} %s\n(?:\*\* Copyright \(C\) [^\n]+\n)*'
-                    r'\*\*\n\*\* %s\n\*/\n' % (re.escape(PROJECT['owner']), re.escape(PROJECT['licence'])))
+HEADER = re.compile(r'/\*\n\*\* Copyright \(C\) \d{4} [^\n]+\n(?:\*\* Copyright \(C\) [^\n]+\n)*'
+                    r'\*\*\n\*\* %s\n\*/\n' % re.escape(PROJECT['licence']))
 ASSIGNS = re.compile(r'(?<![=!<>+\-*/%&|^])=(?!=)')
 
 
