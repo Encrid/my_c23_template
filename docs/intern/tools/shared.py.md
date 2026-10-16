@@ -1,0 +1,81 @@
+# tools/shared.py
+
+`shared.py` holds what more than one tool uses.
+The tools import it. It does not run alone.
+
+## Constants
+
+| Name | Value |
+| --- | --- |
+| `HERE` | The folder of `project.py`, which holds `tools`, zig and the caches of zig. It is the default root. |
+| `NAME` | The pattern of a variable: a name in braces, with an optional separator after a colon. |
+| `KEYS` | The keys that a step, a case, a false variant, a helper, a step of a script, the claims and a source can have. |
+
+## Functions
+
+| Function | Result |
+| --- | --- |
+| `die(why)` | Stops the tool with the message `<tool>: <why>`. `<tool>` is the name of the file of the tool. |
+| `known(table, what, where)` | Gives `table`. It stops if `table` has a key that `KEYS[what]` does not have. |
+| `merged(into, more, above)` | Adds the keys of `more` to `into`, as the section *The configuration* tells. |
+| `config(root)` | Gives the configuration of the project in `root`. |
+| `located(text, values)` | Gives the path of `text` in the root, after it replaces the variables. |
+| `expand(text, values)` | Gives `text` with the value of each variable in place of the variable. |
+| `expanded(items, values)` | Gives the items of a list with the value of each variable. |
+| `files(root, patterns)` | Gives the files of `root` that match the patterns. Each file comes one time, in the order of the patterns. |
+| `status(code)` | Gives an exit status as a decimal number and as a hexadecimal number. |
+| `run(argv, root)` | Runs a command in `root`, and writes its output. It stops the tool if the command fails. |
+| `this_target(targets)` | Gives the target whose `runs_on` is this machine, or nothing. |
+| `sha256(data)` | Gives the SHA-256 digest of the bytes, in hexadecimal. |
+| `variables(config, args, target, zig)` | Gives the variables of a build, as the section *Variables* tells. |
+| `arguments(**flags)` | Reads the options of the command line. Each item of `flags` adds an option that has no value. |
+| `ours(root)` | Gives the files of the project, as the section *The files of the project* tells. |
+
+## The configuration
+
+`config` reads `tools/toolchain.toml` of `HERE`, then `project.toml` of the root.
+`merged` adds each key of `project.toml` to the configuration:
+
+1. If the key names a table in the two files, `merged` merges the two tables in the same way.
+2. Else, if `tools/toolchain.toml` has the key, the tool stops.
+3. Else, the key and its value go into the configuration.
+
+The message names the full key, for example `project.toml states variables.language, and toolchain.toml states it too`.
+Thus a list of tables, for example `[[artifact]]`, comes from one file only.
+
+## Variables
+
+`variables` gives the values in this order. A later value replaces an earlier value with the same name.
+
+1. The variables that the tools give: `root`, `build`, `home`, `out`, `target`, `python` and `zig`.
+2. The keys of the target.
+3. The keys of `[variables]`. The tool stops if a key has a name of step 1 or of step 2.
+4. With `--debug`, the keys of `[debug]`.
+5. The values of `--set`. The tool stops if `[variables]` does not have the name.
+
+`build` is `--out`, or `[build] folder` in the root.
+`out` is `<build>/<target>`, or `<build>/<target>-debug` with `--debug`.
+The messages are `[variables] names a built-in variable or a key of a target: <names>` and `--set <name>=<value>: [variables] has no <name>`.
+
+## Expansion
+
+`expand` replaces each variable of a text with its value. If the value contains variables, `expand` replaces them too.
+A list value in a text needs a separator: `{<name>:<separator>}`. `expand` joins the items with the separator.
+`expanded` replaces a list variable that is a full item of a list with all its items.
+`expand` stops the tool if a variable has no value, or if a list value in a text has no separator.
+
+## The options
+
+`arguments` reads the options `--root`, `--target`, `--debug`, `--out` and `--set`.
+A tool adds its own options, for example `arguments(pack='--pack')`.
+The default of `--root` is `HERE`. `arguments` makes the root an absolute path.
+
+## The files of the project
+
+If the root is the top folder of a git repository, `ours` asks git for its files.
+These are the files that git tracks, and the files that git does not ignore.
+Else, `ours` walks the folders of the root, as `.gitignore` tells: it skips `build` at the root, and each `__pycache__`.
+`ours` gives only the files that exist, as paths from the root.
+
+`git -C <root> rev-parse --show-toplevel` gives the top folder of the repository of the root.
+Thus a project in a folder of a different repository, for example a case in `build`, gets the walk.
