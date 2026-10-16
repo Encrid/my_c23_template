@@ -17,7 +17,7 @@ python tools/xref.py [--root <folder>]
 
 A path is a code span that holds only folders and the name of a file, with `/` between them, for example `tools/shared.py`.
 The name of the file has an extension.
-The first folder is a folder of the layout: `.github`, `docs`, `include`, `presets`, `src`, `tests`, `third_party` or `tools`.
+The first folder is a folder of the layout: `.github`, `docs`, `src`, `tests`, `third_party`, `tools`, or a public folder that `shared.public` gives, such as `include`.
 Thus `xref.py` does not check a folder, a path in `build`, a name with no folder, or a pattern with `*` or `<`.
 `xref.py` looks for the file of a path or of a citation on the disk. Thus a path can name a file of `tests/data`.
 
@@ -63,5 +63,5 @@ Each step keeps the length of the text. Thus the line of a fault is its line in 
 | --- | --- |
 | `blank(match)` | Gives the text of a match with a space in place of each character. The line ends stay. |
 | `headings(text)` | Gives the headings of a document, but not the lines of its fenced blocks. |
-| `faults(root, docs, doc)` | Gives the faults of the document `doc`. `docs` gives the headings of each document. |
+| `faults(root, docs, doc, folders)` | Gives the faults of the document `doc`. `docs` gives the headings of each document. `folders` holds the folders of the layout and the public folders. |
 | `main()` | Reads the options, checks each document, and writes the faults. |

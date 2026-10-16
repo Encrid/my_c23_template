@@ -1,6 +1,9 @@
 [project]
 name = "built"
 
+[layout]
+public = ["share"]
+
 [variables]
 said = "written"
 

@@ -58,8 +58,30 @@ They also stop if a list variable is a part of a text, and has no separator.
 | Key | Value |
 | --- | --- |
 | `name` | The name of the project. `package.txt` and the zip of `pack` use it. |
-| `owner` | The owner of the copyright, in the legal notice. |
+| `owner` | The owner of the project. `cla.md` calls the owner the Project Owner. |
 | `licence` | The line of the licence, in the legal notice. |
+
+## [layout]
+
+| Key | Value |
+| --- | --- |
+| `public` | Optional. The public folders of the project, in addition to `include`. The default is an empty list. |
+
+A public folder holds files that the package gives to its users.
+
+- `check` allows any file in a public folder. Each file needs its document in `docs/extern`.
+- `check` needs each key of each file `.toml` of a public folder in a code span of its document.
+- `pack` puts each public folder in the archive.
+
+A public folder cannot be a folder of the layout, for example `src`.
+Then the tools stop: `[layout] public names a folder of the layout: <folders>`.
+
+For example:
+
+```toml
+[layout]
+public = ["share"]
+```
 
 ## [variables]
 
@@ -196,7 +218,7 @@ The steps can use these variables of the artifact:
 
 ## [[artifact]]
 
-An artifact is a file that the build makes, for example a program, a library or a module.
+An artifact is a file that the build makes, for example a program, a library or a copied file.
 
 | Key | Value |
 | --- | --- |

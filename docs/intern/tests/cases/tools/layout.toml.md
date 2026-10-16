@@ -17,7 +17,7 @@ The project `full` has these files, and the document of each file that needs one
 | `src` | `sample.c`. |
 | `src/os` | `os.h`, and `os.c` in the folders `posix` and `windows`. |
 | `include` | `sample.h`. |
-| `presets` | `sample.toml`. |
+| `share` | `sample.toml`. `project.toml` states `[layout] public = ["share"]`. |
 | `tests/cases` | `sample.toml`. |
 | `tests/fixtures/ask` | `ask.c`. |
 | `third_party/sample` | `fix.patch` and `license`. |
@@ -31,6 +31,8 @@ The project `full` has these files, and the document of each file that needs one
 | the folders that the layout needs | A project with no file in `src`, `tests/cases` and `tools`: `src/: the layout needs this folder`, and the same line for `tests/cases/` and for `tools/`. | The project has a file in each of the three folders. |
 | a source without its document | `src/a.c: no document docs/intern/src/a.c.md`. | The project has the document. |
 | a public header without its document | `include/a.h: no document docs/extern/include/a.h.md`. | The project has the document. |
+| a file of a public folder without its document | `project.toml` states `[layout] public = ["share"]`: `share/a.toml: no document docs/extern/share/a.toml.md`. | The project has the document. |
+| a public folder that is a folder of the layout | `[layout] public` names `tests` and `src`. `layout.py` stops: `[layout] public names a folder of the layout: src tests`. | `[layout] public` names `share`. |
 | a document without its file | `docs/intern/src/gone.c.md: no file has this document`. | The project has the source `gone.c` in `src`. |
 | a document in the wrong folder | A source has a document in `docs/extern`: `docs/extern/src/a.c.md: no file has this document`. | The source has no document in `docs/extern`. |
 | a file of docs that is not a document | `docs/notes.txt: no file has this document`. | No `notes.txt` in `docs`. |

@@ -27,7 +27,7 @@ A function is a line that starts with a letter or `_`, with no `typedef`, and wi
 
 1. Each public name of `include/<path>` is a word of a code span of `docs/extern/include/<path>.md`.
 2. Each public name is a word of the name of a case of `tests/cases`.
-3. Each key of `presets/<path>` is a word of a code span of `docs/extern/presets/<path>.md`.
+3. Each key of a file `.toml` of a public folder is a word of a code span of its document.
 
 A word is a name that no letter, digit or `_` touches.
 For check 3, a key of a table in a table counts too.
@@ -42,7 +42,7 @@ If a document is not there, `cover.py` reads it as an empty document.
 | --- | --- |
 | A document does not name a public name. | `<header>: <name> is not in <document>` |
 | No case has a public name in its name. | `<header>: <name> is in the name of no case` |
-| A document does not name a key of a preset. | `<preset>: <key> is not in <document>` |
+| A document does not name a key of a file `.toml`. | `<file>: <key> is not in <document>` |
 
 ## Functions
 
@@ -52,7 +52,7 @@ If a document is not there, `cover.py` reads it as an empty document.
 | `names(text)` | Gives the public names of the text of a header. |
 | `keys(table)` | Gives each key of a table, and the keys of each table in it. |
 | `spans(root, doc)` | Gives the code spans of a document, one on each line. |
-| `main()` | Reads the options, checks each header and each preset, and writes the faults. |
+| `main()` | Reads the options, checks each header and each file `.toml` of a public folder, and writes the faults. |
 
 ## Limits
 

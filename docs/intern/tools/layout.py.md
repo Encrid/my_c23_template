@@ -7,8 +7,8 @@ It reads the files that `ours` gives. `ours` leaves out the files of `tests/data
 
 | Function | Result |
 | --- | --- |
-| `documents(path)` | Gives the documents that a file needs: none, one or two. |
-| `faults(root, paths, systems)` | Gives the faults of the tree. `systems` holds the value of `system` of each target. |
+| `documents(path, public)` | Gives the documents that a file needs: none, one or two. |
+| `faults(root, paths, systems, public)` | Gives the faults of the tree. `systems` holds the value of `system` of each target. `public` holds the public folders that `shared.public` gives. |
 | `main()` | Runs the check. |
 
 ## The paths
@@ -26,7 +26,7 @@ The layout allows only the paths of this table.
 | `docs/contributing.md` | Needed. |
 | `docs/**` | The documents. The section *The documents* gives their rules. |
 | `include/**.h` | The public headers. |
-| `presets/<name>.toml` | The presets of a host. |
+| `<folder>/**` | The files of a public folder that `[layout] public` of `project.toml` names. |
 | `os.h` in `src/os`, and `src/os/<system>/<name>.c` | `<system>` is the `system` of a target, for example `posix` or `windows`. |
 | `src/**` | Needed: one file or more. The sources, the private headers and the other inputs of a build. This row does not include `src/os`. |
 | `tests/cases/**.toml` | Needed: one file or more. The groups of cases. |
@@ -56,7 +56,7 @@ For example, the document of `src/sample.c` in `docs/intern` is `docs/intern/src
 | A patch of `third_party` | In `docs/intern`. |
 | `project.py` | In `docs/intern` and in `docs/extern`. |
 | `project.toml` | In `docs/extern`. |
-| A file of `include` or of `presets` | In `docs/extern`. |
+| A file of a public folder: `include`, or a folder of `[layout] public` | In `docs/extern`. |
 
 `project.py` needs a document in `docs/intern` and in `docs/extern`, thus these two folders are always there.
 The first line of a document is `#`, a space, and the path of its file.

@@ -6,7 +6,7 @@ The cases of the options, of the report and of the files of a project run a shor
 
 | Project | Content |
 | --- | --- |
-| `built` | The library `greet`, the program `greeter`, and the artifact `stamped` with its variant `plain`. |
+| `built` | The library `greet`, the program `greeter`, the artifact `stamped` with its variant `plain`, and the public folder `share`. |
 | `copy` | The artifact `copy.txt` of the kind `file`. The variables `tool`, `source` and `linked` give its tool, its source and its link. |
 | `twice` | `[variables] language`, a key that `tools/toolchain.toml` also gives. |
 | `builtin` | `[variables] root`, the name of a variable that the tools give. |

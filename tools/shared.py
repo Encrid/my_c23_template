@@ -20,6 +20,7 @@ KEYS = {'step': {'run', 'section', 'text', 'contains', 'copy', 'rename'},
         'script': {'wait', 'put', 'remove', 'type'},
         'claims': {'status', 'status_not', 'line', 'has', 'lacks', 'order', 'files'},
         'source': {'name', 'url', 'sha256', 'into', 'top', 'patches'}}
+LAYOUT = ('.github', 'build', 'docs', 'include', 'src', 'tests', 'third_party', 'tools')
 
 
 def die(why):
@@ -139,6 +140,14 @@ def arguments(*valued, **flags):
     args = ap.parse_args()
     args.root = args.root.resolve()
     return args
+
+
+def public(config):
+    folders = config.get('layout', {}).get('public', [])
+    taken = sorted(set(folders) & set(LAYOUT))
+    if taken:
+        die('[layout] public names a folder of the layout: ' + ' '.join(taken))
+    return ['include'] + folders
 
 
 def repository(root):

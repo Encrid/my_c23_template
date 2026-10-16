@@ -4,7 +4,7 @@
 import re
 import tomllib
 
-from shared import arguments, ours, report
+from shared import arguments, config, ours, public, report
 
 
 def named(name, text):
@@ -41,15 +41,18 @@ def main():
     files = sorted(ours(root))
     cases = '\n'.join(case['name'] for path in files if path.startswith('tests/cases/') and path.endswith('.toml')
                       for case in tomllib.loads((root / path).read_text(encoding='utf-8')).get('case', []))
-    read = [path for path in files if path.startswith(('include/', 'presets/'))]
+    folders = public(config(root))
+    read = [path for path in files if path.split('/', 1)[0] in folders]
     found = []
     for path in read:
         doc = 'docs/extern/%s.md' % path
-        text, source = spans(root, doc), (root / path).read_text(encoding='utf-8')
-        if path.startswith('presets/'):
-            found += ['%s: %s is not in %s' % (path, key, doc) for key in dict.fromkeys(keys(tomllib.loads(source)))
-                      if not named(key, text)]
+        if not path.startswith('include/'):
+            if path.endswith('.toml'):
+                source, text = tomllib.loads((root / path).read_text(encoding='utf-8')), spans(root, doc)
+                found += ['%s: %s is not in %s' % (path, key, doc) for key in dict.fromkeys(keys(source))
+                          if not named(key, text)]
             continue
+        text, source = spans(root, doc), (root / path).read_text(encoding='utf-8')
         for name in names(source):
             if not named(name, text):
                 found.append('%s: %s is not in %s' % (path, name, doc))

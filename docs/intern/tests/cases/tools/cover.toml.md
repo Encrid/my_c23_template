@@ -2,8 +2,8 @@
 
 The group `tools/cover` checks `tools/cover.py`.
 Each case writes a small project into `{case}/p` with `files`, and runs `cover.py --root {case}/p`.
-The project has the header `{case}/p/include/sample.h`, its document `{case}/p/docs/extern/include/sample.h.md`, and the group `{case}/p/tests/cases/sample.toml`.
-The case of the preset also has `{case}/p/presets/sample.toml` and its document `{case}/p/docs/extern/presets/sample.toml.md`.
+The project has an empty `{case}/p/project.toml`, the header `{case}/p/include/sample.h`, its document `{case}/p/docs/extern/include/sample.h.md`, and the group `{case}/p/tests/cases/sample.toml`.
+In the cases of a public folder, `{case}/p/project.toml` states `[layout] public = ["share"]`, and the folder `{case}/p/share` holds one file with its document.
 In this document, each path of the small project starts with `{case}/p`. Thus `xref.py` does not check it in the template.
 
 | Case | Claim | False variant |
@@ -19,4 +19,5 @@ In this document, each path of the small project starts with `{case}/p`. Thus `x
 | a field of a layout | The document names `sample_point_t`, but not `x`. `cover.py` writes `x is not in`. | The document names `x` too. |
 | a pointer to a function in a layout | The layout `sample_table_t` has the field `run`, a pointer to a function. `cover.py` writes `run is not in`. | The document names `run` too. |
 | a layout with no typedef | The header declares `struct sample_pair`. `cover.py` writes `sample_pair is not in`. | The document names `sample_pair`. |
-| a key of a preset | The table `sample` of the preset has the key `threads`, and the document names `sample`. `cover.py` writes `presets/sample.toml: threads is not in docs/extern/presets/sample.toml.md`. | The document names `threads` too. |
+| a key of a file of a public folder | The table `sample` of `share/sample.toml` has the key `threads`, and the document names `sample`. `cover.py` writes `share/sample.toml: threads is not in docs/extern/share/sample.toml.md`. | The document names `threads` too. |
+| a file of a public folder that is not TOML | `share/notes.txt` holds `threads = 4`, and its document does not name `threads`. `cover.py` writes `no fault in 1 files`. | The text is in `share/notes.toml`, and its document does not name `threads`. |

@@ -75,7 +75,7 @@ zig and its caches stay in the folder of `project.py`.
 `pack` puts these files into the zip:
 
 - `package.txt`, and each file that `package.txt` lists, at its path in the output folder of the target.
-- Each file of `include` and of `presets`, at its path in the project.
+- Each file of `include` and of each public folder, at its path in the project.
 - `license`, and `license` of each folder of `third_party`.
 
 ## Cases

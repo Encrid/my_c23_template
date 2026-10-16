@@ -91,7 +91,8 @@ def packed(config, values):
     out, root = Path(values['out']), Path(values['root'])
     names = {name: out / name for name in ['package.txt'] + list(take.listed(out / 'package.txt')[1])}
     names.update((name, root / name) for name in
-                 files(root, ['include/**/*', 'presets/**/*', 'license', 'third_party/*/license']))
+                 files(root, ['%s/**/*' % folder for folder in shared.public(config)]
+                       + ['license', 'third_party/*/license']))
     zipped = Path(values['build']) / ('%s-%s.zip' % (config['project']['name'], values['target']))
     with zipfile.ZipFile(zipped, 'w', zipfile.ZIP_DEFLATED) as packing:
         for name, path in names.items():

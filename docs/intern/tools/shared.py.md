@@ -29,6 +29,7 @@ The tools import it. It does not run alone.
 | `sha256(data)` | Gives the SHA-256 digest of the bytes, in hexadecimal. |
 | `variables(config, args, target, zig)` | Gives the variables of a build, as the section *Variables* tells. |
 | `arguments(*valued, **flags)` | Reads the options of the command line. Each item of `valued` adds an option that has a value. Each item of `flags` adds an option that has no value. |
+| `public(config)` | Gives the public folders, as the section *The public folders* tells. |
 | `repository(root)` | Tells if the root is the top folder of a git repository. |
 | `ours(root)` | Gives the files of the project, as the section *The files of the project* tells. |
 | `report(faults, count, items)` | Writes the faults of a check, and ends the check, as the section *The report of a check* tells. |
@@ -75,6 +76,15 @@ A tool adds its own options:
 - `arguments(pack='--pack')` adds the option `--pack`, with no value. `args.pack` tells if the option is given.
 
 The default of `--root` is `HERE`. `arguments` makes the root an absolute path.
+
+## The public folders
+
+`public` gives `include`, then each folder of `[layout] public` of `project.toml`.
+The default of `[layout] public` is an empty list.
+`LAYOUT` names the folders of the layout: `.github`, `build`, `docs`, `include`, `src`, `tests`, `third_party` and `tools`.
+If `[layout] public` names one of them, `public` stops the tool: `[layout] public names a folder of the layout: <folders>`.
+`<folders>` are the names, in order, with a space between two names.
+The check of the layout, the check of the citations, the check of the cover and the zip of `pack` use `public`.
 
 ## The files of the project
 

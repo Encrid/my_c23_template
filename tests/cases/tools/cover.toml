@@ -1,83 +1,90 @@
 [[case]]
 name = "a function that its document does not name"
 run = ["{python}", "{root}/tools/cover.py", "--root", "{case}/p"]
-files = { "{case}/p/include/sample.h" = "int sample_add(int a, int b);\n", "{case}/p/docs/extern/include/sample.h.md" = "# include/sample.h\n", "{case}/p/tests/cases/sample.toml" = "[[case]]\nname = \"sample_add gives the sum\"\n" }
+files = { "{case}/p/project.toml" = "", "{case}/p/include/sample.h" = "int sample_add(int a, int b);\n", "{case}/p/docs/extern/include/sample.h.md" = "# include/sample.h\n", "{case}/p/tests/cases/sample.toml" = "[[case]]\nname = \"sample_add gives the sum\"\n" }
 claims = { status_not = 0, has = ["include/sample.h: sample_add is not in docs/extern/include/sample.h.md"] }
 false = { files = { "{case}/p/docs/extern/include/sample.h.md" = "# include/sample.h\n\n`sample_add(a, b)` gives the sum.\n" } }
 
 [[case]]
 name = "a function that no case names"
 run = ["{python}", "{root}/tools/cover.py", "--root", "{case}/p"]
-files = { "{case}/p/include/sample.h" = "int sample_add(int a, int b);\n", "{case}/p/docs/extern/include/sample.h.md" = "# include/sample.h\n\n`sample_add(a, b)` gives the sum.\n", "{case}/p/tests/cases/sample.toml" = "[[case]]\nname = \"the sum\"\n" }
+files = { "{case}/p/project.toml" = "", "{case}/p/include/sample.h" = "int sample_add(int a, int b);\n", "{case}/p/docs/extern/include/sample.h.md" = "# include/sample.h\n\n`sample_add(a, b)` gives the sum.\n", "{case}/p/tests/cases/sample.toml" = "[[case]]\nname = \"the sum\"\n" }
 claims = { status_not = 0, has = ["include/sample.h: sample_add is in the name of no case"] }
 false = { files = { "{case}/p/tests/cases/sample.toml" = "[[case]]\nname = \"sample_add gives the sum\"\n" } }
 
 [[case]]
 name = "a function with an attribute"
 run = ["{python}", "{root}/tools/cover.py", "--root", "{case}/p"]
-files = { "{case}/p/include/sample.h" = "[[nodiscard]] int sample_add(int a, int b);\n", "{case}/p/docs/extern/include/sample.h.md" = "# include/sample.h\n", "{case}/p/tests/cases/sample.toml" = "[[case]]\nname = \"sample_add gives the sum\"\n" }
+files = { "{case}/p/project.toml" = "", "{case}/p/include/sample.h" = "[[nodiscard]] int sample_add(int a, int b);\n", "{case}/p/docs/extern/include/sample.h.md" = "# include/sample.h\n", "{case}/p/tests/cases/sample.toml" = "[[case]]\nname = \"sample_add gives the sum\"\n" }
 claims = { status_not = 0, has = ["include/sample.h: sample_add is not in docs/extern/include/sample.h.md"] }
 false = { files = { "{case}/p/docs/extern/include/sample.h.md" = "# include/sample.h\n\n`sample_add(a, b)` gives the sum.\n" } }
 
 [[case]]
 name = "a function static inline"
 run = ["{python}", "{root}/tools/cover.py", "--root", "{case}/p"]
-files = { "{case}/p/include/sample.h" = "static inline int sample_twice(int a)\n{\n    return (a * 2);\n}\n", "{case}/p/docs/extern/include/sample.h.md" = "# include/sample.h\n", "{case}/p/tests/cases/sample.toml" = "[[case]]\nname = \"sample_twice doubles\"\n" }
+files = { "{case}/p/project.toml" = "", "{case}/p/include/sample.h" = "static inline int sample_twice(int a)\n{\n    return (a * 2);\n}\n", "{case}/p/docs/extern/include/sample.h.md" = "# include/sample.h\n", "{case}/p/tests/cases/sample.toml" = "[[case]]\nname = \"sample_twice doubles\"\n" }
 claims = { status_not = 0, has = ["include/sample.h: sample_twice is not in docs/extern/include/sample.h.md"] }
 false = { files = { "{case}/p/docs/extern/include/sample.h.md" = "# include/sample.h\n\n`sample_twice(a)` doubles.\n" } }
 
 [[case]]
 name = "a macro with arguments"
 run = ["{python}", "{root}/tools/cover.py", "--root", "{case}/p"]
-files = { "{case}/p/include/sample.h" = "#define SAMPLE_MAX(a, b) ((a) > (b) ? (a) : (b))\n", "{case}/p/docs/extern/include/sample.h.md" = "# include/sample.h\n", "{case}/p/tests/cases/sample.toml" = "[[case]]\nname = \"SAMPLE_MAX gives the larger\"\n" }
+files = { "{case}/p/project.toml" = "", "{case}/p/include/sample.h" = "#define SAMPLE_MAX(a, b) ((a) > (b) ? (a) : (b))\n", "{case}/p/docs/extern/include/sample.h.md" = "# include/sample.h\n", "{case}/p/tests/cases/sample.toml" = "[[case]]\nname = \"SAMPLE_MAX gives the larger\"\n" }
 claims = { status_not = 0, has = ["include/sample.h: SAMPLE_MAX is not in docs/extern/include/sample.h.md"] }
 false = { files = { "{case}/p/docs/extern/include/sample.h.md" = "# include/sample.h\n\n`SAMPLE_MAX(a, b)` gives the larger.\n" } }
 
 [[case]]
 name = "an item of an enum"
 run = ["{python}", "{root}/tools/cover.py", "--root", "{case}/p"]
-files = { "{case}/p/include/sample.h" = "enum sample_kind : int {\n    SAMPLE_ONE,\n    SAMPLE_TWO\n};\n", "{case}/p/docs/extern/include/sample.h.md" = "# include/sample.h\n\n`SAMPLE_ONE` is one.\n", "{case}/p/tests/cases/sample.toml" = "[[case]]\nname = \"SAMPLE_ONE and SAMPLE_TWO\"\n" }
+files = { "{case}/p/project.toml" = "", "{case}/p/include/sample.h" = "enum sample_kind : int {\n    SAMPLE_ONE,\n    SAMPLE_TWO\n};\n", "{case}/p/docs/extern/include/sample.h.md" = "# include/sample.h\n\n`SAMPLE_ONE` is one.\n", "{case}/p/tests/cases/sample.toml" = "[[case]]\nname = \"SAMPLE_ONE and SAMPLE_TWO\"\n" }
 claims = { status_not = 0, has = ["include/sample.h: SAMPLE_TWO is not in docs/extern/include/sample.h.md"] }
 false = { files = { "{case}/p/docs/extern/include/sample.h.md" = "# include/sample.h\n\n`SAMPLE_ONE` is one, and `SAMPLE_TWO` is two.\n" } }
 
 [[case]]
 name = "a constexpr"
 run = ["{python}", "{root}/tools/cover.py", "--root", "{case}/p"]
-files = { "{case}/p/include/sample.h" = "constexpr int SAMPLE_SIZE = 4;\n", "{case}/p/docs/extern/include/sample.h.md" = "# include/sample.h\n", "{case}/p/tests/cases/sample.toml" = "[[case]]\nname = \"SAMPLE_SIZE is four\"\n" }
+files = { "{case}/p/project.toml" = "", "{case}/p/include/sample.h" = "constexpr int SAMPLE_SIZE = 4;\n", "{case}/p/docs/extern/include/sample.h.md" = "# include/sample.h\n", "{case}/p/tests/cases/sample.toml" = "[[case]]\nname = \"SAMPLE_SIZE is four\"\n" }
 claims = { status_not = 0, has = ["include/sample.h: SAMPLE_SIZE is not in docs/extern/include/sample.h.md"] }
 false = { files = { "{case}/p/docs/extern/include/sample.h.md" = "# include/sample.h\n\n`SAMPLE_SIZE` is four.\n" } }
 
 [[case]]
 name = "a layout"
 run = ["{python}", "{root}/tools/cover.py", "--root", "{case}/p"]
-files = { "{case}/p/include/sample.h" = "typedef struct {\n    int x;\n} sample_point_t;\n", "{case}/p/docs/extern/include/sample.h.md" = "# include/sample.h\n\n`x` is the abscissa.\n", "{case}/p/tests/cases/sample.toml" = "[[case]]\nname = \"sample_point_t has x\"\n" }
+files = { "{case}/p/project.toml" = "", "{case}/p/include/sample.h" = "typedef struct {\n    int x;\n} sample_point_t;\n", "{case}/p/docs/extern/include/sample.h.md" = "# include/sample.h\n\n`x` is the abscissa.\n", "{case}/p/tests/cases/sample.toml" = "[[case]]\nname = \"sample_point_t has x\"\n" }
 claims = { status_not = 0, has = ["include/sample.h: sample_point_t is not in docs/extern/include/sample.h.md"] }
 false = { files = { "{case}/p/docs/extern/include/sample.h.md" = "# include/sample.h\n\n`x` is the abscissa of `sample_point_t`.\n" } }
 
 [[case]]
 name = "a field of a layout"
 run = ["{python}", "{root}/tools/cover.py", "--root", "{case}/p"]
-files = { "{case}/p/include/sample.h" = "typedef struct {\n    int x;\n} sample_point_t;\n", "{case}/p/docs/extern/include/sample.h.md" = "# include/sample.h\n\n`sample_point_t` is a point.\n", "{case}/p/tests/cases/sample.toml" = "[[case]]\nname = \"sample_point_t has x\"\n" }
+files = { "{case}/p/project.toml" = "", "{case}/p/include/sample.h" = "typedef struct {\n    int x;\n} sample_point_t;\n", "{case}/p/docs/extern/include/sample.h.md" = "# include/sample.h\n\n`sample_point_t` is a point.\n", "{case}/p/tests/cases/sample.toml" = "[[case]]\nname = \"sample_point_t has x\"\n" }
 claims = { status_not = 0, has = ["include/sample.h: x is not in docs/extern/include/sample.h.md"] }
 false = { files = { "{case}/p/docs/extern/include/sample.h.md" = "# include/sample.h\n\n`x` is the abscissa of `sample_point_t`.\n" } }
 
 [[case]]
 name = "a pointer to a function in a layout"
 run = ["{python}", "{root}/tools/cover.py", "--root", "{case}/p"]
-files = { "{case}/p/include/sample.h" = "typedef struct {\n    int (*run)(int a);\n} sample_table_t;\n", "{case}/p/docs/extern/include/sample.h.md" = "# include/sample.h\n\n`sample_table_t` is a table.\n", "{case}/p/tests/cases/sample.toml" = "[[case]]\nname = \"sample_table_t has run\"\n" }
+files = { "{case}/p/project.toml" = "", "{case}/p/include/sample.h" = "typedef struct {\n    int (*run)(int a);\n} sample_table_t;\n", "{case}/p/docs/extern/include/sample.h.md" = "# include/sample.h\n\n`sample_table_t` is a table.\n", "{case}/p/tests/cases/sample.toml" = "[[case]]\nname = \"sample_table_t has run\"\n" }
 claims = { status_not = 0, has = ["include/sample.h: run is not in docs/extern/include/sample.h.md"] }
 false = { files = { "{case}/p/docs/extern/include/sample.h.md" = "# include/sample.h\n\n`run` is the entry of `sample_table_t`.\n" } }
 
 [[case]]
 name = "a layout with no typedef"
 run = ["{python}", "{root}/tools/cover.py", "--root", "{case}/p"]
-files = { "{case}/p/include/sample.h" = "struct sample_pair {\n    int a;\n};\n", "{case}/p/docs/extern/include/sample.h.md" = "# include/sample.h\n\n`a` is the first.\n", "{case}/p/tests/cases/sample.toml" = "[[case]]\nname = \"sample_pair has a\"\n" }
+files = { "{case}/p/project.toml" = "", "{case}/p/include/sample.h" = "struct sample_pair {\n    int a;\n};\n", "{case}/p/docs/extern/include/sample.h.md" = "# include/sample.h\n\n`a` is the first.\n", "{case}/p/tests/cases/sample.toml" = "[[case]]\nname = \"sample_pair has a\"\n" }
 claims = { status_not = 0, has = ["include/sample.h: sample_pair is not in docs/extern/include/sample.h.md"] }
 false = { files = { "{case}/p/docs/extern/include/sample.h.md" = "# include/sample.h\n\n`a` is the first of `sample_pair`.\n" } }
 
 [[case]]
-name = "a key of a preset"
+name = "a key of a file of a public folder"
 run = ["{python}", "{root}/tools/cover.py", "--root", "{case}/p"]
-files = { "{case}/p/presets/sample.toml" = "[sample]\nthreads = 4\n", "{case}/p/docs/extern/presets/sample.toml.md" = "# presets/sample.toml\n\n`[sample]` is the table.\n" }
-claims = { status_not = 0, has = ["presets/sample.toml: threads is not in docs/extern/presets/sample.toml.md"] }
-false = { files = { "{case}/p/docs/extern/presets/sample.toml.md" = "# presets/sample.toml\n\n`[sample]` has the key `threads`.\n" } }
+files = { "{case}/p/project.toml" = "[layout]\npublic = [\"share\"]\n", "{case}/p/share/sample.toml" = "[sample]\nthreads = 4\n", "{case}/p/docs/extern/share/sample.toml.md" = "# share/sample.toml\n\n`[sample]` is the table.\n" }
+claims = { status_not = 0, has = ["share/sample.toml: threads is not in docs/extern/share/sample.toml.md"] }
+false = { files = { "{case}/p/docs/extern/share/sample.toml.md" = "# share/sample.toml\n\n`[sample]` has the key `threads`.\n" } }
+
+[[case]]
+name = "a file of a public folder that is not TOML"
+run = ["{python}", "{root}/tools/cover.py", "--root", "{case}/p"]
+files = { "{case}/p/project.toml" = "[layout]\npublic = [\"share\"]\n", "{case}/p/share/notes.txt" = "threads = 4\n", "{case}/p/docs/extern/share/notes.txt.md" = "# share/notes.txt\n" }
+claims = { status = 0, line = ["no fault in 1 files"] }
+false = { files = { "{case}/p/share/notes.txt" = "", "{case}/p/share/notes.toml" = "threads = 4\n", "{case}/p/docs/extern/share/notes.toml.md" = "# share/notes.toml\n" } }

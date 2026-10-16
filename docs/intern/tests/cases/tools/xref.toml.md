@@ -2,12 +2,15 @@
 
 The group `tools/xref` checks `tools/xref.py`.
 Each case writes a small project into `{case}/p` with `files`, and runs `xref.py --root {case}/p`.
+The small project has a `project.toml`, because `xref.py` reads its public folders.
+
 The text of `{case}/p/readme.md` starts with `# p` and an empty line. Thus its third line holds the fault.
 In this document, each path of the small project starts with `{case}/p`. Thus `xref.py` does not check it in the template.
 
 | Case | Claim | False variant |
 | --- | --- | --- |
 | a path that is not in the project | The readme names a file of `src` that is not there. `xref.py` writes `readme.md:3: src/gone.c is not a file of the project`. | `{case}/p/src/gone.c` is there. |
+| a path into a public folder | `project.toml` states `[layout] public = ["share"]`, and the readme names `share/gone.toml`. `xref.py` writes `readme.md:3: share/gone.toml is not a file of the project`. | `{case}/p/share/gone.toml` is there. |
 | a citation of a document that is not there | The readme cites the heading `Usage` of `notes.md`. `xref.py` writes `readme.md:3: notes.md is not a file of the project`. | `{case}/p/notes.md` is there, with the heading `Usage`. |
 | a citation of a heading that is not there | The readme cites the heading `Usage` of `{case}/p/docs/a.md`, which has the heading `Use`. `xref.py` writes `readme.md:3: docs/a.md has no heading Usage`. | `{case}/p/docs/a.md` has the heading `Usage`. |
 | a citation on two lines | The same citation continues on the fourth line. `xref.py` writes `readme.md:3: docs/a.md has no heading Usage`. | `{case}/p/docs/a.md` has the heading `Usage`. |

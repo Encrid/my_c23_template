@@ -14,7 +14,7 @@ false = { files = { "{case}/project/notes.txt" = "" } }
 "{case}/project/cla.md" = ""
 "{case}/project/license" = ""
 "{case}/project/project.py" = ""
-"{case}/project/project.toml" = ""
+"{case}/project/project.toml" = "[layout]\npublic = [\"share\"]\n"
 "{case}/project/readme.md" = ""
 "{case}/project/docs/contributing.md" = ""
 "{case}/project/tools/check.py" = ""
@@ -24,7 +24,7 @@ false = { files = { "{case}/project/notes.txt" = "" } }
 "{case}/project/src/os/posix/os.c" = ""
 "{case}/project/src/os/windows/os.c" = ""
 "{case}/project/include/sample.h" = ""
-"{case}/project/presets/sample.toml" = ""
+"{case}/project/share/sample.toml" = ""
 "{case}/project/tests/cases/sample.toml" = ""
 "{case}/project/tests/fixtures/ask/ask.c" = ""
 "{case}/project/third_party/sample/fix.patch" = ""
@@ -40,7 +40,7 @@ false = { files = { "{case}/project/notes.txt" = "" } }
 "{case}/project/docs/intern/src/os/posix/os.c.md" = "# src/os/posix/os.c\n"
 "{case}/project/docs/intern/src/os/windows/os.c.md" = "# src/os/windows/os.c\n"
 "{case}/project/docs/extern/include/sample.h.md" = "# include/sample.h\n"
-"{case}/project/docs/extern/presets/sample.toml.md" = "# presets/sample.toml\n"
+"{case}/project/docs/extern/share/sample.toml.md" = "# share/sample.toml\n"
 "{case}/project/docs/intern/tests/cases/sample.toml.md" = "# tests/cases/sample.toml\n"
 "{case}/project/docs/intern/tests/fixtures/ask/ask.c.md" = "# tests/fixtures/ask/ask.c\n"
 "{case}/project/docs/intern/third_party/sample/fix.patch.md" = "# third_party/sample/fix.patch\n"
@@ -79,6 +79,20 @@ run = ["{python}", "{root}/tools/layout.py", "--root", "{case}/project"]
 files = { "{case}/project/project.toml" = "", "{case}/project/include/a.h" = "" }
 claims = { status = 1, line = ["include/a.h: no document docs/extern/include/a.h.md"] }
 false = { files = { "{case}/project/docs/extern/include/a.h.md" = "# include/a.h\n" } }
+
+[[case]]
+name = "a file of a public folder without its document"
+run = ["{python}", "{root}/tools/layout.py", "--root", "{case}/project"]
+files = { "{case}/project/project.toml" = "[layout]\npublic = [\"share\"]\n", "{case}/project/share/a.toml" = "" }
+claims = { status = 1, line = ["share/a.toml: no document docs/extern/share/a.toml.md"] }
+false = { files = { "{case}/project/docs/extern/share/a.toml.md" = "# share/a.toml\n" } }
+
+[[case]]
+name = "a public folder that is a folder of the layout"
+run = ["{python}", "{root}/tools/layout.py", "--root", "{case}/project"]
+files = { "{case}/project/project.toml" = "[layout]\npublic = [\"tests\", \"src\"]\n" }
+claims = { status_not = 0, has = ["[layout] public names a folder of the layout: src tests"] }
+false = { files = { "{case}/project/project.toml" = "[layout]\npublic = [\"share\"]\n" } }
 
 [[case]]
 name = "a document without its file"

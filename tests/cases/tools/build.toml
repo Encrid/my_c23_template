@@ -19,7 +19,7 @@ false = { run = ["{python}", "{root}/tools/build.py", "--root", "{root}/tests/da
 [[case]]
 name = "a package in a zip"
 run = ["{python}", "{root}/tools/build.py", "--root", "{root}/tests/data/tools/build/built", "--out", "{case}/out", "--pack"]
-claims = { status = 0, line = ["{case}/out/built-{target}.zip", "package.txt", "greeter/greet{library}", "include/greet.h", "presets/greet.toml", "license", "third_party/sample/license"] }
+claims = { status = 0, line = ["{case}/out/built-{target}.zip", "package.txt", "greeter/greet{library}", "include/greet.h", "share/greet.toml", "license", "third_party/sample/license"] }
 false = { run = ["{python}", "{root}/tools/build.py", "--root", "{root}/tests/data/tools/build/built", "--out", "{case}/out"] }
 
 [[case]]

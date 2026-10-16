@@ -56,7 +56,7 @@ With `--pack`, it then writes the zip with `packed`.
 7. Else, it does the `steps` of the kind, and copies the `beside` files into the folder of the output.
 
 An artifact with a `target` stays in the output folder of the build.
-Thus a build for one target can make a file for a different target, for example a module in each binary format.
+Thus a build for one target can make a file for a different target, for example a library for each system.
 
 A kind with no `unlinked` steps stops `built` if a file of `link` is not there.
 The message is `<file> is not there, and <name> is linked with it`.
@@ -111,7 +111,7 @@ The path of the file is from the output folder of the target.
 It puts these files into the zip:
 
 1. `package.txt`, and each file that `package.txt` lists, at its path from the output folder of the target.
-2. Each file of `include` and of `presets`, at its path from the root.
+2. Each file of each public folder that `shared.public` gives, at its path from the root.
 3. `license`, and `license` of each folder of `third_party`, at their paths from the root.
 
 `packed` writes the path of the zip, then the name of each file in the zip.

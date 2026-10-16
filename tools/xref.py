@@ -3,9 +3,9 @@
 # Under the GNU Affero General Public License, version 3 only: see license.
 import re
 
-from shared import arguments, ours, report
+from shared import arguments, config, ours, public, report
 
-FOLDERS = ('.github', 'docs', 'include', 'presets', 'src', 'tests', 'third_party', 'tools')
+FOLDERS = ('.github', 'docs', 'src', 'tests', 'third_party', 'tools')
 FENCE = re.compile(r'^```.*?^```', re.S | re.M)
 CITED = re.compile(r'`([^`\n]+)`, \*([^*\n]+)\*')
 SPAN = re.compile(r'`([^`\n]+)`')
@@ -21,7 +21,7 @@ def headings(text):
     return set(re.findall(r'^#{1,6} (.+?)[ \t]*$', FENCE.sub(blank, text), re.M))
 
 
-def faults(root, docs, doc):
+def faults(root, docs, doc, folders):
     raw = (root / doc).read_text(encoding='utf-8')
     text = re.sub(r'\n(?=\S)', ' ', FENCE.sub(blank, raw))
     found = []
@@ -34,7 +34,7 @@ def faults(root, docs, doc):
     text = CITED.sub(blank, text)
     for m in SPAN.finditer(text):
         path = m.group(1)
-        if PATH.fullmatch(path) and path.split('/')[0] in FOLDERS and not (root / path).is_file():
+        if PATH.fullmatch(path) and path.split('/')[0] in folders and not (root / path).is_file():
             found.append((m.start(), '%s is not a file of the project' % path))
     for m in LOCAL.finditer(SPAN.sub(blank, text)):
         if m.group(1) not in docs[doc]:
@@ -44,8 +44,9 @@ def faults(root, docs, doc):
 
 def main():
     root = arguments().root
+    folders = FOLDERS + tuple(public(config(root)))
     docs = {path: headings((root / path).read_text(encoding='utf-8')) for path in ours(root) if path.endswith('.md')}
-    report([line for doc in sorted(docs) for line in faults(root, docs, doc)], len(docs))
+    report([line for doc in sorted(docs) for line in faults(root, docs, doc, folders)], len(docs))
 
 
 if __name__ == '__main__':
