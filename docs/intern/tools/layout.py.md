@@ -33,7 +33,7 @@ The layout allows only the paths of this table.
 | `tests/data/**` | The files that the cases read. |
 | `third_party/<source>/<name>.patch` | A patch of a source. |
 | `third_party/<source>/license` | The licence of a source. |
-| `tools/<name>.py` and `tools/toolchain.toml` | Needed: one file or more. The tools of the template. |
+| `tools/<name>.py`, `tools/toolchain.toml` and `tools/header.txt` | Needed: one file or more. The tools of the template. |
 
 The messages are:
 

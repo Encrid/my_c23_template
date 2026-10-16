@@ -85,18 +85,17 @@ You can use an abbreviation if it makes the name much shorter and keeps its mean
 
 ### G1 - The legal notice
 
-Each source starts with the legal notice:
+Each source starts with the legal notice of `tools/header.txt`, between `/*` and `*/`, each line after `** `:
 
 ```text
 /*
 ** Copyright (C) <year> <holder>
 **
-** <licence>
+** Under the GNU Affero General Public License, version 3 only: see license.
 */
 ```
 
-`<year>` is the year of the first version of the file, and `<holder>` is a holder of the rights in the file.
-`<licence>` is `[project] licence` of `project.toml`.
+`docs/intern/tools/header.txt.md` gives the values of `<year>` and `<holder>`.
 A file can have more lines of the copyright, one line for each holder.
 Thus each project keeps the lines of the template in the files of the template.
 If a file holds code of a different holder, add a line for that holder below the first line:

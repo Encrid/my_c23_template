@@ -1,6 +1,5 @@
 [project]
 name = "c23"
-licence = "Under the GNU Affero General Public License, version 3 only: see license."
 
 [[artifact]]
 name = "sample"

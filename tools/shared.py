@@ -142,6 +142,15 @@ def arguments(*valued, **flags):
     return args
 
 
+def header(mark):
+    pattern = ''
+    for line in (HERE / 'tools' / 'header.txt').read_text(encoding='utf-8').splitlines():
+        text = re.escape((mark + ' ' + line).rstrip())
+        text = text.replace('<year>', r'\d{4}(?:-\d{4})?').replace('<holder>', r'[^\n]+')
+        pattern += '(?:%s\n)+' % text if '<holder>' in line else text + '\n'
+    return pattern
+
+
 def public(config):
     folders = config.get('layout', {}).get('public', [])
     taken = sorted(set(folders) & set(LAYOUT))

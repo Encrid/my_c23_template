@@ -29,6 +29,7 @@ The tools import it. It does not run alone.
 | `sha256(data)` | Gives the SHA-256 digest of the bytes, in hexadecimal. |
 | `variables(config, args, target, zig)` | Gives the variables of a build, as the section *Variables* tells. |
 | `arguments(*valued, **flags)` | Reads the options of the command line. Each item of `valued` adds an option that has a value. Each item of `flags` adds an option that has no value. |
+| `header(mark)` | Gives the pattern of the legal notice of `tools/header.txt`, each line after `mark`, as the section *The legal notice* tells. |
 | `public(config)` | Gives the public folders, as the section *The public folders* tells. |
 | `repository(root)` | Tells if the root is the top folder of a git repository. |
 | `ours(root)` | Gives the files of the project, as the section *The files of the project* tells. |
@@ -76,6 +77,16 @@ A tool adds its own options:
 - `arguments(pack='--pack')` adds the option `--pack`, with no value. `args.pack` tells if the option is given.
 
 The default of `--root` is `HERE`. `arguments` makes the root an absolute path.
+
+## The legal notice
+
+`header` reads `tools/header.txt` of `HERE`, and gives a pattern for each line of it:
+
+1. It writes `mark`, a space and the line. For an empty line, it writes `mark` only.
+2. `<year>` matches four digits, or two years with a `-` between them.
+3. `<holder>` matches any text. A line with `<holder>` matches one time or more.
+
+`text.py` gives the mark `#`. `style.py` gives the mark `**`, and adds `/*` before the notice and `*/` after it.
 
 ## The public folders
 

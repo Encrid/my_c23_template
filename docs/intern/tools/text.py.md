@@ -7,7 +7,7 @@ It reads the files that `ours` gives. `ours` leaves out the files of `tests/data
 
 | Function | Result |
 | --- | --- |
-| `notice(project)` | Gives the pattern of the legal notice, with the `licence` of `[project]`. |
+| `notice()` | Gives the pattern of the legal notice of a Python file, from `shared.header`. |
 | `python(text, notice)` | Gives the faults of a Python file: its notice, its comments and its string statements. |
 | `faults(path, data, notice, unicode)` | Gives the faults of one file. `unicode` is true if the file can hold characters that are not ASCII. |
 | `main()` | Runs the check. |
@@ -24,17 +24,16 @@ The message is `<path>:<line>: a character that is not ASCII`.
 
 ## The Python files
 
-A file `.py` starts with the legal notice:
+A file `.py` starts with the legal notice of `tools/header.txt`, each line after `# `:
 
 ```text
 # Copyright (C) <year> <holder>
 #
-# <licence>
+# Under the GNU Affero General Public License, version 3 only: see license.
 ```
 
-`<year>` has four digits, and `<holder>` is a holder of the rights in the file.
-`<licence>` is `[project] licence` of `project.toml`.
-More lines `# Copyright (C) <year> <holder>` can follow the first line, one line for each holder.
+`docs/intern/tools/header.txt.md` gives the values of `<year>` and `<holder>`.
+More lines of the copyright can follow the first line, one line for each holder.
 Thus each project keeps the lines of the template in the files of the template.
 
 A Python file has no other comment, and no string statement.

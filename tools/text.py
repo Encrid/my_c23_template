@@ -6,13 +6,13 @@ import io
 import re
 import tokenize
 
-from shared import arguments, config, files, ours, report
+from shared import arguments, config, files, header, ours, report
 
 QUOTED = re.compile(r'"""[\s\S]*?"""|\'\'\'[\s\S]*?\'\'\'|"(?:\\.|[^"\\\n])*"|\'[^\'\n]*\'|#')
 
 
-def notice(project):
-    return re.compile(r'(?:# Copyright \(C\) \d{4} [^\n]+\n)+#\n# %s\n' % re.escape(project['licence']))
+def notice():
+    return re.compile(header('#'))
 
 
 def python(text, notice):
@@ -44,9 +44,9 @@ def main():
     settings = config(root)
     paths = ours(root)
     unicode = set(files(root, settings.get('check', {}).get('unicode', [])))
-    header = notice(settings['project'])
+    legal = notice()
     found = sorted((path, n, what) for path in paths
-                   for n, what in faults(path, (root / path).read_bytes(), header, path in unicode))
+                   for n, what in faults(path, (root / path).read_bytes(), legal, path in unicode))
     report(['%s:%d: %s' % fault for fault in found], len(paths))
 
 

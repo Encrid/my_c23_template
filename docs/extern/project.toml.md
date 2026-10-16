@@ -58,7 +58,6 @@ They also stop if a list variable is a part of a text, and has no separator.
 | Key | Value |
 | --- | --- |
 | `name` | The name of the project. `package.txt` and the zip of `pack` use it. |
-| `licence` | The line of the licence, in the legal notice. |
 
 ## [layout]
 

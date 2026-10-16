@@ -11,7 +11,7 @@ NEEDED = ('.github/workflows/ci.yml', '.github/workflows/release.yml', '.github/
 FOLDERS = ('tests/cases', 'tools')
 ALLOWED = (r'docs/.+|include/.+\.h|src/.+'
            r'|tests/cases/.+\.toml|tests/fixtures/[^/]+/.+|third_party/[^/]+/(?:[^/]+\.patch|license)'
-           r'|tools/[^/]+\.py|tools/toolchain\.toml')
+           r'|tools/[^/]+\.py|tools/toolchain\.toml|tools/header\.txt')
 INTERN = re.compile(r'(?:src|tests|tools)/.+|third_party/[^/]+/[^/]+\.patch|project\.py')
 SNAKE = re.compile(r'[a-z0-9_]+(?:\.[a-z0-9]+)*')
 DOTTED = ('.github', '.gitattributes', '.gitignore')
