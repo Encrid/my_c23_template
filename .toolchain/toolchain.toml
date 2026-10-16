@@ -109,13 +109,13 @@ errno = "-fmath-errno"
 [kinds.program]
 output = "{name}{exe}"
 steps = [
-    { run = ["{zig}", "cc", "-target", "{triple}", "-mcpu={cpu}", "{optimize}", "{float}", "{errno}", "{language}", "{define}", "{defines}", "{include}", "{flags}", "{sources}", "{link}", "{rpath}", "-o", "{output}", "{stack}"] },
+    { run = ["{zig}", "cc", "-target", "{triple}", "-mcpu={cpu}", "{optimize}", "{float}", "{errno}", "{language}", "{define}", "{defines}", "{include}", "{sources}", "{link}", "{flags}", "{rpath}", "-o", "{output}", "{stack}"] },
 ]
 
 [kinds.library]
 output = "{name}{library}"
 steps = [
-    { run = ["{zig}", "cc", "-target", "{triple}", "-mcpu={cpu}", "-shared", "{pic}", "{soname}", "{optimize}", "{float}", "{errno}", "{language}", "{define}", "{defines}", "{include}", "{flags}", "{sources}", "-o", "{output}"] },
+    { run = ["{zig}", "cc", "-target", "{triple}", "-mcpu={cpu}", "-shared", "{pic}", "{soname}", "{optimize}", "{float}", "{errno}", "{language}", "{define}", "{defines}", "{include}", "{sources}", "{flags}", "-o", "{output}"] },
 ]
 
 [kinds.archive]

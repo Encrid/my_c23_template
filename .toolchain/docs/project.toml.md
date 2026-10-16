@@ -205,7 +205,7 @@ An artifact is a file that the build makes, for example a program, a library or 
 | `sources` | The patterns of the sources, from the folder of the project. |
 | `include` | Optional. The folders of the headers. |
 | `defines` | Optional. The macros, without `-D`. |
-| `flags` | Optional. More flags of the compiler, for example `-fvisibility=hidden`. They can contain variables. |
+| `flags` | Optional. More flags of the compiler, for example `-fvisibility=hidden` or `-lm`. They come after the sources and the files of `link`. They can contain variables. |
 | `link` | Optional. The files that the artifact links. |
 | `beside` | Optional. The files to copy into the folder of the artifact. |
 | `manifest` | Optional. A list of texts for the steps. |
