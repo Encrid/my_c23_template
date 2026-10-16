@@ -9,7 +9,7 @@ NEEDED = ('.github/workflows/ci.yml', '.github/workflows/release.yml', '.github/
           '.github/pull_request_template.md', '.gitattributes', '.gitignore', 'cla.md', 'license', 'project.py',
           'project.toml', 'readme.md', 'docs/contributing.md')
 FOLDERS = ('tests/cases', 'tools')
-ALLOWED = (r'docs/.+|include/.+\.h|src/os/os\.h|src/os/(?:%s)/[^/]+\.c|src/(?!os/).+'
+ALLOWED = (r'docs/.+|include/.+\.h|src/.+'
            r'|tests/cases/.+\.toml|tests/fixtures/[^/]+/.+|third_party/[^/]+/(?:[^/]+\.patch|license)'
            r'|tools/[^/]+\.py|tools/toolchain\.toml')
 INTERN = re.compile(r'(?:src|tests|tools)/.+|third_party/[^/]+/[^/]+\.patch|project\.py')
@@ -24,8 +24,8 @@ def documents(path, public):
             if pattern.fullmatch(path)]
 
 
-def faults(root, paths, systems, public):
-    allowed = re.compile('|'.join(map(re.escape, NEEDED)) + '|' + ALLOWED % '|'.join(systems)
+def faults(root, paths, public):
+    allowed = re.compile('|'.join(map(re.escape, NEEDED)) + '|' + ALLOWED
                          + ''.join('|%s/.+' % re.escape(folder) for folder in public[1:]))
     found = ['%s: the layout needs this file' % path for path in NEEDED if path not in paths]
     found += ['%s/: the layout needs this folder' % folder for folder in FOLDERS
@@ -52,10 +52,8 @@ def faults(root, paths, systems, public):
 
 def main():
     root = arguments().root
-    settings = config(root)
     paths = ours(root)
-    systems = sorted({target['system'] for target in settings['targets'].values()})
-    report(sorted(faults(root, set(paths), systems, public(settings))), len(paths))
+    report(sorted(faults(root, set(paths), public(config(root)))), len(paths))
 
 
 if __name__ == '__main__':

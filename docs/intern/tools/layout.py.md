@@ -8,7 +8,7 @@ It reads the files that `ours` gives. `ours` leaves out the files of `tests/data
 | Function | Result |
 | --- | --- |
 | `documents(path, public)` | Gives the documents that a file needs: none, one or two. |
-| `faults(root, paths, systems, public)` | Gives the faults of the tree. `systems` holds the value of `system` of each target. `public` holds the public folders that `shared.public` gives. |
+| `faults(root, paths, public)` | Gives the faults of the tree. `public` holds the public folders that `shared.public` gives. |
 | `main()` | Runs the check. |
 
 ## The paths
@@ -27,16 +27,13 @@ The layout allows only the paths of this table.
 | `docs/**` | The documents. The section *The documents* gives their rules. |
 | `include/**.h` | The public headers. |
 | `<folder>/**` | The files of a public folder that `[layout] public` of `project.toml` names. |
-| `os.h` in `src/os`, and `src/os/<system>/<name>.c` | `<system>` is the `system` of a target, for example `posix` or `windows`. |
-| `src/**` | The sources, the private headers and the other inputs of a build. This row does not include `src/os`. |
+| `src/**` | The sources, the private headers and the other inputs of a build. |
 | `tests/cases/**.toml` | Needed: one file or more. The groups of cases. |
 | `tests/fixtures/<name>/**` | The files of the fixture `<name>`. |
 | `tests/data/**` | The files that the cases read. |
 | `third_party/<source>/<name>.patch` | A patch of a source. |
 | `third_party/<source>/license` | The licence of a source. |
 | `tools/<name>.py` and `tools/toolchain.toml` | Needed: one file or more. The tools of the template. |
-
-A file of `src/os` counts as a file of `src`.
 
 The messages are:
 

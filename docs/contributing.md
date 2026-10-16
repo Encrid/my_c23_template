@@ -42,7 +42,6 @@ docs/intern/             a document for every file of the code and of the tests
 include/                 the public headers
 <folder>/                a public folder that [layout] public of project.toml names
 src/                     the sources and the private headers
-src/os/<system>/         the code of a system: posix or windows
 tests/cases/             the groups of cases
 tests/fixtures/<name>/   the programs and the libraries that the cases build and run
 tests/data/              the files that the cases read
@@ -51,7 +50,7 @@ tools/                   the tools of the template
 build/                   the output, which git ignores
 ```
 
-`include/`, the public folders, `src/`, `src/os/`, `tests/fixtures/`, `tests/data/` and `third_party/` are optional.
+`include/`, the public folders, `src/`, `tests/fixtures/`, `tests/data/` and `third_party/` are optional.
 Every other path of the tree is necessary.
 
 A public folder holds files that the package gives to its users, as `include/` does.

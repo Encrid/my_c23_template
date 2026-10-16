@@ -36,7 +36,7 @@ The `runs_on` of `aarch64-windows-gnu` is empty. Thus the tools build it, and do
 | Key | Value |
 | --- | --- |
 | `runs_on` | The system and the processor that Python gives for a machine of the target. An empty list means: build only. |
-| `system` | The family of the system: `posix` or `windows`. The code for a family is in `src/os/<system>`. |
+| `system` | The family of the system: `posix` or `windows`. It is also the variable `{system}`. |
 | `triple` | The target for zig, with the range of the versions of the system. |
 | `cpu` | The model of the processor. |
 | `exe` | The extension of a program. |
