@@ -1,0 +1,29 @@
+[[case]]
+name = "the holder"
+run = ["{python}", "{root}/tools/cla.py", "--decide", "holder", "holder", ""]
+claims = { status = 0, line = ["nothing, passes: the holder needs no agreement"] }
+false = { run = ["{python}", "{root}/tools/cla.py", "--decide", "ann", "holder", ""] }
+
+[[case]]
+name = "a name of the record"
+run = ["{python}", "{root}/tools/cla.py", "--decide", "ann", "holder", "bob,ann"]
+claims = { status = 0, line = ["nothing, passes: ann has signed cla.md"] }
+false = { run = ["{python}", "{root}/tools/cla.py", "--decide", "ann", "holder", "bob"] }
+
+[[case]]
+name = "the sentence of the author"
+run = ["{python}", "{root}/tools/cla.py", "--decide", "ann", "holder", "", "ann", "I have read cla.md and I sign it."]
+claims = { status = 0, line = ["record, passes: ann signs cla.md"] }
+false = { run = ["{python}", "{root}/tools/cla.py", "--decide", "ann", "holder", "", "bob", "I have read cla.md and I sign it."] }
+
+[[case]]
+name = "each other author"
+run = ["{python}", "{root}/tools/cla.py", "--decide", "ann", "holder", "", "ann", "I sign, more or less."]
+claims = { status = 0, line = ["ask, fails: ann has not signed cla.md"] }
+false = { run = ["{python}", "{root}/tools/cla.py", "--decide", "ann", "holder", "", "ann", "I have read cla.md and I sign it."] }
+
+[[case]]
+name = "a decision with too few values"
+run = ["{python}", "{root}/tools/cla.py", "--decide", "ann", "holder"]
+claims = { status_not = 0, has = ["usage: cla.py --decide <author> <holder> <signed> [<by> <said>]"] }
+false = { run = ["{python}", "{root}/tools/cla.py", "--decide", "ann", "holder", "bob"] }

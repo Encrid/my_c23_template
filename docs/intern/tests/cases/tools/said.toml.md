@@ -20,3 +20,7 @@ In this document, each path of the small project starts with `{case}/p`. Thus `x
 | a format with few own characters | The format is `"%s\n"`. `said.py` ends with 0. | The format is `"%s is gone\n"`. |
 | a function that is not a writer | `{case}/p/src/p.c` calls `puts`, which is not a writer. `said.py` ends with 0. | `[test] writers` names `puts`. |
 | no output of the cases | `said.txt` is not there. `said.py` stops: `said.txt is not there: run test first`. | `said.txt` is there. |
+| the messages after the cases | `test.py` runs on the small project. Its one case writes `the file a.txt is not there`. Then `test.py` writes `no fault in 1 messages`. | The readme does not quote the message. |
+
+The last case runs `test.py`, and not `said.py`. Its `folders` copy the group `tests/data/tools/said/said.toml` into `{case}/p/tests/cases`.
+That group has one case, which writes the message.

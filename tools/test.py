@@ -11,6 +11,7 @@ from pathlib import Path
 
 import build
 import shared
+from said import checked
 from shared import die, expand, expanded, files, known, located, status
 
 
@@ -205,6 +206,8 @@ def main():
     if not groups:
         return print('no case: tests/cases holds no case')
     test(config, values, {name: paths[0] for name, paths in made}, groups, args.broken)
+    if not args.broken:
+        checked(Path(values['root']), Path(values['out']))
 
 
 if __name__ == '__main__':

@@ -22,7 +22,8 @@ The workflow uses `cla.py` of the default branch. `cla.py` reads the pull reques
 
 The sentence is `I have read cla.md and I sign it.`, with no other text in the comment.
 Only a comment of the author counts. A comment of a different person does not sign for the author.
-The holder is the owner of the repository on GitHub, `GITHUB_REPOSITORY_OWNER`.
+The holder is the login on GitHub that `[cla] holder` of `project.toml` gives.
+The owner of the repository can be an organization. Thus `cla.py` does not use the owner as the holder.
 
 ## The record
 
@@ -76,7 +77,7 @@ With a different number of values, `cla.py` stops: `usage: cla.py --decide <auth
 | `call(method, path, body)` | Sends one request to the API of GitHub for the repository. It gives nothing if the thing is not there. |
 | `signatures()` | Gives the record, and the version of its file. |
 | `record(signed, version, author, number)` | Adds the author to the record. The first time, it makes the branch. |
-| `main()` | Reads the event of GitHub, decides, asks or records, and sets the status. |
+| `main()` | Reads the event of GitHub and `[cla] holder`, decides, asks or records, and sets the status. |
 
 `call` stops if GitHub answers with an error that is not 404: `<method> <path> answered <code>: <text>`.
 

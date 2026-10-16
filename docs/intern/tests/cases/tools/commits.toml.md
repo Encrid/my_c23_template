@@ -10,6 +10,7 @@ python tests/data/tools/commits/commit.py <folder> <message> ... -- <command> ..
 `commit.py` makes a git repository in `<folder>`, with one empty commit for each message, in the order of the messages.
 With no message, the repository has no commit.
 Then it runs the command, and ends with its exit status.
+
 The commits do not use the configuration of git of the machine: `GIT_CONFIG_GLOBAL` names a file that is not there, and `GIT_CONFIG_NOSYSTEM` is set.
 The author of the commits is `c23`, with the address `c23@example.com`.
 

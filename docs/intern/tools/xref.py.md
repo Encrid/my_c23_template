@@ -19,6 +19,7 @@ A path is a code span that holds only folders and the name of a file, with `/` b
 The name of the file has an extension.
 The first folder is a folder of the layout: `.github`, `docs`, `include`, `presets`, `src`, `tests`, `third_party` or `tools`.
 Thus `xref.py` does not check a folder, a path in `build`, a name with no folder, or a pattern with `*` or `<`.
+`xref.py` looks for the file of a path or of a citation on the disk. Thus a path can name a file of `tests/data`.
 
 A citation is a code span, a comma, a space, and a heading between two asterisks.
 A reference is a heading between two asterisks, with no citation before it.
@@ -61,6 +62,6 @@ Each step keeps the length of the text. Thus the line of a fault is its line in 
 | Function | Result |
 | --- | --- |
 | `blank(match)` | Gives the text of a match with a space in place of each character. The line ends stay. |
-| `headings(text)` | Gives the headings of a document. |
-| `faults(root, files, docs, doc)` | Gives the faults of the document `doc`. `files` holds the files of the project. `docs` gives the headings of each document. |
+| `headings(text)` | Gives the headings of a document, but not the lines of its fenced blocks. |
+| `faults(root, docs, doc)` | Gives the faults of the document `doc`. `docs` gives the headings of each document. |
 | `main()` | Reads the options, checks each document, and writes the faults. |
