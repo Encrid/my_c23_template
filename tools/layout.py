@@ -7,7 +7,8 @@ from shared import arguments, document, ours, report
 
 NEEDED = ('.github/workflows/ci.yml', '.github/workflows/release.yml', '.github/workflows/cla.yml', '.gitattributes',
           '.gitignore', 'cla.md', 'license', 'project.py', 'project.toml', 'readme.md', 'docs/contributing.md',
-          'docs/coding_style.md', 'docs/documentation_style.md', 'docs/pull_request_template.md')
+          'docs/coding_style.md', 'docs/documentation_style.md', 'docs/tests.md', 'docs/pull_request.md',
+          'docs/pull_request_template.md')
 FOLDERS = ('tools',)
 DOCUMENT = r'docs/(?:extern|intern)/.+\.md'
 ALLOWED = (DOCUMENT + r'|include/.+\.h|src/.+|third_party/[^/]+/(?:[^/]+\.patch|license)'

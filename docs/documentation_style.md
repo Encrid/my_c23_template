@@ -11,7 +11,9 @@ This document tells how to write the documents of the project.
 | `docs/contributing.md` | What a contribution must meet. |
 | `docs/coding_style.md` | The style of the code. |
 | `docs/documentation_style.md` | The style of the documents. |
-| `docs/pull_request_template.md` | The first text of the description of a pull request. |
+| `docs/tests.md` | How to write the tests. |
+| `docs/pull_request.md` | How to write a pull request. |
+| `docs/pull_request_template.md` | The headings of the description of a pull request. |
 | `docs/extern/<path>.md` | The document of `include/<path>`, for the users of the project. |
 | `docs/intern/<path>.md` | The document of `src/<path>`, for the developers of the project. |
 
@@ -107,7 +109,7 @@ To cite a section of the same document, write its heading between two asterisks.
 ## The messages of the code
 
 `[test] writers` of `project.toml` can name the functions that write the messages of the code.
-Then `readme.md` or a document of `docs/extern` quotes each message, and a case writes it.
+Then `readme.md` or a document of `docs/extern` quotes each message.
 In a quote, write `<name>` in place of a conversion such as `%s`.
 
 ## Characters

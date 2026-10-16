@@ -1,16 +1,11 @@
 # Contributing
 
-Read `docs/coding_style.md` and `docs/documentation_style.md` before you write code or documents.
+Read these documents before you change the project:
 
-## Before a pull request
-
-Make sure that these commands pass:
-
-1. `python project.py check`
-2. `python project.py test`
-3. `python project.py test --break`
-
-The workflow `ci` runs them again on five platforms.
+- `docs/coding_style.md` tells how to write the code.
+- `docs/documentation_style.md` tells how to write the documents.
+- `docs/tests.md` tells how to write the tests.
+- `docs/pull_request.md` tells how to write a pull request.
 
 ## The commits
 
