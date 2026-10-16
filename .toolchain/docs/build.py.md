@@ -61,7 +61,8 @@ With `--pack`, it then writes the zip with `packed`.
 6. If a file of `link` is not there, it does the `unlinked` steps of the kind.
 7. Else, it does the `steps` of the kind, and copies the `beside` files into the folder of the output.
 
-With a tree, step 4 gives the copy in the tree for each source and each folder of `include` that is in `src` or in `include`.
+With a tree, step 4 changes each path that is in `src` or in `include`, for the sources and the folders of `include`.
+It gives the copy of the path in the tree.
 `test --branches` builds so, from the copy with the probes: `.toolchain/docs/branches.py.md`.
 
 An artifact with a `target` stays in the output folder of the build.

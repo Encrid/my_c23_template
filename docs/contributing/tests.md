@@ -136,6 +136,7 @@ It runs each case one time. Then it writes a line for each branch that no case r
 For each line, write a case that runs the branch, or remove the branch.
 A condition in an argument or in the body of a macro cannot get a probe. The run writes it, and stops.
 Thus write such a condition outside the macro.
+
 The probes change the program, thus the run does not judge the claims. It writes the verdicts only for information.
 `.toolchain/docs/branches.py.md` tells how the probes work.
 
