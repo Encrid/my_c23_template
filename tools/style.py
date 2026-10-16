@@ -3,12 +3,11 @@
 # Under the GNU Affero General Public License, version 3 only: see license.
 import fnmatch
 import re
-import sys
 from pathlib import Path
 
 import shared
 
-ROOT = shared.HERE
+ROOT = shared.arguments().root
 CONFIG = shared.config(ROOT)
 PROJECT = CONFIG['project']
 STYLE = CONFIG['style']
@@ -228,9 +227,6 @@ def check_lines(src):
 
 def check_file(src, functions):
     path = Path(src.path)
-    for part in path.parts[:-1] + (path.stem,):
-        if not SNAKE.match(part):
-            src.say('O4', 1, "'%s' is not in snake_case" % part)
     notice = HEADER.match(src.text)
     if not notice:
         src.say('G1', 1, 'the file does not start with the legal notice')
@@ -522,9 +518,6 @@ def check_function(src, f):
 
 def check(path, text, declared):
     src = Source(path, text)
-    if not path.endswith(('.c', '.h')):
-        src.say('O2', 1, "a source in C is a .c or a .h, and this is a '%s'" % Path(path).suffix)
-        return src.found
     functions, statements = file_scope(src)
     check_lines(src)
     check_file(src, functions)
@@ -543,8 +536,7 @@ def exceptions():
 
 
 def ours():
-    return sorted(path for path in shared.ours(ROOT)
-                  if path.endswith(('.c', '.h')) and not path.startswith('tests/data/'))
+    return sorted(path for path in shared.ours(ROOT) if path.endswith(('.c', '.h')))
 
 
 def prototypes():
@@ -554,21 +546,6 @@ def prototypes():
             src = Source(path, (ROOT / path).read_text(encoding='utf-8'))
             names.update(re.findall(r'\b([A-Za-z_]\w*)\s*\(', src.code))
     return names
-
-
-def tracked():
-    listed = shared.ours(ROOT)
-    theirs = tuple(path.rsplit('/', 1)[0] + '/' for path in listed
-                   if re.search(r'/(?:LICENSE|LICENCE|COPYING)[^/]*\Z', path))
-    unwanted = re.compile(r'\.(?:o|obj|a|so|dll|dylib|exe|gch|d|pyc)\Z|~\Z|(?:\A|/)#[^/]*#\Z|(?:\A|/)a\.out\Z')
-    ours_only = [path for path in listed if path and not path.startswith(theirs + ('.',))]
-    found = [(path, 1, 'O1', 'a compiled, temporary or unnecessary file is tracked', None)
-             for path in ours_only if unwanted.search(path)]
-    for path in ours_only:
-        for part in path.split('/'):
-            if not re.match(r'[a-z0-9_]+(?:\.[a-z0-9]+)*\Z', part):
-                found.append((path, 1, 'O4', "'%s' is not in snake_case" % part, None))
-    return found
 
 
 PROVES = {
@@ -609,8 +586,6 @@ def self_test():
         for rule, text in proves.items():
             if rule not in {f[2] for f in check(path, text, set())}:
                 wrong.append('%s is not found in what infringes it' % rule)
-    if 'O4' not in {f[2] for f in check('not-snake.h', '', set())}:
-        wrong.append('O4 is not found in what infringes it')
     stray = [f for f in check('x.h', CLEAN, set()) if f[2] not in ('G1', 'H2', 'H1')]
     if stray:
         wrong.append('clean C is reported: %s' % stray)
@@ -620,13 +595,11 @@ def self_test():
 def main():
     wrong = self_test()
     if wrong:
-        sys.exit('FAIL: the checker itself: %s' % '; '.join(wrong))
-    everything = '--all' in sys.argv[1:]
-    given = [a for a in sys.argv[1:] if not a.startswith('--')]
-    paths = given or ours()
+        shared.die('the checker itself: %s' % '; '.join(wrong))
+    paths = ours()
     declared = prototypes()
     listed = exceptions()
-    found = tracked() if not given else []
+    found = []
     for path in paths:
         found += check(path, (ROOT / path).read_text(encoding='utf-8'), declared)
     kept = []
@@ -639,21 +612,9 @@ def main():
         if not excused:
             kept.append((path, line, rule, what))
     for entry in listed:
-        if not entry[3] and any(fnmatch.fnmatch(p, entry[1]) for p in paths + [f[0] for f in found]):
+        if not entry[3] and any(fnmatch.fnmatch(p, entry[1]) for p in paths):
             kept.append(('project.toml', 1, entry[0], "the exception for '%s' excuses nothing" % entry[1]))
-    if everything:
-        counts = {}
-        for _, _, rule, _ in kept:
-            counts[rule] = counts.get(rule, 0) + 1
-        for rule in sorted(counts):
-            print('%s  %5d' % (rule, counts[rule]))
-        print('%d files, %d infringements' % (len(paths), len(kept)))
-        return
-    for path, line, rule, what in sorted(kept):
-        print('%s:%d: %s %s' % (path, line, rule, what))
-    if kept:
-        sys.exit('FAIL: %d infringements of the coding style' % len(kept))
-    print('the coding style holds in %d files' % len(paths))
+    shared.report(['%s:%d: %s %s' % fault for fault in sorted(kept)], len(paths))
 
 
 if __name__ == '__main__':

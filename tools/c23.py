@@ -2,8 +2,8 @@
 #
 # Under the GNU Affero General Public License, version 3 only: see license.
 import re
-import sys
 
+import shared
 from style import ROOT, ours
 
 OLDER = [
@@ -27,18 +27,15 @@ SILENT = re.compile(r'''/\*.*?\*/|//[^\n]*|"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])
 
 
 def main():
-    found = 0
-    for path in ours():
+    paths, found = ours(), []
+    for path in paths:
         text = (ROOT / path).read_text(encoding='utf-8')
         code = SILENT.sub(lambda m: re.sub(r'[^\n]', ' ', m.group(0)), text)
         for older, newer in OLDER:
             for m in re.finditer(older, code, re.M):
                 line = code.count('\n', 0, m.start()) + 1
-                print('%s:%d: %s  ->  %s' % (path, line, m.group(0).strip(), newer))
-                found += 1
-    if found:
-        sys.exit('FAIL: %d older spellings' % found)
-    print('no older spelling in what is ours')
+                found.append('%s:%d: %s  ->  %s' % (path, line, m.group(0).strip(), newer))
+    shared.report(found, len(paths))
 
 
 if __name__ == '__main__':

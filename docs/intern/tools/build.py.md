@@ -81,9 +81,8 @@ FUNCTION leb(n : INTEGER) RETURNS STRING
    REPEAT
       low <- n MOD 128
       n <- n DIV 128
-      IF n > 0
-         THEN
-            low <- low + 128
+      IF n > 0 THEN
+         low <- low + 128
       ENDIF
       out <- out & CHR(low)
    UNTIL n = 0

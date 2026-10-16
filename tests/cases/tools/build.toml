@@ -87,3 +87,29 @@ name = "an option with a value"
 run = ["{python}", "-c", "import sys; sys.path.insert(0, sys.argv.pop(1)); import shared; print(shared.arguments('--commits').commits)", "{root}/tools", "--commits", "a..b"]
 claims = { status = 0, line = ["a..b"] }
 false = { run = ["{python}", "-c", "import sys; sys.path.insert(0, sys.argv.pop(1)); import shared; print(shared.arguments('--commits').commits)", "{root}/tools"] }
+
+[[case]]
+name = "a report with faults"
+run = ["{python}", "-c", "import sys; sys.path.insert(0, sys.argv[1]); import shared; shared.report(['a: one', 'b: two'], 3)", "{root}/tools"]
+claims = { status = 1, line = ["a: one", "b: two", "faults: 2"] }
+false = { run = ["{python}", "-c", "import sys; sys.path.insert(0, sys.argv[1]); import shared; shared.report([], 3)", "{root}/tools"] }
+
+[[case]]
+name = "a report with no fault"
+run = ["{python}", "-c", "import sys; sys.path.insert(0, sys.argv[1]); import shared; shared.report([], 12, 'commits')", "{root}/tools"]
+claims = { status = 0, line = ["no fault in 12 commits"] }
+false = { run = ["{python}", "-c", "import sys; sys.path.insert(0, sys.argv[1]); import shared; shared.report(['a: one'], 12, 'commits')", "{root}/tools"] }
+
+[[case]]
+name = "the files of a project, walked"
+run = ["{python}", "-c", "import sys; from pathlib import Path; sys.path.insert(0, sys.argv[1]); import shared; print('\\n'.join(shared.ours(Path(sys.argv[2]).resolve())))", "{root}/tools", "{case}/w"]
+files = { "{case}/w/a.txt" = "a", "{case}/w/src/build/e.txt" = "e", "{case}/w/tests/data/b.txt" = "b", "{case}/w/build/c.txt" = "c", "{case}/w/tools/__pycache__/d.txt" = "d" }
+claims = { status = 0, line = ["a.txt", "src/build/e.txt"], lacks = ["b.txt", "c.txt", "d.txt"] }
+false = { files = { "{case}/w/tests/b.txt" = "b" } }
+
+[[case]]
+name = "the files of a project, from git"
+run = ["{python}", "-c", "import subprocess, sys; from pathlib import Path; sys.path.insert(0, sys.argv[1]); import shared; subprocess.run(['git', 'init', '-q', sys.argv[2]]); print('\\n'.join(shared.ours(Path(sys.argv[2]).resolve())))", "{root}/tools", "{case}/g"]
+files = { "{case}/g/a.txt" = "a", "{case}/g/.gitignore" = "skip.txt\n", "{case}/g/skip.txt" = "s", "{case}/g/tests/data/b.txt" = "b" }
+claims = { status = 0, line = ["a.txt", ".gitignore"], lacks = ["b.txt", "skip.txt"] }
+false = { files = { "{case}/g/tests/b.txt" = "b" } }

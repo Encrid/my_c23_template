@@ -30,6 +30,7 @@ The tools import it. It does not run alone.
 | `variables(config, args, target, zig)` | Gives the variables of a build, as the section *Variables* tells. |
 | `arguments(*valued, **flags)` | Reads the options of the command line. Each item of `valued` adds an option that has a value. Each item of `flags` adds an option that has no value. |
 | `ours(root)` | Gives the files of the project, as the section *The files of the project* tells. |
+| `report(faults, count, items)` | Writes the faults of a check, and ends the check, as the section *The report of a check* tells. |
 
 ## The configuration
 
@@ -80,6 +81,18 @@ If the root is the top folder of a git repository, `ours` asks git for its files
 These are the files that git tracks, and the files that git does not ignore.
 Else, `ours` walks the folders of the root, as `.gitignore` tells: it skips `build` at the root, and each `__pycache__`.
 `ours` gives only the files that exist, as paths from the root.
+It leaves out the files of `tests/data`, because no check reads them.
 
 `git -C <root> rev-parse --show-toplevel` gives the top folder of the repository of the root.
 Thus a project in a folder of a different repository, for example a case in `build`, gets the walk.
+
+## The report of a check
+
+Each check tool ends with `report`. `faults` is the list of the faults, one line for each fault.
+`count` is the number of the things that the check read, and `items` is their name. Its default is `files`.
+
+1. `report` writes each fault on its own line.
+2. If there is a fault, it writes `faults: <number>`, and the check ends with the status 1.
+3. Else, it writes `no fault in <count> <items>`, and the check ends with the status 0.
+
+For example, the check of the commits gives `items='commits'`, and writes `no fault in 12 commits`.

@@ -1,8 +1,8 @@
 # tests/cases/tools/build.toml
 
-The group `tools/build` checks `tools/build.py`, and the configuration, the variables and the options of `tools/shared.py`.
+The group `tools/build` checks `tools/build.py`, and the parts of `tools/shared.py` that the tools share.
 Its cases run `build.py` or `test.py` on a project in `tests/data/tools/build`, with the output in `{case}/out`.
-The case of the options runs a short Python program that calls `shared.arguments`.
+The cases of the options, of the report and of the files of a project run a short Python program that calls `shared`.
 
 | Project | Content |
 | --- | --- |
@@ -16,11 +16,11 @@ The case of the options runs a short Python program that calls `shared.arguments
 | `untargeted` | The same artifact and variant, but the variant has no `target`. |
 
 In `built`, `greet` gets its greeting from `defines`.
-`greeter` includes `include/greet.h`, links `greet`, and has `greet` beside it in its folder.
-`greeter` also compiles `src/os/{system}/os.c`, and writes `hello from a library, on <system>`.
+`greeter` includes `tests/data/tools/build/built/include/greet.h`, links `greet`, and has `greet` beside it in its folder.
+`greeter` also compiles `tests/data/tools/build/built/src/os/<system>/os.c`, and writes `hello from a library, on <system>`.
 The case `greeter` of `built` runs `greeter`. Its false variant runs a copy of `greeter` without the library.
 
-The kind `stamped` copies `src/note.txt` to a work file, renames the work file to the output, and adds the section `said`.
+The kind `stamped` copies `tests/data/tools/build/built/src/note.txt` to a work file, renames the work file to the output, and adds the section `said`.
 Then it checks that the output contains `{said}`. The default of `said` is `written`, a word of `note.txt`.
 The section holds the items of `manifest` with commas between them: `first,second`.
 The variant `plain` is unstamped.
@@ -42,5 +42,9 @@ The variant `plain` is unstamped.
 | a list variable in a text | `build` on `listed` stops: `is a list inside a text`. | `--set named=named.txt`. |
 | an artifact for a different target | `build` on `targeted` lists `far-aarch64-windows-gnu.txt` in `package.txt`. No machine runs that target. | `build` on `untargeted`. |
 | an option with a value | `shared.arguments('--commits')` gets `--commits a..b`, and the program writes `a..b`. | No `--commits`, thus the program writes `None`. |
+| a report with faults | `shared.report` gets two faults. It writes them and `faults: 2`, and the status is 1. | No fault. |
+| a report with no fault | `shared.report` gets no fault, 12 and `commits`. It writes `no fault in 12 commits`, and the status is 0. | One fault. |
+| the files of a project, walked | `shared.ours` gives `{case}/w/a.txt` and `{case}/w/src/build/e.txt`. It leaves out `tests/data`, the folder `build` at the root and `__pycache__`. | `{case}/w/tests/b.txt` is also there. |
+| the files of a project, from git | The program makes `{case}/g` a repository of git. `shared.ours` gives `a.txt` and `.gitignore`, but not `tests/data` or a file that git ignores. | `{case}/g/tests/b.txt` is also there. |
 
 `docs/intern/tools/build.py.md` gives the limits of these cases.

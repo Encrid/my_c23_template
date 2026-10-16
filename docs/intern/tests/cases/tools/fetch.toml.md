@@ -2,7 +2,7 @@
 
 The group `tools/fetch` checks `tools/fetch.py`.
 Its cases run `fetch.py` or `build.py` on the project in `tests/data/tools/fetch`, with the output in `{case}/out`.
-That project has one source, `sample`: the archive `sample.zip` and the patch `third_party/sample/{patch}.patch`.
+That project has one source, `sample`: the archive `sample.zip` and the patch `tests/data/tools/fetch/third_party/sample/<patch>.patch`.
 The variable `patch` is `greeting`, and the variable `digest` is the digest of `sample.zip`.
 
 The archive holds `sample/greeting.txt`. The patch `greeting` changes its line `hello` to `hello, patched`.

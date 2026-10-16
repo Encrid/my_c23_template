@@ -8,21 +8,14 @@ The tools read the two files as one configuration.
 - If the two files give the same key, the tools stop: `project.toml states <key>, and toolchain.toml states it too`.
 - Thus `project.toml` cannot change a value of `tools/toolchain.toml`. Do not change `tools/toolchain.toml`.
 
-The `project.toml` of the template builds the program `sample`:
+Each section of this document gives the keys of one table of `project.toml`.
+For example, these lines make a program from the sources of `src`:
 
 ```toml
-[project]
-name = "c23"
-owner = "Enkrid"
-licence = "Under the GNU Affero General Public License, version 3 only: see license."
-
 [[artifact]]
-name = "sample"
+name = "hello"
 kind = "program"
 sources = ["src/*.c"]
-
-[test]
-timeout = 120
 ```
 
 ## Variables
@@ -96,6 +89,18 @@ Put the patches of a source and its licence into `third_party/<source>`.
 | `top` | Optional. The folder of the archive that holds the files. |
 | `patches` | Optional. The patches, as files of the project, in the order that `fetch` applies them. |
 
+For example:
+
+```toml
+[[source]]
+name = "sample"
+url = "https://example.org/sample-1.0.tar.gz"
+sha256 = "<digest>"
+into = "{build}/third_party/sample"
+top = "sample-1.0"
+patches = ["third_party/sample/fix.patch"]
+```
+
 The command `fetch` does these steps for each source:
 
 1. It removes the files of the `into` folder, and downloads the archive into the folder.
@@ -125,6 +130,16 @@ The `package.txt` of a different project is such a list.
 | `into` | The folder that gets the copies. |
 | `make` | Optional. A command that runs before the tools read the list. |
 | `optional` | Optional. If it is `true` and the list is not there, the tools do not take the dependency, and continue. |
+
+For example, this dependency takes the package of a project beside this project:
+
+```toml
+[[dependency]]
+name = "sdk"
+from = "../sdk/build/{home}"
+list = "package.txt"
+into = "{build}/taken/sdk"
+```
 
 The tools copy the files of each dependency into its `into` folder.
 They copy a file only if the copy is not there, or if the copy is different.
@@ -213,10 +228,27 @@ The command `test` stops if an artifact is not linked.
 | --- | --- |
 | `timeout` | The maximum time of a case, in seconds. |
 | `rule` | Optional. The rules of the groups of cases. Each `[[test.rule]]` has `lacks` and `exempt`. |
+| `writers` | Optional. The functions that write the messages of the code, for example `fprintf`. |
 
 A rule adds a claim to each case: the output does not contain the text `lacks`.
 The rule does not apply to the groups of `exempt`.
 `docs/extern/project.py.md` describes the cases.
+
+The check of the messages reads each call of a writer in the files `.c` and `.h` of `src` and `include`.
+A case must write each message, and a document of `docs/extern` or `readme.md` must quote it.
+
+## [check]
+
+| Key | Value |
+| --- | --- |
+| `unicode` | Optional. The paths of the files that can hold text that is not ASCII. A path can contain `*`. The default is an empty list. |
+
+For example:
+
+```toml
+[check]
+unicode = ["docs/extern/names.md"]
+```
 
 ## [[style.exception]]
 
@@ -227,5 +259,14 @@ An exception lets one file break one rule of the style.
 | `rule` | The rule, for example `F4`. |
 | `path` | The path of the file. It can contain `*`. It can end with `:` and the name of a function. |
 | `why` | The reason for the exception. |
+
+For example:
+
+```toml
+[[style.exception]]
+rule = "F4"
+path = "src/parse.c:parse"
+why = "The table of the grammar is one long function."
+```
 
 The check of the style reports an exception that excuses nothing.

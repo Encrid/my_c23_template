@@ -152,4 +152,13 @@ def ours(root):
             subfolders[:] = [name for name in subfolders
                              if name != '__pycache__' and not (name == 'build' and Path(folder) == root)]
             found += [(Path(folder) / name).relative_to(root).as_posix() for name in names]
-    return [path for path in found if path and (root / path).is_file()]
+    return [path for path in found if path and not path.startswith('tests/data/') and (root / path).is_file()]
+
+
+def report(faults, count, items='files'):
+    for fault in faults:
+        print(fault)
+    if faults:
+        print('faults: %d' % len(faults))
+        sys.exit(1)
+    print('no fault in %d %s' % (count, items))
