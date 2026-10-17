@@ -12,7 +12,7 @@ This document tells how to write a pull request that is easy to review.
 5. Read the full change, and remove each part that the change does not need.
 6. Make sure that the documents describe the change, and that a case checks each new behavior.
 
-The workflow `ci` runs the four commands again on five platforms.
+The workflow `ci` runs the four commands again on a machine of each target of `.toolchain/toolchain.toml`.
 
 ## One purpose
 
