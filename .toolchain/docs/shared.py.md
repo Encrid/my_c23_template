@@ -34,7 +34,7 @@ The tools import it. It does not run alone.
 | `project_name(config)` | Gives `[project] name`, as the section *The name of the project* tells. |
 | `document(path)` | Gives the document of a file, as the section *The documents* tells. |
 | `repository(root)` | Tells if the root is the top folder of a git repository. |
-| `ours(root)` | Gives the files of the project, as the section *The files of the project* tells. |
+| `ours(root, tests)` | Gives the files of the project, as the section *The files of the project* tells. |
 | `report(faults, count, items)` | Writes the faults of a check, and ends the check, as the section *The report of a check* tells. |
 
 ## The configuration
@@ -112,6 +112,8 @@ These are the files that git tracks, and the files that git does not ignore.
 Else, `ours` walks the folders of the root, as `.gitignore` tells: it skips `build` at the root, and each `__pycache__`.
 `ours` gives only the files that exist, as paths from the root.
 It leaves out the files of `tests` and of `.toolchain/tests`. Thus no check reads the tests of the project or of the toolchain.
+
+With `tests=True`, `ours` keeps the files of `tests`, and leaves out only `.toolchain/tests`. The check of the retired words uses it.
 
 `repository` asks `git -C <root> rev-parse --show-toplevel` for the top folder of the repository of the root.
 Thus a project in a folder of a different repository, for example a case in `build`, is not a repository.

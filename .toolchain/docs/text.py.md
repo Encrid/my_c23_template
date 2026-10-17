@@ -10,6 +10,7 @@ It reads the files that `ours` gives.
 | `notice()` | Gives the pattern of the legal notice of a Python file, from `shared.header`. |
 | `python(text, notice)` | Gives the faults of a Python file: its notice, its comments and its string statements. |
 | `faults(path, data, notice, unicode)` | Gives the faults of one file. `unicode` is true if the file can hold characters that are not ASCII. |
+| `retired(text, words)` | Gives a fault for each retired word of `words` in `text`. |
 | `main()` | Runs the check. |
 
 ## The characters
@@ -59,6 +60,18 @@ The message is `<path>:<line>: a comment`.
 A file `.md` has no HTML comment.
 An HTML comment starts with the four characters `<`, `!`, `-` and `-`.
 The message is `<path>:<line>: a comment`.
+
+## Retired words
+
+`[check.retired]` of `.toolchain/project.toml` holds the retired words of the project.
+`text.py` refuses each retired word as a whole word, in upper or lower case.
+It reads the files of `ours`, also the files of `tests`, but no file of `.toolchain`.
+Thus the table itself is no fault, and a project never gets a fault that only the toolchain can fix.
+
+The messages are:
+
+- `<path>:<line>: '<word>' is retired: write '<new>'`
+- `<path>:<line>: '<word>' is retired`, when the table gives no new word
 
 ## Output
 

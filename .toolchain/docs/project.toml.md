@@ -232,12 +232,17 @@ The command `test` stops if an artifact is not linked.
 | Key | Value |
 | --- | --- |
 | `unicode` | Optional. The paths of the files that can hold text that is not ASCII. A path can contain `*`. The default is an empty list. |
+| `retired` | Optional. A table of the retired words of the project. A key is a retired word, and its value is the word to write, or an empty text. `.toolchain/docs/text.py.md`, *Retired words* tells the check. |
 
 For example:
 
 ```toml
 [check]
 unicode = ["docs/extern/names.md"]
+
+[check.retired]
+utilise = "use"
+whilst = ""
 ```
 
 ## [[style.exception]]
