@@ -38,33 +38,43 @@ def units(lines):
     return found
 
 
+def quoted(places):
+    spans = [next(iter(found)) if len(found) == 1 else '' for found in places.values()]
+    return all(spans) and len(set(spans)) == len(spans)
+
+
 def shared_runs(units_by_file):
-    grams = collections.defaultdict(set)
-    for name, found in units_by_file.items():
-        for _, words, _ in found:
-            for i in range(len(words) - RUN + 1):
-                grams[' '.join(words[i:i + RUN])].add(name)
-    runs, spans = {}, collections.defaultdict(dict)
+    grams = collections.defaultdict(dict)
     for name, found in sorted(units_by_file.items()):
         for line, words, held in found:
+            for i in range(len(words) - RUN + 1):
+                span = held[i] if len(set(held[i:i + RUN])) == 1 else ''
+                grams[' '.join(words[i:i + RUN])].setdefault((name, line), set()).add(span)
+
+    def shared(words, i):
+        return len({name for name, _ in grams[' '.join(words[i:i + RUN])]}) > 1
+
+    runs = {}
+    for name, found in sorted(units_by_file.items()):
+        for line, words, _ in found:
             i = 0
             while i <= len(words) - RUN:
-                owners = grams[' '.join(words[i:i + RUN])]
-                if len(owners) < 2:
+                if not shared(words, i):
                     i += 1
                     continue
-                end = i + RUN
-                while end < len(words) and grams[' '.join(words[end - RUN + 1:end + 1])] >= owners:
+                end = i
+                while end < len(words) - RUN and shared(words, end + 1):
                     end += 1
-                run = ' '.join(words[i:end])
-                runs.setdefault(run, {}).setdefault(name, line)
-                spans[run].setdefault(name, held[i] if len(set(held[i:end])) == 1 else '')
-                i = end - RUN + 1
-    quotes = {run for run, found in spans.items()
-              if len(found) > 1 and all(found.values()) and len(set(found.values())) == len(found)}
-    return {run: places for run, places in runs.items()
-            if len(places) > 1 and run not in quotes
-            and not any(run != other and other not in quotes and ' %s ' % run in ' %s ' % other for other in runs)}
+                places = {}
+                for k in range(i, end + 1):
+                    for place, spans in grams[' '.join(words[k:k + RUN])].items():
+                        places.setdefault(place, set()).update(spans)
+                run = ' '.join(words[i:end + RUN])
+                runs[(run, tuple(sorted(places)))] = places
+                i = end + 1
+    kept = [(run, set(places)) for (run, _), places in runs.items() if not quoted(places)]
+    return [(run, sorted(places)) for run, places in kept
+            if not any(run != other and ' %s ' % run in ' %s ' % other and places <= more for other, more in kept)]
 
 
 def scopes(documents):
@@ -78,8 +88,8 @@ def main():
     faults = []
     for scope in scopes(documents):
         found = shared_runs({path: units(lines) for path, lines in scope.items()})
-        faults += ['%s: %s' % (', '.join('%s:%d' % place for place in sorted(places.items())), run)
-                   for run, places in sorted(found.items(), key=lambda item: sorted(item[1].items()))]
+        faults += ['%s: %s' % (', '.join('%s:%d' % place for place in places), run)
+                   for run, places in sorted(found, key=lambda item: item[1])]
     report(faults, len(documents), 'documents')
 
 

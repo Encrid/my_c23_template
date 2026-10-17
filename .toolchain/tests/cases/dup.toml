@@ -13,6 +13,20 @@ claims = { status = 0, line = ["no fault in 2 documents"] }
 false = { files = { "{case}/p/docs/a.md" = "# a\n\nOne two three four five six seven eight.\n", "{case}/p/docs/b.md" = "# b\n\nOne two three four five six seven eight.\n" } }
 
 [[case]]
+name = "a passage in 2 sentences of one document"
+run = ["{python}", "{root}/.toolchain/tools/dup.py", "--root", "{case}/p"]
+files = { "{case}/p/docs/a.md" = "# a\n\nOne two three four five six seven eight nine.\n", "{case}/p/docs/b.md" = "# b\n\nOne two three four five six seven eight.\n\nTwo three four five six seven eight nine.\n" }
+claims = { status = 1, has = ["docs/a.md:3, docs/b.md:3, docs/b.md:5: one two three four five six seven eight nine"] }
+false = { files = { "{case}/p/docs/b.md" = "# b\n\nOne two three four five six seven ten.\n\nTwo three four five six seven eight ten.\n" } }
+
+[[case]]
+name = "a passage that a third document holds in part"
+run = ["{python}", "{root}/.toolchain/tools/dup.py", "--root", "{case}/p"]
+files = { "{case}/p/docs/a.md" = "# a\n\nOne two three four five six seven eight nine.\n", "{case}/p/docs/b.md" = "# b\n\nOne two three four five six seven eight nine.\n", "{case}/p/docs/c.md" = "# c\n\nTwo three four five six seven eight nine.\n" }
+claims = { status = 1, has = ["docs/a.md:3, docs/b.md:3, docs/c.md:3: one two three four five six seven eight nine"] }
+false = { files = { "{case}/p/docs/c.md" = "# c\n\nTwo three four five six seven eight ten.\n" } }
+
+[[case]]
 name = "a passage across 2 sentences"
 run = ["{python}", "{root}/.toolchain/tools/dup.py", "--root", "{case}/p"]
 files = { "{case}/p/docs/a.md" = "# a\n\nOne two three four. Five six seven eight.\n", "{case}/p/docs/b.md" = "# b\n\nOne two three four five six seven eight.\n" }
