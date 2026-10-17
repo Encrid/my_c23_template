@@ -101,6 +101,7 @@ If the value is empty or not there, it stops the tool with the message that `.to
 
 - The document of `include/<path>` is `docs/extern/<path>.md`.
 - The document of `src/<path>` is `docs/intern/<path>.md`.
+- The document of `tools/<path>` is `docs/tools/<path>.md`.
 - A file `.gitkeep`, and a file of a different folder, have no document. Then `document` gives `None`.
 
 The check of the layout and the check of the cover use `document`.

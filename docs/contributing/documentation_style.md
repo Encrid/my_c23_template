@@ -11,9 +11,11 @@ This document tells how to write the documents of the project.
 | `docs/contributing/<name>.md` | A rule of a contribution, for the contributors. |
 | `docs/extern/<path>.md` | The document of `include/<path>`, for the users of the project. |
 | `docs/intern/<path>.md` | The document of `src/<path>`, for the developers of the project. |
+| `docs/tools/<path>.md` | The document of `tools/<path>`, for the developers of the project. |
 | `.toolchain/docs/<name>.md` | The document of a part of the toolchain. |
 
-Each file of `include` and of `src` has its document. No other file is in `docs/extern` or `docs/intern`.
+Each file of `include`, of `src` and of `tools` has its document.
+No other file is in `docs/extern`, `docs/intern` or `docs/tools`.
 The first line of the document of a file is `#`, a space, and the path of the file, for example `# src/parse.c`.
 
 ## The readme

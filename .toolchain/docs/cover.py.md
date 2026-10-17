@@ -26,8 +26,8 @@ A function is a line that starts with a letter or `_`, with no `typedef`, and wi
 ## The check
 
 Each public name of a header is a word of a code span of the document of the header.
-`shared.document` gives the document: the document of `include/<path>` is `docs/extern/<path>.md`.
-A word is a name that no letter, digit or `_` touches.
+`shared.document` gives the document of the header: `.toolchain/docs/shared.py.md`, *The documents*.
+A name counts only when no letter, digit or `_` touches it.
 If a document is not there, `cover.py` reads it as an empty document.
 
 ## Output

@@ -20,7 +20,7 @@ KEYS = {'step': {'run', 'section', 'text', 'contains', 'copy', 'rename'},
         'script': {'wait', 'put', 'remove', 'type'},
         'claims': {'status', 'status_not', 'line', 'has', 'lacks', 'matches', 'matches_not', 'order', 'output', 'files'},
         'source': {'name', 'url', 'sha256', 'into', 'top', 'patches'}}
-SIDES = {'include': 'extern', 'src': 'intern'}
+SIDES = {'include': 'docs/extern', 'src': 'docs/intern', 'tools': 'docs/tools'}
 
 
 def die(why):
@@ -160,7 +160,7 @@ def document(path):
     top, _, rest = path.partition('/')
     if top not in SIDES or path.endswith('/.gitkeep'):
         return None
-    return 'docs/%s/%s.md' % (SIDES[top], rest)
+    return '%s/%s.md' % (SIDES[top], rest)
 
 
 def repository(root):
