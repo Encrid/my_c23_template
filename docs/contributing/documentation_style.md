@@ -104,8 +104,8 @@ To cite a section of the same document, write its heading between two asterisks.
 
 ## The messages of the code
 
-`[test] writers` of `.toolchain/project.toml` can name the functions that write the messages of the code.
-Then `readme.md` or a document of `docs/extern` quotes each message.
+`readme.md` or a document of `docs/extern` quotes each message of the code.
+`docs/contributing/tests.md`, *The messages of the code*, names the functions that write them.
 In a quote, write `<name>` in place of a conversion such as `%s`.
 
 ## Characters

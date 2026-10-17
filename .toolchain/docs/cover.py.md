@@ -32,8 +32,8 @@ If a document is not there, `cover.py` reads it as an empty document.
 
 ## Output
 
-`cover.py` gives its faults to `report` of `.toolchain/tools/shared.py`, in the order of the headers.
-`report` writes each fault on its own line, then stops: `faults: <number>`. If there is no fault, it writes `no fault in <number> files`.
+Its faults follow the headers.
+The output follows `.toolchain/docs/shared.py.md`, *The report of a check*.
 A fault is `<header>: <name> is not in <document>`.
 
 ## Functions

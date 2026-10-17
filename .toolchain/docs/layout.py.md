@@ -1,7 +1,7 @@
 # .toolchain/tools/layout.py
 
 `layout.py` checks the tree of the project: the paths, the needed files, the documents and the names.
-It reads the files that `ours` gives. `ours` leaves out the files of `tests` and of `.toolchain/tests`, thus no rule of `layout.py` applies to them.
+It reads the files that `ours` gives, so no rule of `layout.py` applies to a file that `ours` leaves out.
 
 ## Functions
 
@@ -77,5 +77,5 @@ The messages are:
 
 ## Output
 
-`main` gives the faults to `report` of `shared.py`, in the order of the paths.
-Thus the output is the faults, then `faults: <number>`, or else `no fault in <number> files`.
+A fault of `layout.py` has no line, so its faults follow the paths only.
+The output follows `.toolchain/docs/shared.py.md`, *The report of a check*.

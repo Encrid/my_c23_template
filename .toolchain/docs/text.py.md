@@ -1,7 +1,7 @@
 # .toolchain/tools/text.py
 
 `text.py` checks the characters, the legal notices and the comments of the project.
-It reads the files that `ours` gives. `ours` leaves out the files of `tests` and of `.toolchain/tests`.
+It reads the files that `ours` gives.
 
 ## Functions
 
@@ -62,5 +62,4 @@ The message is `<path>:<line>: a comment`.
 
 ## Output
 
-`main` gives the faults to `report` of `shared.py`, in the order of the paths and of the lines.
-Thus the output is the faults, then `faults: <number>`, or else `no fault in <number> files`.
+The output follows `.toolchain/docs/shared.py.md`, *The report of a check*.
