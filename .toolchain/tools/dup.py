@@ -10,33 +10,43 @@ from shared import arguments, report
 RUN = 8
 CITATION = re.compile(r'`[^`\n]*\.md`(?:,\s*\*[^*\n]+\*)?')
 PUNCTUATION = re.compile(r'[^a-z0-9]')
+JOIN = '\x01'
 
 
 def unwrap(line):
-    return prose.SPAN.sub(lambda m: m.group()[1:-1].replace('|', ' '), CITATION.sub(' ', line))
+    return prose.SPAN.sub(lambda m: JOIN + re.sub(r'[\s|]+', JOIN, m.group()[1:-1]) + JOIN,
+                          CITATION.sub(' ', line))
 
 
 def words(sentence):
-    return [PUNCTUATION.sub('', word.lower()) for word in prose.WORD.findall(sentence)]
+    found = []
+    for token in prose.WORD.findall(sentence):
+        parts = [part for part in (PUNCTUATION.sub('', piece.lower()) for piece in token.split(JOIN)) if part]
+        found += [(part, ' '.join(parts) if JOIN in token else '') for part in parts]
+    return found
 
 
 def units(lines):
     text = list(lines)
     for start, end, _ in prose.blocks(lines):
         text[start:end + 1] = [''] * (end + 1 - start)
-    return [(n, words(m.group())) for n, unit, _ in prose.units([unwrap(line) for line in text])
-            for m in prose.SENTENCE.finditer(unit)]
+    found = []
+    for n, unit, _ in prose.units([unwrap(line) for line in text]):
+        for m in prose.SENTENCE.finditer(unit):
+            pairs = words(m.group())
+            found.append((n, [word for word, _ in pairs], [span for _, span in pairs]))
+    return found
 
 
 def shared_runs(units_by_file):
     grams = collections.defaultdict(set)
     for name, found in units_by_file.items():
-        for _, words in found:
+        for _, words, _ in found:
             for i in range(len(words) - RUN + 1):
                 grams[' '.join(words[i:i + RUN])].add(name)
-    runs = {}
+    runs, spans = {}, collections.defaultdict(dict)
     for name, found in sorted(units_by_file.items()):
-        for line, words in found:
+        for line, words, held in found:
             i = 0
             while i <= len(words) - RUN:
                 owners = grams[' '.join(words[i:i + RUN])]
@@ -46,10 +56,15 @@ def shared_runs(units_by_file):
                 end = i + RUN
                 while end < len(words) and grams[' '.join(words[end - RUN + 1:end + 1])] >= owners:
                     end += 1
-                runs.setdefault(' '.join(words[i:end]), {}).setdefault(name, line)
+                run = ' '.join(words[i:end])
+                runs.setdefault(run, {}).setdefault(name, line)
+                spans[run].setdefault(name, held[i] if len(set(held[i:end])) == 1 else '')
                 i = end - RUN + 1
+    quotes = {run for run, found in spans.items()
+              if len(found) > 1 and all(found.values()) and len(set(found.values())) == len(found)}
     return {run: places for run, places in runs.items()
-            if len(places) > 1 and not any(run != other and ' %s ' % run in ' %s ' % other for other in runs)}
+            if len(places) > 1 and run not in quotes
+            and not any(run != other and other not in quotes and ' %s ' % run in ' %s ' % other for other in runs)}
 
 
 def scopes(documents):

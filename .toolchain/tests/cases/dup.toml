@@ -34,6 +34,20 @@ claims = { status = 0, line = ["no fault in 2 documents"] }
 false = { files = { "{case}/p/docs/a.md" = "# a\n\none two three four five six seven eight\n" } }
 
 [[case]]
+name = "2 quotes that share 8 words"
+run = ["{python}", "{root}/.toolchain/tools/dup.py", "--root", "{case}/p"]
+files = { "{case}/p/docs/a.md" = "# a\n\n- `one two three four five six seven eight nine`\n", "{case}/p/docs/b.md" = "# b\n\n- `one two three four five six seven eight ten`\n" }
+claims = { status = 0, line = ["no fault in 2 documents"] }
+false = { files = { "{case}/p/docs/b.md" = "# b\n\n- `one two three four five six seven eight nine`\n" } }
+
+[[case]]
+name = "a sentence that repeats a quote"
+run = ["{python}", "{root}/.toolchain/tools/dup.py", "--root", "{case}/p"]
+files = { "{case}/p/docs/a.md" = "# a\n\n- `one two three four five six seven eight nine`\n", "{case}/p/docs/b.md" = "# b\n\nOne two three four five six seven eight.\n" }
+claims = { status = 1, has = ["docs/a.md:3, docs/b.md:3: one two three four five six seven eight"] }
+false = { files = { "{case}/p/docs/b.md" = "# b\n\nOne two three four five six seven nine.\n" } }
+
+[[case]]
 name = "a citation in 2 documents"
 run = ["{python}", "{root}/.toolchain/tools/dup.py", "--root", "{case}/p"]
 files = { "{case}/p/docs/a.md" = "# a\n\nRead `docs/c.md`, *The use of the tool in each case*.\n", "{case}/p/docs/b.md" = "# b\n\nRead `docs/c.md`, *The use of the tool in each case*.\n" }

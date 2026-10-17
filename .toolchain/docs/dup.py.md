@@ -26,16 +26,24 @@ A passage is a run of 8 words or more that 2 documents of one scope share, insid
 
 1. It replaces each fenced block with empty lines. Thus a block of examples or of quotes holds no passage.
 2. It removes each citation whose code span names a file `.md`. A citation points to a fact, and does not state it.
-3. It replaces each other code span with its text, with no backticks and no `|`.
+3. It keeps each other code span as one piece: the words of its text, with no backticks and no `|`.
 4. It cuts the text into units, and each unit into sentences: `.toolchain/docs/prose.py.md`, *Sentences*.
 
 The form of a citation is in `.toolchain/docs/xref.py.md`, *The checks*.
 `words` takes the words of a sentence as `prose.py` counts them, then compares them in lower case, with no
 punctuation.
 Thus 2 sentences that follow each other never make one passage, and a table cell is a sentence of its own.
+A code span holds no end of a sentence.
 
 `shared_runs` finds each run of 8 words that 2 documents or more hold, and makes it as long as each of them holds it.
 A passage that is a part of a longer passage does not count.
+
+## Quotes
+
+A passage inside a code span in each of its documents is a quote, for example of a message of the code.
+Such a passage counts only if 2 of its documents hold the same code span.
+A quote keeps the words that it quotes. Thus 2 different messages that share 8 words make no fault.
+One message in 2 documents is a fault, and so is a sentence that repeats the words of a quote.
 
 ## Output
 
@@ -49,8 +57,8 @@ The line is the first line of the unit of the passage. The passage is in lower c
 | Function | Result |
 | --- | --- |
 | `unwrap(line)` | Gives the line with no citation, and with the text of each other code span. |
-| `words(sentence)` | Gives the words of a sentence, in lower case and with no punctuation. |
-| `units(lines)` | Gives the sentences of a document: for each one, the first line of its unit and its words. |
-| `shared_runs(units_by_file)` | Gives each passage that 2 documents share, with the first line of its unit in each document. |
+| `words(sentence)` | Gives the words of a sentence, in lower case and with no punctuation. With each word, it gives the words of the code span that holds it, or an empty text. |
+| `units(lines)` | Gives the sentences of a document: for each one, the first line of its unit, its words, and the code span of each word. |
+| `shared_runs(units_by_file)` | Gives each passage that 2 documents share, with the first line of its unit in each document, as the sections *Passages* and *Quotes* tell. |
 | `scopes(documents)` | Gives the 2 scopes: the documents of the project, and the documents of the toolchain. |
 | `main()` | Reads the options, checks each scope, and writes the faults. |

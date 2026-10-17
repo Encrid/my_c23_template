@@ -11,6 +11,8 @@ The text of each document starts with a heading and an empty line. Thus its thir
 | a passage across 2 sentences | `docs/a.md` holds the 8 words in 2 sentences, and `docs/b.md` in 1. `dup.py` ends with 0. | `docs/a.md` holds them in 1 sentence. |
 | a passage across 2 cells | `docs/a.md` holds the 8 words in 2 cells of a table. `dup.py` ends with 0. | `docs/a.md` holds them in 1 cell. |
 | a passage in a fenced block | `docs/a.md` holds the 8 words in a fenced block. `dup.py` ends with 0. | The words are out of the block. |
+| 2 quotes that share 8 words | `docs/a.md` and `docs/b.md` each hold a code span of 9 words, and the first 8 are the same. `dup.py` writes `no fault in 2 documents`. | The 2 code spans are the same. |
+| a sentence that repeats a quote | `docs/b.md` holds the first 8 words of the code span of `docs/a.md` in a sentence. `dup.py` writes `docs/a.md:3, docs/b.md:3: one two three four five six seven eight`, and ends with 1. | The last word of `docs/b.md` differs. |
 | a citation in 2 documents | The 2 documents hold the same citation of `docs/c.md`. `dup.py` ends with 0. | The 2 documents hold the same words, with no code span and no heading between asterisks. |
 | a passage of 2 scopes | `docs/a.md` and `.toolchain/docs/b.md` share 8 words. `dup.py` ends with 0. | `docs/b.md` also holds the 8 words. |
 | the documents of this project | `folders` copies `readme.md`, the 6 guides and the documents of `.toolchain/docs` into `{case}`. `dup.py` writes `no fault in 32 documents`. | `{case}/docs/a.md` holds a sentence of `docs/contributing/tests.md`. |
