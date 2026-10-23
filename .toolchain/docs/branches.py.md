@@ -34,11 +34,17 @@ A header gets the probes of each tree that includes it.
 - A condition `c` becomes `c23b_((c), <number>)`. `c23b_` records if `c` was true or false, and gives `c`.
 - After the `:` of a label and after the `{` of a function, `c23b_hit_(<number>);` records that it ran.
 - A file `.c` starts with an array of `_Atomic` bytes, one for each outcome, and these two functions.
-- At its end, a file `.c` includes `stdio.h`, `stdlib.h` and `string.h`, and has a function with the attribute `[[gnu::destructor]]`.
+- At its end, a file `.c` writes with the low-level file calls of the system, with no buffer of `stdio`.
 - A header starts with one block, under a guard of its own, with the same parts under names of its own.
 
-At the end of a program, each such function adds one line to the file that the variable `C23_BRANCHES` names.
-The line is `<path> <bits>`, with one character `0` or `1` for each outcome, and it is written in one call.
+Each program writes one line `<path> <bits>` for each file, to the file that the variable `C23_BRANCHES` names.
+A line has one character, `0` or `1`, for each outcome.
+A `[[gnu::destructor]]` of each file writes its line, at the exit of the program and at the close of a library.
+The writer builds each line in a buffer and writes it with one append, so parallel programs do not interleave.
+
+On macOS a coverage build opens each library with `RTLD_NODELETE`, so a closed library stays mapped.
+Then its destructor runs at the exit of the program, with the code of the library still in place.
+The host adds the flag where it opens a library, under the define `C23B_KEEP_LOADED` that the probes set on macOS.
 The probes come before the first line of the file, and `#line 1` keeps the numbers of the lines.
 A file `.c` includes no header before its own lines. Thus its own macros, such as `_POSIX_C_SOURCE`, come first.
 
@@ -70,6 +76,7 @@ If a line has a different number of bits than the probes of its file, it stops: 
 `[[branches.exception]]` of `project.toml` marks a defensive branch that stays though no test drives it.
 Each exemption names a branch by `path`, `line`, `column` and `side`, and states a `why`.
 The `side` is `true`, `false`, `function` or `case`.
+An exemption can also name a `system`. It applies, and is checked, only on that system, so a platform-only branch gets a platform-only exemption.
 
 `reported` excuses an unreached outcome that an exemption matches, and counts it as exempt, not as missed.
 An exemption with no `why` excuses nothing and is a fault.
@@ -83,11 +90,13 @@ zig then writes an error ending with `FileNotFound`, because no object is made. 
 If clang writes a different error, `dumped` stops: `the tree of <path> cannot be read:`, and the errors.
 If the output is not JSON, it stops: `the tree of <path> is not JSON`.
 
+The dump sets `_FORTIFY_SOURCE` to 0. Then a condition in a call that the system would fortify, such as `snprintf`, stays measurable and does not read as a macro.
+
 ## Limits
 
 - A case that crashes, or that stops before its end, writes no line. Its outcomes count as not reached.
 - The measure uses only the target of this machine. The files of a different system, for example `src/posix` on Windows, are measured on a machine of that system.
-- `[[gnu::destructor]]` is an attribute of GNU, which clang has on Linux, macOS and Windows. It replaces `atexit`, because ISO C guarantees only 32 functions for `atexit`.
+- Every file writes with a `[[gnu::destructor]]`. A destructor of a library that `dlclose` unmaps on macOS would run at the exit of the program with its code gone. So a coverage build opens each library with `RTLD_NODELETE`, which keeps the library mapped, and the destructor runs in place.
 - A header that two artifacts compile with different macros gets the probes of both.
 
 ## Functions
@@ -117,5 +126,5 @@ If the output is not JSON, it stops: `the tree of <path> is not JSON`.
 | `probed(config, values)` | Writes the copies with the probes, as *The steps* tells. It gives the probes and the branches that are not measured. |
 | `written(root, where, edits, skips)` | Copies `src` and `include`, and writes the probes of each file. |
 | `joined(probes, hits)` | Gives the bits of each file, joined from all the lines of `hits`. |
-| `excused(listed, name, line, col, said)` | Tells if an exemption of `listed` matches this unreached outcome, and counts the match. |
-| `reported(probes, gaps, hits, excepted)` | Writes the report, as *The report* tells. `excepted` holds the exemptions. |
+| `excused(listed, system, name, line, col, said)` | Tells if an exemption of `listed` matches this unreached outcome on this system, and counts the match. |
+| `reported(probes, gaps, hits, excepted, system)` | Writes the report, as *The report* tells. `excepted` holds the exemptions, and `system` is the system of the build. |

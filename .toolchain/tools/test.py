@@ -234,13 +234,13 @@ def measured(args):
     unlinked = [name for name, paths in made if not paths]
     if unlinked:
         die('the cases need what is linked: ' + ' '.join(unlinked))
-    groups = groups_of(values, 'tests/cases')
+    groups = groups_of(values, config.get('test', {}).get('cases', 'tests/cases'))
     groups = chosen(groups, args.k) if args.k and groups else groups
     hits = Path(values['out']) / 'hits.txt'
     hits.unlink(missing_ok=True)
     os.environ['C23_BRANCHES'] = str(hits)
     test(config, values, {name: paths[0] for name, paths in made}, groups, False, False, 1)
-    branches.reported(probes, gaps, hits, config.get('branches', {}).get('exception', []))
+    branches.reported(probes, gaps, hits, config.get('branches', {}).get('exception', []), values['system'])
 
 
 def main():
@@ -256,15 +256,15 @@ def main():
     unlinked = [name for name, paths in made if not paths]
     if unlinked:
         die('the cases need what is linked: ' + ' '.join(unlinked))
-    folder = '.toolchain/tests/cases' if args.toolchain else 'tests/cases'
+    folder = '.toolchain/tests/cases' if args.toolchain else config.get('test', {}).get('cases', 'tests/cases')
     groups = groups_of(values, folder)
     if not groups:
         return print('no case: %s holds no case' % folder)
     groups = chosen(groups, args.k) if args.k else groups
     if args.part:
         groups = [(group, cases) for group, cases in groups
-                  if group == args.part or group.startswith(args.part + '/')] \
-            or die('no case group is in the part %s' % args.part)
+                  if any(group == p or group.startswith(p + '/') for p in args.part)] \
+            or die('no case group is in the parts %s' % ' '.join(args.part))
     copies = args.copies or config['test'].get('copies') or die('.toolchain/project.toml: write [test] copies')
     own = not (args.broken or args.toolchain or args.k or args.part)
     rounds = args.rounds or 1

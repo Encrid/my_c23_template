@@ -1,14 +1,15 @@
 # .toolchain/project.toml
 
-`.toolchain/project.toml` holds the values of the project.
-zig, the targets, the flags of the compiler and the limits of the style are in `.toolchain/toolchain.toml`.
-The tools read the two files as one configuration.
+`.toolchain/project.toml` holds `[project]` and `[test]`.
+The other values are in the files of `.toolchain/config`, one file for each concern: `artifacts.toml`, `modules.toml`, `targets.toml`, `kinds.toml`, `sources.toml`, `variables.toml`, `package.toml` and `checks.toml`.
+zig, the compiler flags and the limits of the style are in `.toolchain/toolchain.toml`.
+The tools read every file as one configuration.
 
-- A table of `.toolchain/project.toml` adds its keys to the table of `.toolchain/toolchain.toml` that has the same name.
-- If the two files give the same key, the tools stop: `project.toml states <key>, and toolchain.toml states it too`.
-- Thus `.toolchain/project.toml` cannot change a value of `.toolchain/toolchain.toml`. Do not change `.toolchain/toolchain.toml`.
+- A table of a file adds its keys to the table of another file that has the same name.
+- If two files give the same key, the tools stop: `project.toml states <key>, and toolchain.toml states it too`.
+- A file of a project cannot change a value of `.toolchain/toolchain.toml`. Do not change `.toolchain/toolchain.toml`.
 
-Each section of this document gives the keys of one table of `.toolchain/project.toml`.
+Each section of this document gives the keys of one table.
 For example, these lines make a program from the sources of `src`:
 
 ```toml
@@ -31,11 +32,13 @@ The tools give these variables:
 | --- | --- |
 | `{root}` | The folder of the project. |
 | `{build}` | The output folder, as `.toolchain/docs/shared.py.md`, *Variables*, gives it. |
-| `{out}` | The output folder of the target. |
+| `{dist}` | The deliverable folder of the target, `<build>/<target>`. |
+| `{out}` | The scratch folder of the target, `<dist>/scratch`. |
 | `{target}` | The name of the target. |
 | `{home}` | The name of the target of this machine. |
 | `{python}` | The Python program that runs the tool. |
 | `{zig}` | The zig program. |
+| `{paths}` | The `*_PATH` macros of the test libraries, as `.toolchain/docs/build.py.md`, *Modules*, tells. |
 
 A case has more variables: `docs/contributing/tests.md`, *Variables* gives them.
 Each key of `[targets.<target>]` is also a variable, for example `{exe}`, `{library}` and `{system}`.
@@ -213,7 +216,8 @@ An artifact is a file that the build makes, for example a program, a library or 
 | `target` | Optional. The target of the artifact, if it is not the target of the build. |
 | `variants` | Optional. The variants. Each variant has a `name`, and can have the other keys and `unstamped`. |
 | `test` | Optional. `true` for an artifact that only the tests use. The build makes it, and `package.txt` does not list it. Thus `pack` does not put it into the zip. |
-| `part` | Optional. The name of a part of the project. A build or a test with `--part <name>` acts on the untagged artifacts and on the artifacts of the part `<name>`. Without `--part`, they act on every artifact. |
+| `part` | Optional. The name of a part of the project. `--part <name>` acts on the part `<name>`, and repeats. A build makes the base and each named part. The base is the untagged artifacts, and a build always makes it. |
+| `path` | Optional. `true` for a test library that a case loads by a `*_PATH` macro. `.toolchain/docs/build.py.md`, *Modules*, tells it. |
 
 A variant is a copy of the artifact with a different name and some different keys.
 A variant with `unstamped = true` does not do the `section` steps.
@@ -223,6 +227,26 @@ An artifact with a `target` gets the keys of that target and the variable `{targ
 Thus a build for a different target can compile the sources, and not link them.
 If the kind has no `unlinked` steps, the tools stop.
 The command `test` stops if an artifact is not linked.
+
+## [module] and [[modules]]
+
+`[module]` holds the keys shared by the built test modules.
+`[[modules]]` lists each one. A row adds a `name`, what differs from the shared keys, and `path = true` to expose a `*_PATH` macro.
+`.toolchain/docs/build.py.md`, *Modules*, gives the rest.
+
+## [compose]
+
+`[compose]` tells what the deliverable of each part holds, beside the binaries that the part builds.
+`.toolchain/docs/build.py.md`, *The deliverable*, tells how `build` composes it.
+
+`[compose.<part>]` has these keys, for the part `<part>`:
+
+| Key | Value |
+| --- | --- |
+| `headers` | Optional. The patterns of the public headers of the part, from the folder of the project. |
+| `assets` | Optional. The files of the part, from the scratch folder, for example a merged `acc.wasm`. |
+
+A part with no table, and a part with empty keys, composes only its binaries.
 
 ## [test]
 
@@ -279,6 +303,7 @@ An exception lets a project keep a defensive branch that no case can reach, for 
 | `col` | The column of the branch. |
 | `side` | `true`, `false`, `function` or `case`. |
 | `why` | The reason the branch is unreachable. |
+| `system` | Optional. The system the exemption applies on, for a branch that only one platform has. |
 
 For example:
 
@@ -292,3 +317,4 @@ why = "A wasm32 memory holds at most 65536 pages, which is the reserve, so a gro
 ```
 
 `test --branches` reports an exception that states no reason, or that matches no unreached outcome.
+An exemption with a `system` is applied and checked only on that system.

@@ -100,23 +100,95 @@ def packaged(config, values, made):
     (out / 'package.txt').write_text('\n'.join(lines) + '\n', encoding='utf-8', newline='\n')
 
 
-def packed(config, values):
-    out, root = Path(values['out']), Path(values['root'])
-    names = {name: out / name for name in ['package.txt'] + list(take.listed(out / 'package.txt')[1])}
-    names.update((name, root / name) for name in files(root, ['include/**/*.h', 'license', 'third_party/*/license']))
+def packed(config, values, kit):
+    dist = Path(values['dist'])
     zipped = Path(values['build']) / ('%s-%s.zip' % (shared.project_name(config), values['target']))
     with zipfile.ZipFile(zipped, 'w', zipfile.ZIP_DEFLATED) as packing:
-        for name, path in names.items():
-            packing.write(path, name)
+        for name in kit:
+            packing.write(dist / name, name)
     print(zipped.as_posix())
-    print('\n'.join(names))
+    print('\n'.join(kit))
 
 
 def artifacts(config):
+    defaults = config.get('module', {})
+    for module in config.get('modules', []):
+        base = dict(defaults, **module)
+        yield base
+        for variant in base.get('variants', []):
+            yield dict(base, **variant)
     for artifact in config.get('artifact', []):
         yield artifact
         for variant in artifact.get('variants', []):
             yield dict(artifact, **variant)
+
+
+def path_defines(config):
+    found = ['BUILT_DIR="{out}/built"', 'BUILT_SUFFIX="{library}"']
+    for artifact in artifacts(config):
+        folder = artifact.get('folder')
+        if artifact.get('kind') != 'library' or folder not in ('built', 'backends'):
+            continue
+        if folder == 'built' and not artifact.get('path'):
+            continue
+        macro = artifact['name'].removeprefix('bridge_').upper().replace('-', '_') + '_PATH'
+        found.append('%s="{out}/%s/%s{library}"' % (macro, folder, artifact['name']))
+    return found
+
+
+def archives(config, values):
+    out = Path(values['out'])
+    found = []
+    for artifact in artifacts(config):
+        if not artifact.get('test') and artifact['kind'] == 'archive':
+            found.append(Path(planned(config, values, artifact)[1]['output']).relative_to(out))
+    return found
+
+
+def prove(config, values, pick):
+    proof = config.get('package', {}).get('proof')
+    if not proof or (pick is not None and 'base' not in pick):
+        return
+    clean = Path(values['out']) / 'proof'
+    shutil.rmtree(clean, ignore_errors=True)
+    zipped = Path(values['build']) / ('%s-%s.zip' % (shared.project_name(config), values['target']))
+    with zipfile.ZipFile(zipped) as packing:
+        packing.extractall(clean)
+    artifact = {'name': 'proof', 'kind': 'program', 'sources': [proof],
+                'include': [(clean / 'include').as_posix()],
+                'link': [(clean / name).as_posix() for name in archives(config, values)]}
+    _, made = built(config, dict(values, out=(clean / 'host').as_posix()), artifact)
+    if values['target'] == shared.this_target(config['targets']):
+        run([made[0].as_posix()], values['root'])
+    print('package proof: %s %s' % (shared.project_name(config),
+          'ran' if values['target'] == shared.this_target(config['targets']) else 'built'))
+
+
+def composed(config, values, pick):
+    dist, out, root, kit = Path(values['dist']), Path(values['out']), Path(values['root']), []
+    for artifact in artifacts(config):
+        if artifact.get('test') or (pick is not None and (artifact.get('part') or 'base') not in pick):
+            continue
+        _, mine = planned(config, values, artifact)
+        outs = [Path(mine['output'])] + [Path(file) for file in expanded(artifact.get('beside', []), mine)]
+        for path in outs:
+            put(dist / path.name, path.read_bytes())
+            kit.append(path.name)
+    for part, table in config.get('compose', {}).items():
+        if not isinstance(table, dict) or (pick is not None and part not in pick):
+            continue
+        for name in files(root, table.get('headers', [])):
+            put(dist / name, (root / name).read_bytes())
+            kit.append(name)
+        for asset in table.get('assets', []):
+            put(dist / Path(asset).name, (out / asset).read_bytes())
+            kit.append(Path(asset).name)
+    for name in files(root, ['license', 'third_party/*/license']):
+        put(dist / name, (root / name).read_bytes())
+        kit.append(name)
+    kit = list(dict.fromkeys(kit))
+    print('\n'.join(kit))
+    return kit
 
 
 def prepared(args, here=False):
@@ -131,7 +203,9 @@ def prepared(args, here=False):
     os.environ['ZIG_GLOBAL_CACHE_DIR'] = str(cache / 'global')
     os.environ['ZIG_LOCAL_CACHE_DIR'] = str(cache / 'local')
     zig = fetch.zig_found(config['zig']) or die('zig %s is neither fetched nor on the path' % config['zig']['version'])
-    return config, shared.variables(config, args, target, zig)
+    values = shared.variables(config, args, target, zig)
+    values['paths'] = path_defines(config)
+    return config, values
 
 
 def ready(args, here=False):
@@ -142,10 +216,13 @@ def ready(args, here=False):
     return config, values
 
 
-def made(config, values, tree=None, part=None):
+def made(config, values, tree=None, part=None, tests=True):
     done, shipped = [], []
+    build_set = None if part is None else {'base'} | set(part)
     for artifact in artifacts(config):
-        if part is not None and artifact.get('part') not in (None, part):
+        if not tests and artifact.get('test'):
+            continue
+        if build_set is not None and (artifact.get('part') or 'base') not in build_set:
             continue
         done.append(built(config, values, artifact, tree))
         shipped += [] if artifact.get('test') else done[-1][1]
@@ -153,17 +230,20 @@ def made(config, values, tree=None, part=None):
     return done
 
 
-def build(args, here=False):
+def build(args, here=False, tests=True):
     config, values = ready(args, here)
-    return config, values, made(config, values, part=args.part)
+    return config, values, made(config, values, part=args.part, tests=tests)
 
 
 def main():
     args = shared.arguments(pack='--pack')
-    config, values, made = build(args)
+    config, values, made = build(args, tests=False)
     print('\n'.join(paths[0].as_posix() for _, paths in made if paths))
+    pick = None if args.part is None else set(args.part)
+    kit = composed(config, values, pick)
     if args.pack:
-        packed(config, values)
+        packed(config, values, kit)
+        prove(config, values, pick)
 
 
 if __name__ == '__main__':
