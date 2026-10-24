@@ -157,6 +157,7 @@ def prove(config, values, pick):
     included = clean / 'include'
     includes = [included.as_posix()]
     includes += sorted(sub.as_posix() for sub in included.rglob('*') if sub.is_dir())
+    includes += expanded(config['package'].get('include', []), values)
     artifact = {'name': 'proof', 'kind': 'program', 'sources': [proof],
                 'include': includes,
                 'link': [(clean / name).as_posix() for name in archives(config, values)]
