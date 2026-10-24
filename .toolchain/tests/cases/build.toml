@@ -29,6 +29,12 @@ claims = { status = 0, line = ["package proof: built ran"] }
 false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/built", "--out", "{case}/out", "--pack", "--set", "outside={case}/none.c"] }
 
 [[case]]
+name = "the proof includes the folders of [package] include"
+run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/built", "--out", "{case}/out", "--pack"]
+claims = { status = 0, line = ["package proof: built ran"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/built", "--out", "{case}/out", "--pack", "--set", "outside_include={case}/none"] }
+
+[[case]]
 name = "a pack of a part without the base skips the proof"
 run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/built", "--out", "{case}/out", "--pack", "--part", "extra"]
 claims = { status = 0, has = ["stamped.txt", "{case}/out/built-{target}.zip"], lacks = ["package proof"] }
