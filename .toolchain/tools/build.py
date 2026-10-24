@@ -59,7 +59,7 @@ def planned(config, values, artifact, tree=None):
         mine.update(config['targets'][artifact['target']], target=artifact['target'])
     name = expand(artifact['name'], mine)
     mine['name'] = name
-    sources = files(Path(values['root']), [expand(pattern, mine) for pattern in artifact['sources']])
+    sources = files(Path(values['root']), expanded(artifact['sources'], mine))
     if not sources:
         die('no file matches the sources of %s' % name)
     output = Path(values['out']) / artifact.get('folder', '') / expand(kind['output'], mine)
