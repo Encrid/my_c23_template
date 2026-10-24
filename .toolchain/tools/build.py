@@ -159,7 +159,8 @@ def prove(config, values, pick):
     includes += sorted(sub.as_posix() for sub in included.rglob('*') if sub.is_dir())
     artifact = {'name': 'proof', 'kind': 'program', 'sources': [proof],
                 'include': includes,
-                'link': [(clean / name).as_posix() for name in archives(config, values)]}
+                'link': [(clean / name).as_posix() for name in archives(config, values)]
+                + expanded(config['package'].get('link', []), values)}
     _, made = built(config, dict(values, out=(clean / 'host').as_posix()), artifact)
     if values['target'] == shared.this_target(config['targets']):
         run([made[0].as_posix()], values['root'])
