@@ -178,6 +178,9 @@ It runs the program if the target runs here, and `shared.run` stops the tool if 
 It then writes `package proof: <project> ran`, or `package proof: <project> built` when the target does not run here.
 
 `archives` gives the shipped archives that the proof links.
+`[package] link` names more files that the proof links, after the shipped archives.
+Such a file is not in the package, for example an archive of a different project that `[[source]]` fetches.
+`prove` expands each name with the variables of the build, before it gives the proof its own `out`.
 
 ## Limits
 
