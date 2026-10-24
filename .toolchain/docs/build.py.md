@@ -181,6 +181,9 @@ It then writes `package proof: <project> ran`, or `package proof: <project> buil
 `[package] link` names more files that the proof links, after the shipped archives.
 Such a file is not in the package, for example an archive of a different project that `[[source]]` fetches.
 `prove` expands each name with the variables of the build, before it gives the proof its own `out`.
+`[package] include` names more folders for the include path of the proof, after the folders of the package.
+Such a folder holds headers that the headers of the package include, for example the headers of a different project.
+`prove` expands each folder in the same way.
 
 ## Limits
 
