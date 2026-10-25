@@ -7,6 +7,7 @@
     #define POOL_H
 
 void *pool_take(void);
+void *wrapped_take(void);
 int plain(int number);
 
 #endif

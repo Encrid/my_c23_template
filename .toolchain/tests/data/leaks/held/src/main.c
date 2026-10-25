@@ -27,14 +27,15 @@ static int whole(void)
     char *moved = realloc(nullptr, 8);
     char *zeroed = calloc(2, 4);
     void *pooled = pool_take();
+    void *wrapped = wrapped_take();
     box_t *box = box_open(3);
 
     free(kept);
     dropped(free, moved);
     free(zeroed);
     free(pooled);
-    box_close(box);
-    return (plain(-1));
+    free(wrapped);
+    return (box_close(box) + plain(-1));
 }
 
 static int spoiled(void)

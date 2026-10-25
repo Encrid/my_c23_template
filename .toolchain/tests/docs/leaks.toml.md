@@ -5,7 +5,7 @@ Each case runs `test.py` on a project of `.toolchain/tests/data/leaks`, with its
 
 | Project | Content |
 | --- | --- |
-| `held` | The program `held`, from five files of `src` and `tests/grab.c`. Its first argument picks what it does, and each case of the project gives one argument. |
+| `held` | The program `held`, from six files of `src` and `tests/grab.c`. Its first argument picks what it does, and each case of the project gives one argument. The case `silent` runs Python, which writes no line. |
 | `opened` | The library `chunk`, which takes memory in `chunk_make` and frees it in `chunk_drop`, and the test program `loader`. `loader` opens the library, calls it and closes it. |
 | `excused` | The program `keep`, which keeps one block of memory, and an exemption of `project.toml` that excuses it. |
 | `badexempt` | The same program, with an exemption that states no reason and an exemption for a kind that no case keeps. |
@@ -13,7 +13,9 @@ Each case runs `test.py` on a project of `.toolchain/tests/data/leaks`, with its
 
 The case `whole` of `held` frees each block that it takes: with `free`, and with `free` given as a pointer.
 It takes a block in `src/pool.c` and frees it in `src/main.c`, and it opens and closes a box of the pair `box_open`.
-The last `#include` of `src/main.c` is in an `#if`. `src/plain.c` uses no counted function.
+The last `#include` of `src/main.c` is in an `#if` that holds only lines of the preprocessor.
+The includes and the code of `src/wrapped.c` are in one `#if`. `src/plain.c` uses no counted function.
+`box_close` gives back a box and returns a number, and `free` returns nothing.
 `[leaks] with` of `held` names the file of the variable `counted`, which is `tests/leaks.toml` by default.
 That file names `grab` as a function that takes memory, and the pair `box_open` and `box_close`.
 `grab` and `seize` of `tests/grab.c` take memory with no count. The case `named` frees the result of `grab`, and `foreign` frees the result of `seize`.
@@ -21,6 +23,7 @@ That file names `grab` as a function that takes memory, and the pair `box_open` 
 | Case | Claim | False variant |
 | --- | --- | --- |
 | a case that gives back what it takes | `test` on the case `whole` writes `leaks: 1 cases, 1 give back what they take`, and ends with 0. | The case `kept`. |
+| a case that writes no line | `test` on `silent` writes `leaks: 1 cases, 1 give back what they take`, and ends with 0. | The case `kept`. |
 | a case that keeps memory | `test` on `kept` writes `leaks: kept keeps 1 memory`, and stops. | The case `whole`. |
 | a call of realloc with 0 bytes | `test` on `zero` writes `leaks: zero calls realloc with 0 bytes`, and stops. | The case `whole`. |
 | memory that no count took | `test` on `foreign` writes `leaks: foreign gives back 1 memory that it did not take`, and stops. | The case `named`. |

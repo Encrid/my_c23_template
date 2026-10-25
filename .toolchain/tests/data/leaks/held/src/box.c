@@ -26,11 +26,12 @@ box_t *box_open(int size)
     return (box);
 }
 
-void box_close(box_t *box)
+int box_close(box_t *box)
 {
     if (box)
         opened--;
     free(box);
+    return (opened);
 }
 
 int box_count(void)

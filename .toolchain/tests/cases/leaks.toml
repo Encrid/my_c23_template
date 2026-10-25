@@ -5,6 +5,12 @@ claims = { status = 0, line = ["leaks: 1 cases, 1 give back what they take"] }
 false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/leaks/held", "--out", "{case}/out", "--leaks", "-k", "kept"] }
 
 [[case]]
+name = "a case that writes no line"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/leaks/held", "--out", "{case}/out", "--leaks", "-k", "silent"]
+claims = { status = 0, line = ["leaks: 1 cases, 1 give back what they take"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/leaks/held", "--out", "{case}/out", "--leaks", "-k", "kept"] }
+
+[[case]]
 name = "a case that keeps memory"
 run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/leaks/held", "--out", "{case}/out", "--leaks", "-k", "kept"]
 claims = { status = 1, line = ["leaks: kept keeps 1 memory", "leaks: 1 cases, 0 give back what they take"], has = ["cases that do not give back what they take: 1; exemptions that are faults: 0"] }

@@ -47,6 +47,12 @@ claims = { line = ["misfit"] }
 false = { run = ["{out}/held{exe}"] }
 
 [[case]]
+name = "silent"
+run = ["{python}", "-c", "print('silent')"]
+claims = { line = ["silent"] }
+false = { run = ["{python}", "-c", "print('loud')"] }
+
+[[case]]
 name = "helped"
 run = ["{out}/held{exe}"]
 helper = { run = ["{out}/held{exe}", "served"], wait = "ready" }

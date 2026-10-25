@@ -9,7 +9,7 @@
 typedef struct box box_t;
 
 box_t *box_open(int size);
-void box_close(box_t *box);
+int box_close(box_t *box);
 int box_count(void);
 int box_number(int base, box_t *box);
 char *box_format(const char *text, ...);
