@@ -13,6 +13,7 @@ from pathlib import Path
 
 import branches
 import build
+import rewrite
 import shared
 from said import checked
 from shared import die, expand, expanded, files, known, located, status
@@ -230,7 +231,7 @@ def measured(args):
     config, values = build.ready(args, True)
     values['out'] = (Path(values['build']) / 'branches' / values['target']).as_posix()
     probes, gaps = branches.probed(config, values)
-    made = build.made(config, values, branches.tree(values))
+    made = build.made(config, values, rewrite.tree(values, 'branches'))
     unlinked = [name for name, paths in made if not paths]
     if unlinked:
         die('the cases need what is linked: ' + ' '.join(unlinked))
