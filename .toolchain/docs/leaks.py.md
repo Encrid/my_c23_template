@@ -17,7 +17,7 @@ Each resource has a kind. Functions of the code take a resource of a kind, and f
 A function that takes a resource of a pair gives a pointer. The function that gives it back gets that pointer as its first argument.
 
 A take adds 1 when its value is not zero, and a give subtracts 1 when its value is not zero.
-A value is not zero when one of its bytes is not zero: a pointer that is not null, a number that is not 0, or a handle whose bytes are not all 0.
+A value is not zero when one of its bytes is not zero. Examples are a pointer that is not null, a number that is not 0, and a handle with a byte that is not 0.
 The value of a take of `memory` or of a pair is its result, and the value of a give is its first argument.
 `realloc` adds 1 when its pointer is null and its result is not null.
 `realloc` with 0 bytes is a fault, because C23 does not define it.
@@ -139,7 +139,7 @@ An exemption that excuses no kept resource is a fault, so a case that gives the 
 | `kinded(names, kind, acts)` | Adds the effects of one table `[leaks.kinds.<kind>]` to `names`. It stops on a key or a place that does not fit. |
 | `plain(kind)` | Gives a type of the syntax tree with each `typedef` replaced, if the dump gives it. A header can use a name that the end of the file does not know. |
 | `declaration(node)` | Gives the type of the result and the types of the parameters of the declaration of a function. |
-| `found(root, path, tree, names)` | Gives the counted functions that a file uses and does not define, the declaration of each of them, and the end of the definition of each give at `result` that the file uses and defines. |
+| `found(root, path, tree, names)` | Gives the counted functions that a file uses and does not define, and the declaration of each of them. It also gives the end of the definition of each give at `result` that the file uses. |
 | `directive(line)` | Gives the name of the directive of a line, an empty text for a blank line, or `None` for a line of code. |
 | `included(text)` | Gives the byte after the last `#include` of a file, or after the `#endif` of the `#if` that holds it. |
 | `fitted(name, effects, returned, parameters)` | Stops if a place of a function does not fit its declaration. |
