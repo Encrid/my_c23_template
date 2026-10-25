@@ -56,6 +56,8 @@ The command `build` and the command `pack` build only the shippable artifacts. S
 
 The caches of zig are the variables `ZIG_GLOBAL_CACHE_DIR` and `ZIG_LOCAL_CACHE_DIR` of the environment.
 The commands of the steps and of the cases get them too.
+When the cache is in the folder of the project, each variable is a path from that folder, since each step runs there.
+Thus an archive that zig makes names its members with no folder of the machine. Else each variable is a whole path.
 `tools` stops if a program is not there: `the tool <name> is not at <path>`.
 
 ## main
@@ -164,6 +166,10 @@ With no `pick`, it composes every part. A part with no header, for example a hos
 It puts each file of the deliverable `kit` into the zip, at its path from `dist`.
 So the zip is the deliverable that `composed` made, and `pack --part` zips the parts that it picks.
 `packed` writes the path of the zip, then the name of each file in the zip.
+
+Before it writes the zip, `packed` reads each file of the deliverable.
+It stops if a file holds the folder of the project or the folder of the build, with `/` or with `\`: `<file> holds <path>, a path of the machine that built it`.
+Thus a package does not depend on the machine that built it, for example a library that names another library by its path.
 
 ## The package proof
 
