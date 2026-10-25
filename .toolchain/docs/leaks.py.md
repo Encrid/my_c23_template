@@ -44,13 +44,13 @@ After the last `#include` of a file, a block renames each counted function that 
 
 Each later use of the name calls the function that counts, also a use of the name as a pointer.
 No header sees the new name, because the headers come before the block.
-If the last `#include` is in an `#if`, the block comes after the `#endif` of that `#if`.
+If the last `#include` is in an `#if` that holds only lines of the preprocessor, the block comes after the `#endif` of that `#if`.
 A `#line` after the block keeps the numbers of the lines.
 
 At the end of the file, `#pragma pop_macro` gives each name its first meaning again. Then the file has these parts:
 
 - an array of `_Atomic long long`, with a count for each kind and a count of the calls of `realloc` with 0 bytes;
-- for each counted function, a `static` function that counts and calls it, with the parameters of its declaration;
+- for each counted function, a `static` function that counts and calls it, with the parameters of its declaration and with each `typedef` replaced;
 - the writer of `rewrite.py`: `.toolchain/docs/rewrite.py.md`, *The writer*.
 
 Each program writes one line `<path> <counts>` for each file into the file of the variable `C23_LEAKS`.
@@ -103,8 +103,10 @@ An exemption that excuses no kept resource is a fault, so a case that gives the 
 | Function | Result |
 | --- | --- |
 | `listed(config, values)` | Gives the role and the kind of each counted function, and the list of the kinds. It reads the files of `[leaks] with`. |
+| `plain(kind)` | Gives a type of the syntax tree with each `typedef` replaced, if the dump gives it. A header can use a name that the end of the file does not know. |
 | `declaration(node)` | Gives the type of the result and the types of the parameters of the declaration of a function. |
 | `found(root, path, tree, names)` | Gives the counted functions that a file uses and does not define, and the declaration of each of them. |
+| `directive(line)` | Gives the name of the directive of a line, an empty text for a blank line, or `None` for a line of code. |
 | `included(text)` | Gives the byte after the last `#include` of a file, or after the `#endif` of the `#if` that holds it. |
 | `wrapped(name, role, kinds, declaration)` | Gives the `static` function that counts the calls of a function. |
 | `rewritten(text, path, used, declared, names, kinds)` | Gives a file with its count. |
