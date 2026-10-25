@@ -17,7 +17,8 @@ With `--pack`, it also puts the deliverable into a zip file.
 | `planned(config, values, artifact, tree)` | Gives the kind and the variables of one artifact, as steps 1 to 4 of *Artifacts* tell. |
 | `built(config, values, artifact, tree)` | Builds one artifact. It gives the name of the artifact and its files. |
 | `packaged(config, values, made)` | Writes `package.txt`. |
-| `packed(config, values, kit)` | Writes the zip of the deliverable `kit`. Then it writes the path of the zip and the names in it. |
+| `leaked(values, kit)` | Stops if a file of the deliverable `kit` holds the folder of the project or of the build, as *The zip* tells. |
+| `packed(config, values, kit)` | Writes the zip of the deliverable `kit`, after `leaked`. Then it writes the path of the zip and the names in it. |
 | `artifacts(config)` | Gives each module of `[[modules]]` over the defaults of `[module]`, then each artifact of `[[artifact]]`, and after each one its variants. |
 | `path_defines(config)` | Gives the `*_PATH` macros of the test libraries, for the variable `paths`. |
 | `archives(config, values)` | Gives the path of each shipped archive, from the output folder. |
