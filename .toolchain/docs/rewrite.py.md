@@ -1,8 +1,8 @@
 # .toolchain/tools/rewrite.py
 
-`rewrite.py` makes a changed copy of the code, for a run of the cases on that copy.
-It holds the parts that such runs share.
-`.toolchain/docs/branches.py.md` tells what `test --branches` writes into the copy.
+`rewrite.py` makes a changed copy of the code, for `test --branches` and for `test --leaks`.
+It holds the parts that the two runs share.
+`.toolchain/docs/branches.py.md` and `.toolchain/docs/leaks.py.md` tell what each run writes into the copy.
 
 ## The steps
 
