@@ -65,6 +65,18 @@ claims = { status_not = 0, has = ["project.toml states variables.language, and t
 false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/copy", "--out", "{case}/out"] }
 
 [[case]]
+name = "a list of tables in two files"
+run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/joined", "--out", "{case}/out"]
+claims = { status = 0, has = ["alpha", "beta"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/config", "--out", "{case}/out"] }
+
+[[case]]
+name = "a key in two files of config"
+run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/clash", "--out", "{case}/out"]
+claims = { status_not = 0, has = ["config/two.toml states variables.word, and config/one.toml states it too"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/copy", "--out", "{case}/out"] }
+
+[[case]]
 name = "a built-in variable in [variables]"
 run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/builtin", "--out", "{case}/out"]
 claims = { status_not = 0, has = ["[variables] names a built-in variable or a key of a target: root"] }
