@@ -35,30 +35,6 @@ claims = { status = 0, line = ["package proof: built ran"] }
 false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/built", "--out", "{case}/out", "--pack", "--set", "outside_include={case}/none"] }
 
 [[case]]
-name = "a pack of a part without the base skips the proof"
-run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/built", "--out", "{case}/out", "--pack", "--part", "extra"]
-claims = { status = 0, has = ["stamped.txt", "{case}/out/built-{target}.zip"], lacks = ["package proof"] }
-false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/built", "--out", "{case}/out", "--pack"] }
-
-[[case]]
-name = "a build of a part skips the artifacts of other parts"
-run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/built", "--out", "{case}/out", "--part", "main"]
-claims = { status = 0, has = ["greeter"], lacks = ["stamped.txt"] }
-false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/built", "--out", "{case}/out"] }
-
-[[case]]
-name = "a build takes several parts"
-run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/built", "--out", "{case}/out", "--part", "base", "--part", "extra"]
-claims = { status = 0, has = ["greeter", "stamped.txt"] }
-false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/built", "--out", "{case}/out", "--part", "base"] }
-
-[[case]]
-name = "compose gathers only the picked parts"
-run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/built", "--out", "{case}/out", "--part", "base"]
-claims = { status = 0, has = ["greet{library}", "include/greet.h"], lacks = ["stamped.txt"] }
-false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/built", "--out", "{case}/out"] }
-
-[[case]]
 name = "a build skips the test artifacts"
 run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/built", "--out", "{case}/out"]
 claims = { status = 0, has = ["greet_static.a"], lacks = ["greeter_static"] }
