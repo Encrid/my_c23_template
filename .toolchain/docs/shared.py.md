@@ -115,7 +115,7 @@ If `repository` tells that the root is the top folder of a git repository, `ours
 These are the files that git tracks, and the files that git does not ignore.
 Else, `ours` walks the folders of the root, as `.gitignore` tells: it skips `build` at the root, and each `__pycache__`.
 `ours` gives only the files that exist, as paths from the root.
-It leaves out the files of `tests` and of `.toolchain/tests`. Thus no check reads the tests of the project or of the toolchain.
+It leaves out the files of `tests`, and of `.toolchain/tests` in the repository `my_c23_template`. Thus no check reads the tests of the project or of the toolchain.
 
 With `tests=True`, `ours` keeps the files of `tests`, and leaves out only `.toolchain/tests`. The check of the retired words uses it.
 
