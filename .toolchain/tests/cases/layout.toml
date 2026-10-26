@@ -155,6 +155,13 @@ claims = { status = 1, lacks = ["docs/contributing/timings.md"] }
 false = { files = { "{case}/project/.toolchain/project.toml" = "" } }
 
 [[case]]
+name = "a file of a preset"
+run = ["{python}", "{root}/.toolchain/tools/layout.py", "--root", "{case}/project"]
+files = { "{case}/project/.toolchain/project.toml" = "", "{case}/project/.toolchain/presets/native_module/native_kinds.toml" = "" }
+claims = { status = 1, lacks = ["native_kinds.toml"] }
+false = { files = { "{case}/project/.toolchain/presets/native_kinds.toml" = "" } }
+
+[[case]]
 name = "third_party holds anything"
 run = ["{python}", "{root}/.toolchain/tools/layout.py", "--root", "{case}/project"]
 files = { "{case}/project/.toolchain/project.toml" = "", "{case}/project/third_party/bridge/bridge-host.exe" = "" }
