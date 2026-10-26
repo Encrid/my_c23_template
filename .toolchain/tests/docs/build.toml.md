@@ -16,6 +16,8 @@ The cases of the options, of the report and of the files of a project run a shor
 | `untargeted` | The same artifact and variant, but the variant has no `target`. |
 | `module` | The modules `mod`, `two` and its variant `three`, over the defaults of `[module]`, and the program `pathcheck` that reads their `*_PATH` macros. |
 | `config` | The artifact `thing`, stated in a file of `.toolchain/config` and not in `project.toml`. |
+| `joined` | The artifact `alpha` in `project.toml`, and the artifact `beta` in `more.toml` of `.toolchain/config`. |
+| `clash` | `[variables] word` in `one.toml` and in `two.toml` of `.toolchain/config`. |
 | `leaky` | The artifact `stamped`, whose section holds `{root}`: the folder of the project. |
 | `archived` | The archive `one`. |
 | `started` | The program `sizer`, which calls `stat`. |
@@ -57,6 +59,8 @@ Thus each machine checks a file that holds a path of its machine without the fix
 | the files of config merge | `build` on `config` makes `thing`, whose `[[artifact]]` is in a file of `.toolchain/config`, not `project.toml`. | `build` on `copy`. |
 | a variable that [variables] does not have | `--set nowhere=1` stops `build`: `--set nowhere=1: [variables] has no nowhere`. | No `--set`. |
 | a key in project.toml and in toolchain.toml | `build` on `twice` stops: `project.toml states variables.language, and toolchain.toml states it too`. | `build` on `copy`. |
+| a list of tables in two files | `build` on `joined` makes `alpha` and `beta`. | `build` on `config`. |
+| a key in two files of config | `build` on `clash` stops: `config/two.toml states variables.word, and config/one.toml states it too`. | `build` on `copy`. |
 | a built-in variable in [variables] | `build` on `builtin` stops: `[variables] names a built-in variable or a key of a target: root`. | `build` on `copy`. |
 | a target that the toolchain does not have | `--target nowhere` stops `build`: `no target nowhere; the targets:`. | No `--target`. |
 | a tool that is not there | `--set tool=nowhere` stops `build`: `the tool interpreter is not at nowhere`. | No `--set`. |

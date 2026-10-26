@@ -18,7 +18,7 @@ The tools import it. It does not run alone.
 | --- | --- |
 | `die(why)` | Stops the tool with the message `<tool>: <why>`, where `<tool>` is the file name of the tool. |
 | `known(table, what, where)` | Gives `table`. It stops if `table` has a key that `KEYS[what]` does not have. |
-| `merged(into, more, above)` | Adds the keys of `more` to `into`, as the section *The configuration* tells. |
+| `merged(into, more, name, whence, above)` | Adds the keys of `more`, the file `name`, to `into`, as the section *The configuration* tells. `whence` gives the file of each key. |
 | `config(root)` | Gives the configuration of the project in `root`. |
 | `located(text, values)` | Gives the path of `text` in the root, after it replaces the variables. |
 | `expand(text, values)` | Gives `text` with the value of each variable in place of the variable. |
@@ -43,11 +43,13 @@ The tools import it. It does not run alone.
 `merged` adds each key of a later file to the configuration:
 
 1. If the key names a table in the two files, `merged` merges the two tables in the same way.
-2. Else, if `.toolchain/toolchain.toml` has the key, the tool stops.
-3. Else, the key and its value go into the configuration.
+2. Else, if the key names a list of tables in the two files, `merged` puts the two lists together.
+3. Else, if an earlier file has the key, the tool stops.
+4. Else, the key and its value go into the configuration.
 
-The message names the full key, for example `project.toml states variables.language, and toolchain.toml states it too`.
-Thus a list of tables, for example `[[artifact]]`, comes from one file only.
+In a list of tables, the tables of the earlier file come first.
+The message names the later file, the full key and the earlier file, for example `project.toml states variables.language, and toolchain.toml states it too`.
+The name of a file is its path from `.toolchain`, for example `config/sources.toml`.
 
 ## Variables
 

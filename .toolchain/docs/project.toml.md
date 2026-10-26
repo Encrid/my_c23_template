@@ -6,7 +6,8 @@ zig, the compiler flags and the limits of the style are in `.toolchain/toolchain
 The tools read every file as one configuration.
 
 - A table of a file adds its keys to the table of another file that has the same name.
-- If two files give the same key, the tools stop: `project.toml states <key>, and toolchain.toml states it too`.
+- If two files give the same list of tables, for example `[[source]]` or `[[artifact]]`, the list holds the tables of the two files.
+- If two files give the same key, the tools stop: `<file> states <key>, and <file> states it too`.
 - A file of a project cannot change a value of `.toolchain/toolchain.toml`. Do not change `.toolchain/toolchain.toml`.
 
 Each section of this document gives the keys of one table.
