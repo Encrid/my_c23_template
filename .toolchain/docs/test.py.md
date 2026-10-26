@@ -50,6 +50,8 @@ The number of copies is `--copies`, or `[test] copies`. If neither gives it, `ma
 `main` stops at step 7 if a case failed. Thus step 8 runs only if each case passed.
 `.toolchain/docs/said.py.md` gives the checks of step 7.
 
+In the template, the workflow `toolchain.yml` runs `fetch`, `test --toolchain` and `test --toolchain --break` on each of the 6 targets of `ci.yml`.
+
 The message of step 1 is `<target> does not run here: build it, and test it where it runs`.
 
 ## Groups
