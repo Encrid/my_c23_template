@@ -73,14 +73,13 @@ A list value in a text needs a separator: `{<name>:<separator>}`. `expand` joins
 
 ## The options
 
-`arguments` reads the options `--root`, `--target`, `--part`, `--debug`, `--out` and `--set`.
+`arguments` reads the options `--root`, `--target`, `--debug`, `--out` and `--set`.
 A tool adds its own options:
 
 - `arguments('--commits')` adds the option `--commits <value>`. Its value is in `args.commits`, or `None` if the option is not given.
 - `arguments(pack='--pack')` adds the option `--pack`, with no value. `args.pack` tells if the option is given.
 
 The default of `--root` is `HERE`. `arguments` makes the root an absolute path.
-`--part` can be given more than one time. `args.part` is the list of its values, or `None`.
 
 ## The legal notice
 
