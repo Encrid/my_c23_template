@@ -1,7 +1,7 @@
 # .toolchain/presets
 
 A preset holds the files of the configuration for one kind of project, for example a module of a backend.
-Only the template has `.toolchain/presets`. A project copies the files of its preset into `.toolchain/config`.
+Only the repository `my_c23_template` has `.toolchain/presets`. A project copies the files of its preset into `.toolchain/config`.
 The tools then read them as the other files of the configuration. `.toolchain/docs/project.toml.md` tells how the files merge.
 
 ## native_module
