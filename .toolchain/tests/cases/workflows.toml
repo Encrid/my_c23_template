@@ -1,0 +1,26 @@
+[[case]]
+name = "the workflows of the template"
+run = ["{python}", "{root}/.toolchain/tools/workflows.py", "--root", "{root}"]
+claims = { status = 0, line = ["no fault in 4 workflows"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/workflows.py", "--root", "{case}/p"], files = { "{case}/p/.toolchain/project.toml" = "[project]\nname = \"p\"\n", "{case}/p/.github/workflows/ci.yml" = "jobs:\n  check:\n    strategy:\n      matrix:\n        include:\n          - target: x86_64-linux-gnu\n          - target: aarch64-linux-gnu\n          - target: aarch64-macos\n          - target: x86_64-macos\n          - target: x86_64-windows-gnu\n" } }
+
+[[case]]
+name = "a target that a workflow does not build"
+run = ["{python}", "{root}/.toolchain/tools/workflows.py", "--root", "{case}/p"]
+files = { "{case}/p/.toolchain/project.toml" = "[project]\nname = \"p\"\n", "{case}/p/.github/workflows/ci.yml" = "jobs:\n  check:\n    strategy:\n      matrix:\n        include:\n          - target: x86_64-linux-gnu\n          - target: aarch64-linux-gnu\n          - target: aarch64-macos\n          - target: x86_64-macos\n          - target: x86_64-windows-gnu\n" }
+claims = { status = 1, line = [".github/workflows/ci.yml: the matrix does not build aarch64-windows-gnu"] }
+false = { files = { "{case}/p/.github/workflows/ci.yml" = "jobs:\n  check:\n    strategy:\n      matrix:\n        include:\n          - target: x86_64-linux-gnu\n          - target: aarch64-linux-gnu\n          - target: aarch64-macos\n          - target: x86_64-macos\n          - target: x86_64-windows-gnu\n          - target: aarch64-windows-gnu\n" } }
+
+[[case]]
+name = "a name that is not a target"
+run = ["{python}", "{root}/.toolchain/tools/workflows.py", "--root", "{case}/p"]
+files = { "{case}/p/.toolchain/project.toml" = "[project]\nname = \"p\"\n", "{case}/p/.github/workflows/ci.yml" = "jobs:\n  check:\n    strategy:\n      matrix:\n        include:\n          - target: x86_64-linux-gnu\n          - target: aarch64-linux-gnu\n          - target: aarch64-macos\n          - target: x86_64-macos\n          - target: x86_64-windows-gnu\n          - target: aarch64-windows-gnu\n          - target: riscv64-linux-gnu\n" }
+claims = { status = 1, line = [".github/workflows/ci.yml: riscv64-linux-gnu is not a target of the toolchain"] }
+false = { files = { "{case}/p/.github/workflows/ci.yml" = "jobs:\n  check:\n    strategy:\n      matrix:\n        include:\n          - target: x86_64-linux-gnu\n          - target: aarch64-linux-gnu\n          - target: aarch64-macos\n          - target: x86_64-macos\n          - target: x86_64-windows-gnu\n          - target: aarch64-windows-gnu\n" } }
+
+[[case]]
+name = "a workflow with no matrix"
+run = ["{python}", "{root}/.toolchain/tools/workflows.py", "--root", "{case}/p"]
+files = { "{case}/p/.toolchain/project.toml" = "[project]\nname = \"p\"\n", "{case}/p/.github/workflows/cla.yml" = "name: cla\non:\n  pull_request_target:\n" }
+claims = { status = 0, line = ["no fault in 1 workflows"] }
+false = { files = { "{case}/p/.github/workflows/cla.yml" = "name: cla\njobs:\n  cla:\n    strategy:\n      matrix:\n        include:\n          - target: x86_64-linux-gnu\n" } }
