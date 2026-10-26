@@ -58,7 +58,6 @@ beside = ["{out}/greet{library}"]
 [[artifact]]
 name = "stamped"
 kind = "stamped"
-part = "extra"
 sources = ["src/note.txt"]
 manifest = ["first", "second"]
 variants = [{ name = "plain", unstamped = true }]
