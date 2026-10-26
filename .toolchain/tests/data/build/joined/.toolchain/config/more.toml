@@ -1,0 +1,4 @@
+[[artifact]]
+name = "beta"
+kind = "file"
+sources = ["note.txt"]
