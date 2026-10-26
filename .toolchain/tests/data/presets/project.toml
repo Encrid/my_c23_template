@@ -1,0 +1,8 @@
+[project]
+name = "probe"
+
+[[artifact]]
+name = "probe"
+kind = "native_module"
+sources = ["src/probe.c"]
+manifest = ["probe", "tick"]

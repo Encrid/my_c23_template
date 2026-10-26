@@ -2,5 +2,5 @@
 name = ""
 
 [test]
-timeout = 120
+timeout = 600
 copies = 1

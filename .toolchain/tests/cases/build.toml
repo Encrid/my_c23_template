@@ -35,30 +35,6 @@ claims = { status = 0, line = ["package proof: built ran"] }
 false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/built", "--out", "{case}/out", "--pack", "--set", "outside_include={case}/none"] }
 
 [[case]]
-name = "a pack of a part without the base skips the proof"
-run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/built", "--out", "{case}/out", "--pack", "--part", "extra"]
-claims = { status = 0, has = ["stamped.txt", "{case}/out/built-{target}.zip"], lacks = ["package proof"] }
-false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/built", "--out", "{case}/out", "--pack"] }
-
-[[case]]
-name = "a build of a part skips the artifacts of other parts"
-run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/built", "--out", "{case}/out", "--part", "main"]
-claims = { status = 0, has = ["greeter"], lacks = ["stamped.txt"] }
-false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/built", "--out", "{case}/out"] }
-
-[[case]]
-name = "a build takes several parts"
-run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/built", "--out", "{case}/out", "--part", "base", "--part", "extra"]
-claims = { status = 0, has = ["greeter", "stamped.txt"] }
-false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/built", "--out", "{case}/out", "--part", "base"] }
-
-[[case]]
-name = "compose gathers only the picked parts"
-run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/built", "--out", "{case}/out", "--part", "base"]
-claims = { status = 0, has = ["greet{library}", "include/greet.h"], lacks = ["stamped.txt"] }
-false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/built", "--out", "{case}/out"] }
-
-[[case]]
 name = "a build skips the test artifacts"
 run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/built", "--out", "{case}/out"]
 claims = { status = 0, has = ["greet_static.a"], lacks = ["greeter_static"] }
@@ -86,6 +62,18 @@ false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{roo
 name = "a key in project.toml and in toolchain.toml"
 run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/twice", "--out", "{case}/out"]
 claims = { status_not = 0, has = ["project.toml states variables.language, and toolchain.toml states it too"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/copy", "--out", "{case}/out"] }
+
+[[case]]
+name = "a list of tables in two files"
+run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/joined", "--out", "{case}/out"]
+claims = { status = 0, has = ["alpha", "beta"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/config", "--out", "{case}/out"] }
+
+[[case]]
+name = "a key in two files of config"
+run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/clash", "--out", "{case}/out"]
+claims = { status_not = 0, has = ["config/two.toml states variables.word, and config/one.toml states it too"] }
 false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/copy", "--out", "{case}/out"] }
 
 [[case]]

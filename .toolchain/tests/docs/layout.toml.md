@@ -40,4 +40,5 @@ The project of the case `a full project` has these files, and the document of ea
 | a tool without its document | `tools/a.py` has no document: `tools/a.py: no document docs/tools/a.py.md`. | `docs/tools/a.py.md` is there. |
 | a document of a tool that is not there | `docs/tools/gone.py.md` has no file: `docs/tools/gone.py.md: no file has this document`. | `tools/gone.py` is there. |
 | a guide that [check] guides names | `[check] guides` names `timings.md`, so the layout allows `docs/contributing/timings.md`. The output does not name it. | `.toolchain/project.toml` is empty. |
+| a file of a preset | A file in a folder of `.toolchain/presets` makes no fault. No line names `native_kinds.toml`. | The file is in `.toolchain/presets`, not in a folder of a preset. |
 | third_party holds anything | A compiled file under `third_party` makes no fault. No line names `bridge-host.exe`. | The file is in `bridge`, not under `third_party`. |
