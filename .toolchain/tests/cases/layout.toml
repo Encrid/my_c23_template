@@ -1,7 +1,7 @@
 [[case]]
 name = "a full project"
 run = ["{python}", "{root}/.toolchain/tools/layout.py", "--root", "{case}/project"]
-claims = { status = 0, line = ["no fault in 35 files"] }
+claims = { status = 0, line = ["no fault in 36 files"] }
 false = { files = { "{case}/project/notes.txt" = "" } }
 
 [case.files]
@@ -18,6 +18,7 @@ false = { files = { "{case}/project/notes.txt" = "" } }
 "{case}/project/docs/contributing/agreement.md" = ""
 "{case}/project/docs/contributing/coding_style.md" = ""
 "{case}/project/docs/contributing/commits.md" = ""
+"{case}/project/docs/contributing/decisions.md" = ""
 "{case}/project/docs/contributing/documentation_style.md" = ""
 "{case}/project/docs/contributing/needs.md" = ""
 "{case}/project/docs/contributing/pull_request.md" = ""
@@ -63,6 +64,13 @@ run = ["{python}", "{root}/.toolchain/tools/layout.py", "--root", "{case}/projec
 files = { "{case}/project/.toolchain/project.toml" = "" }
 claims = { status = 1, line = ["docs/contributing/needs.md: the layout needs this file"] }
 false = { files = { "{case}/project/docs/contributing/needs.md" = "" } }
+
+[[case]]
+name = "the guide of the decisions that the layout needs"
+run = ["{python}", "{root}/.toolchain/tools/layout.py", "--root", "{case}/project"]
+files = { "{case}/project/.toolchain/project.toml" = "" }
+claims = { status = 1, line = ["docs/contributing/decisions.md: the layout needs this file"] }
+false = { files = { "{case}/project/docs/contributing/decisions.md" = "" } }
 
 [[case]]
 name = "the folder that the layout needs"
