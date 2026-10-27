@@ -2,8 +2,8 @@
 name = "the documents of this project"
 run = ["{python}", "{root}/.toolchain/tools/prose.py", "--root", "{case}"]
 files = { "{case}/.toolchain/project.toml" = "" }
-folders = { "{case}/docs/contributing" = ["docs/contributing/agreement.md", "docs/contributing/coding_style.md", "docs/contributing/commits.md", "docs/contributing/documentation_style.md", "docs/contributing/pull_request.md", "docs/contributing/tests.md"], "{case}/.toolchain/docs" = [".toolchain/docs/prose.py.md"] }
-claims = { status = 0, line = ["no fault in 7 files"] }
+folders = { "{case}/docs/contributing" = ["docs/contributing/agreement.md", "docs/contributing/coding_style.md", "docs/contributing/commits.md", "docs/contributing/documentation_style.md", "docs/contributing/needs.md", "docs/contributing/pull_request.md", "docs/contributing/tests.md"], "{case}/.toolchain/docs" = [".toolchain/docs/prose.py.md"] }
+claims = { status = 0, line = ["no fault in 8 files"] }
 false = { files = { "{case}/docs/a.md" = "# a\n\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26.\n" } }
 
 [[case]]

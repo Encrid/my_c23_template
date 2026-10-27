@@ -78,10 +78,10 @@ false = { files = { "{case}/p/docs/b.md" = "# b\n\nOne two three four five six s
 [[case]]
 name = "the documents of this project"
 run = ["{python}", "{root}/.toolchain/tools/dup.py", "--root", "{case}"]
-claims = { status = 0, line = ["no fault in 32 documents"] }
+claims = { status = 0, line = ["no fault in 33 documents"] }
 false = { files = { "{case}/docs/a.md" = "# a\n\nThe false variant changes the command or its input.\n" } }
 
 [case.folders]
 "{case}" = ["readme.md"]
-"{case}/docs/contributing" = ["docs/contributing/agreement.md", "docs/contributing/coding_style.md", "docs/contributing/commits.md", "docs/contributing/documentation_style.md", "docs/contributing/pull_request.md", "docs/contributing/tests.md"]
+"{case}/docs/contributing" = ["docs/contributing/agreement.md", "docs/contributing/coding_style.md", "docs/contributing/commits.md", "docs/contributing/documentation_style.md", "docs/contributing/needs.md", "docs/contributing/pull_request.md", "docs/contributing/tests.md"]
 "{case}/.toolchain/docs" = [".toolchain/docs/branches.py.md", ".toolchain/docs/build.py.md", ".toolchain/docs/c23.py.md", ".toolchain/docs/check.py.md", ".toolchain/docs/cla.py.md", ".toolchain/docs/clean.py.md", ".toolchain/docs/commits.py.md", ".toolchain/docs/cover.py.md", ".toolchain/docs/dup.py.md", ".toolchain/docs/fetch.py.md", ".toolchain/docs/header.txt.md", ".toolchain/docs/layout.py.md", ".toolchain/docs/licence.py.md", ".toolchain/docs/project.py.md", ".toolchain/docs/project.toml.md", ".toolchain/docs/prose.py.md", ".toolchain/docs/pseudo.py.md", ".toolchain/docs/said.py.md", ".toolchain/docs/shared.py.md", ".toolchain/docs/style.py.md", ".toolchain/docs/take.py.md", ".toolchain/docs/test.py.md", ".toolchain/docs/text.py.md", ".toolchain/docs/toolchain.toml.md", ".toolchain/docs/xref.py.md"]
