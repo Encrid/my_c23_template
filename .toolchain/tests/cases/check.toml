@@ -17,6 +17,7 @@ false = { run = ["{python}", "{root}/.toolchain/tools/check.py", "--root", "{cas
 "{case}/p/docs/contributing/agreement.md" = ""
 "{case}/p/docs/contributing/coding_style.md" = ""
 "{case}/p/docs/contributing/commits.md" = ""
+"{case}/p/docs/contributing/decisions.md" = ""
 "{case}/p/docs/contributing/documentation_style.md" = ""
 "{case}/p/docs/contributing/needs.md" = ""
 "{case}/p/docs/contributing/pull_request.md" = ""
