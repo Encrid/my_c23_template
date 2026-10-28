@@ -120,3 +120,27 @@ run = ["{python}", "{root}/.toolchain/tools/text.py", "--root", "{case}"]
 files = { "{case}/.toolchain/project.toml" = "[check.retired]\nutilise = \"use\"\n", "{case}/.toolchain/docs/a.md" = "# a\n\nWe utilise it.\n" }
 claims = { status = 0, line = ["no fault in 2 files"] }
 false = { files = { "{case}/docs/a.md" = "# a\n\nWe utilise it.\n" } }
+
+[[case]]
+name = "a call that [check] refuse names"
+run = ["{python}", "{root}/.toolchain/tools/text.py", "--root", "{case}"]
+folders = { "{case}/.toolchain" = [".toolchain/tests/data/text/refuse/project.toml"] }
+files = { "{case}/build/third_party/gaps/fetched.txt" = "0", "{case}/build/third_party/gaps/gaps.txt" = "wgpuInstanceWaitAny\n\nwgpuBufferGetMapState\n", "{case}/src/a.c" = "void a(void)\n{\n    wgpuInstanceWaitAny(0);\n}\n", "{case}/include/a.h" = "static inline void b(void)\n{\n    wgpuBufferGetMapState (0);\n}\n" }
+claims = { status = 1, matches = ["include/a.h:3: 'wgpuBufferGetMapState' is refused by .gaps./gaps[.]txt", "src/a.c:3: 'wgpuInstanceWaitAny' is refused by .gaps./gaps[.]txt"], lacks = ["'' is refused"] }
+false = { files = { "{case}/src/a.c" = "void a(void)\n{\n    wgpuInstanceWaitAnyLater(0);\n}\n", "{case}/include/a.h" = "static inline void b(void)\n{\n    my_wgpuBufferGetMapState (0);\n}\n" } }
+
+[[case]]
+name = "a file of [check] refuse that is not there"
+run = ["{python}", "{root}/.toolchain/tools/text.py", "--root", "{case}"]
+folders = { "{case}/.toolchain" = [".toolchain/tests/data/text/refuse/project.toml"] }
+files = { "{case}/build/third_party/gaps/fetched.txt" = "0" }
+claims = { status = 1, has = ["[check] refuse: ", "/build/third_party/gaps/gaps.txt is not there"] }
+false = { files = { "{case}/build/third_party/gaps/gaps.txt" = "wgpuInstanceWaitAny\n" } }
+
+[[case]]
+name = "a source of [check] refuse that is not fetched"
+run = ["{python}", "{root}/.toolchain/tools/text.py", "--root", "{case}"]
+folders = { "{case}/.toolchain" = [".toolchain/tests/data/text/refuse/project.toml"] }
+files = { "{case}/build/third_party/gaps/gaps.txt" = "wgpuInstanceWaitAny\n" }
+claims = { status = 1, has = ["gaps is not fetched as project.toml states: run fetch"] }
+false = { files = { "{case}/build/third_party/gaps/fetched.txt" = "0" } }

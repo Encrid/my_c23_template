@@ -191,3 +191,10 @@ run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{case}", "--out
 folders = { "{case}/.toolchain" = [".toolchain/tests/data/test/nocopies/project.toml"], "{case}/tests/cases" = [".toolchain/tests/data/test/passes.toml"] }
 claims = { status_not = 0, has = [".toolchain/project.toml: write [test] copies"] }
 false = { folders = { "{case}/.toolchain" = [".toolchain/tests/data/test/project.toml"] } }
+
+[[case]]
+name = "a case that holds no port gets no port"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{case}", "--out", "{case}/out"]
+folders = { "{case}/.toolchain" = [".toolchain/tests/data/test/port/project.toml"], "{case}/tests/cases" = [".toolchain/tests/data/test/unported.toml"] }
+claims = { status_not = 0, matches = ["no variable .port. for 127[.]0[.]0[.]1:.port."] }
+false = { folders = { "{case}/tests/cases" = [".toolchain/tests/data/test/ported.toml"] } }

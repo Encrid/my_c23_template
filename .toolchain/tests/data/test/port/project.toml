@@ -1,0 +1,9 @@
+[project]
+name = "ported"
+
+[variables]
+address = "127.0.0.1:{port}"
+
+[test]
+timeout = 60
+copies = 1

@@ -1,6 +1,6 @@
 [[case]]
 name = "a native module with its manifest"
 run = ["{python}", "-c", "import subprocess, sys; [subprocess.run([sys.executable, sys.argv[1] + '/' + tool, '--root', sys.argv[2], '--out', sys.argv[3]], check=True) for tool in ('fetch.py', 'build.py')]", "{root}/.toolchain/tools", "{case}/proj", "{case}/out"]
-folders = { "{case}/proj/.toolchain" = [".toolchain/tests/data/presets/project.toml"], "{case}/proj/.toolchain/config" = [".toolchain/presets/native_module/native_sources.toml", ".toolchain/presets/native_module/native_targets.toml", ".toolchain/presets/native_module/native_kinds.toml"], "{case}/proj/src" = [".toolchain/tests/data/presets/probe.c"] }
+folders = { "{case}/proj/.toolchain" = [".toolchain/tests/data/presets/project.toml"], "{case}/proj/.toolchain/config" = [".toolchain/presets/native_module/native_sources.toml", ".toolchain/presets/native_module/native_targets.toml", ".toolchain/presets/native_module/native_kinds.toml", ".toolchain/presets/native_module/native_checks.toml"], "{case}/proj/src" = [".toolchain/tests/data/presets/probe.c"] }
 claims = { status = 0, has = ["probe{library}"] }
 false = { folders = { "{case}/proj/src" = [".toolchain/tests/data/presets/unmarked/probe.c"] } }

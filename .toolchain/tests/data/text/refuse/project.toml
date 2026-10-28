@@ -1,0 +1,11 @@
+[project]
+name = "refusing"
+
+[check]
+refuse = ["{gaps}/gaps.txt"]
+
+[[source]]
+name = "gaps"
+url = "gaps.zip"
+sha256 = "0"
+into = "{build}/third_party/gaps"

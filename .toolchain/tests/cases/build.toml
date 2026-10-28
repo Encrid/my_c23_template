@@ -186,3 +186,28 @@ name = "a program of a release holds no path of its machine"
 run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/started", "--out", "{case}/out", "--pack", "--target", "x86_64-linux-gnu"]
 claims = { status = 0, line = ["{case}/out/started-x86_64-linux-gnu.zip", "sizer"] }
 false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/started", "--out", "{case}/out", "--pack", "--target", "x86_64-linux-gnu", "--debug"] }
+
+[[case]]
+name = "the headers of a table start from its folder"
+run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/composed", "--out", "{case}/out"]
+claims = { status = 0, line = ["include/kept.h"], files = { "{case}/out/{target}/include/kept.h" = "int kept(void);" } }
+false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/composed", "--out", "{case}/out", "--set", "place=."] }
+
+[[case]]
+name = "a step that runs in a folder"
+run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/placed", "--out", "{case}/out"]
+claims = { status = 0, has = ["placed{exe}"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/placed", "--out", "{case}/out", "--set", "side=."] }
+
+[[case]]
+name = "a step that runs in a folder that is not there"
+run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/placed", "--out", "{case}/out", "--set", "side=nowhere"]
+claims = { status_not = 0, has = ["/nowhere is not there, and a step of placed runs in it"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/placed", "--out", "{case}/out"] }
+
+[[case]]
+name = "a step that runs in a folder gets the caches of zig as whole paths"
+run = ["{python}", "-c", "import sys; from pathlib import Path; sys.path.insert(0, sys.argv[1]); import build, shared; read = shared.config; shared.config = lambda root: (whole := read(root)) | {'build': whole['build'] | {'cache': (Path(root) / whole['build']['cache']).as_posix()}}; sys.argv = ['build.py', '--root', sys.argv[2]]; build.build(shared.arguments())", "{root}/.toolchain/tools", "{case}/proj"]
+folders = { "{case}/proj/.toolchain" = [".toolchain/tests/data/build/cached/.toolchain/project.toml"] }
+claims = { status = 0, line = ["{case}/proj/build/zig-cache/local"] }
+false = { run = ["{python}", "-c", "import sys; sys.path.insert(0, sys.argv[1]); import build, shared; sys.argv = ['build.py', '--root', sys.argv[2]]; build.build(shared.arguments())", "{root}/.toolchain/tools", "{case}/proj"] }
