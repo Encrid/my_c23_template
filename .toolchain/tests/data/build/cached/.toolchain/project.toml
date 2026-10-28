@@ -1,0 +1,14 @@
+[project]
+name = "cached"
+
+[kinds.cached]
+output = "{name}.txt"
+steps = [
+    { run = ["{python}", "-c", "import os, pathlib; print(pathlib.Path(os.environ['ZIG_LOCAL_CACHE_DIR']).as_posix())"], cwd = "{build}" },
+]
+
+[[artifact]]
+name = "cached"
+kind = "cached"
+test = true
+sources = [".toolchain/project.toml"]

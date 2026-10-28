@@ -18,6 +18,7 @@ The other cases run `test.py` on a project in `{case}`. Their `folders` copy the
 | `still.toml` | The case `still`, whose false variant also passes. |
 | `later/project.toml` | An artifact that links `linked.txt`, which is not there. Its kind has `unlinked` steps. |
 | `nowhere/project.toml` | The project of `.toolchain/project.toml`, and the target `nowhere`, whose `runs_on` is empty. |
+| `port/project.toml`, `unported.toml` and `ported.toml` | A project whose variable `address` holds `{port}`. The case `unported` names `{address}` only, and the case `ported` names `{port}` too. |
 
 | Case | Claim | False variant |
 | --- | --- | --- |
@@ -49,3 +50,4 @@ The other cases run `test.py` on a project in `{case}`. Their `folders` copy the
 | the cases of a part of a name | `test -k second` runs `second case` of `two.toml`, and not `first case`. | `-k first`. |
 | a part of no name | `test -k nothing` stops: `no case has nothing in its name`. | `-k second`. |
 | a project with no copies | The `.toolchain/project.toml` of the project has no `[test] copies`: `test` stops. | The project gives `copies = 1`. |
+| a case that holds no port gets no port | The case `unported` holds no `{port}`, so `{address}` has no value: `test` stops with `no variable {port} for 127.0.0.1:{port}`. | `ported.toml`, which names `{port}`. |

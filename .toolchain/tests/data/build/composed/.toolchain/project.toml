@@ -1,0 +1,9 @@
+[project]
+name = "composed"
+
+[variables]
+place = "kept"
+
+[compose.base]
+from = "{place}"
+headers = ["include/*.h"]

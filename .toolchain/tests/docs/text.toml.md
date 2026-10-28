@@ -8,6 +8,7 @@ The false variant of a case changes the file that has the fault.
 | --- | --- |
 | `.toolchain/project.toml` in `.toolchain/tests/data/text` | An empty table `[project]`. Each case copies it, or the next file. |
 | `.toolchain/project.toml` in `.toolchain/tests/data/text/unicode` | The same values, and a `[check] unicode` that names `docs/*.md`. |
+| `.toolchain/project.toml` in `.toolchain/tests/data/text/refuse` | The source `gaps`, fetched into `{case}/build/third_party/gaps`, and a `[check] refuse` that names `{gaps}/gaps.txt`. |
 
 The project `clean` has five files with no fault:
 
@@ -15,6 +16,9 @@ The project `clean` has five files with no fault:
 - the `project.py` of this project, which starts with the legal notice,
 - `a.toml`, and `ci.yml` in `.github/workflows`, which each have a `#` in a string,
 - the document `a.md` in `docs`.
+
+The cases of `[check] refuse` write the files of the source `gaps`: its stamp `fetched.txt`, which holds `0`, and its list `gaps.txt`.
+A case that writes no stamp has a source that is not fetched.
 
 A Python file of a case has no legal notice if the fault of the case is a different fault. Thus the fault is on line 1.
 
@@ -36,3 +40,6 @@ A Python file of a case has no legal notice if the fault of the case is a differ
 | a word that holds a retired word | `a.md` holds `utilised`, which is not the whole word `utilise`. `text.py` writes `no fault in 2 files`. | `a.md` holds `utilise`. |
 | a retired word in the tests | `tests/a.md` holds `utilise`: `tests/a.md:1: 'utilise' is retired: write 'use'`. | `tests/a.md` holds `use`. |
 | a retired word in the toolchain | `.toolchain/docs/a.md` holds `utilise`, and so does the table in `.toolchain/project.toml`. Neither is a fault: `no fault in 2 files`. | `docs/a.md` holds `utilise` too. |
+| a call that [check] refuse names | `gaps.txt` names `wgpuInstanceWaitAny` and `wgpuBufferGetMapState`, with an empty line between them. `src/a.c` and `include/a.h` call them: `src/a.c:3: 'wgpuInstanceWaitAny' is refused by {gaps}/gaps.txt`, and the same for the header. The empty line names nothing. | The calls are `wgpuInstanceWaitAnyLater` and `my_wgpuBufferGetMapState`, which are different names. |
+| a file of [check] refuse that is not there | The source is fetched, and `gaps.txt` is not there: `[check] refuse: <path> is not there`. | `gaps.txt` is there. |
+| a source of [check] refuse that is not fetched | `gaps` has no stamp: `gaps is not fetched as project.toml states: run fetch`. | The stamp is there. |

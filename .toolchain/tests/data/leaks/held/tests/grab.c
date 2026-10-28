@@ -15,6 +15,10 @@ struct part {
     int unused;
 };
 
+struct handle {
+    int unused;
+};
+
 char *grab(void)
 {
     return (malloc(8));
@@ -87,4 +91,25 @@ int note_hand(note_t *(*make)(int ok), int ok)
 
     note_delete(note);
     return (note != nullptr);
+}
+
+handle_t handle_open(void)
+{
+    return (malloc(sizeof(struct handle)));
+}
+
+void handle_close(handle_t handle)
+{
+    free(handle);
+}
+
+void sheet_fill(int ok, sheet_t *sheet)
+{
+    if (ok && sheet)
+        sheet->part = malloc(sizeof(part_t));
+}
+
+void part_lend(void (*take)(int ok, part_t *part), int ok)
+{
+    take(ok, ok ? malloc(sizeof(part_t)) : nullptr);
 }

@@ -21,6 +21,9 @@ The cases of the options, of the report and of the files of a project run a shor
 | `leaky` | The artifact `stamped`, whose section holds `{root}`: the folder of the project. |
 | `archived` | The archive `one`. |
 | `started` | The program `sizer`, which calls `stat`. |
+| `placed` | The program `placed`, whose kind compiles `src/main.c` with the folder `include`, and `side.c` by its bare name, in the folder `{side}`. `side` is `side`, the folder that holds `side.c`. |
+| `cached` | The test artifact `cached`, whose kind writes the cache of zig of its step, in the folder `{build}`. |
+| `composed` | No artifact, and the table `[compose.base]`, whose `from` is the variable `place`. `place` is `kept`, the folder that holds `include/kept.h`. |
 
 In `built`, `greet` gets its greeting from `defines`.
 `greeter` includes `.toolchain/tests/data/build/built/include/greet.h`, links `greet`, and has `greet` beside it in its folder.
@@ -78,5 +81,9 @@ Thus each machine checks a file that holds a path of its machine without the fix
 | the cache of zig is a path from the folder of the project | `build.prepared` on the template, which holds the cache, sets `ZIG_LOCAL_CACHE_DIR` to `build/zig-cache/local`. | `build.prepared` on `built`, which does not hold the cache: a whole path. |
 | an archive of a release holds no path of its machine | `build --pack --target x86_64-windows-gnu` on the copy of `archived` writes its zip, thus `one.a` holds no folder of the machine. Without `-fstrip`, each object of `one.a` holds its own path. | `--debug`: the debug information of `one.a` holds the folder of the project, thus `pack` stops. |
 | a program of a release holds no path of its machine | `build --pack --target x86_64-linux-gnu` on `started` writes its zip, thus `sizer` holds no folder of the machine. `sizer` links objects that zig builds for glibc, with their debug information. Without `-s`, `sizer` keeps it. | `--debug`: the debug information of `sizer` holds the folder of the project, thus `pack` stops. |
+| the headers of a table start from its folder | `build` on `composed` writes `include/kept.h`, and `{case}/out/{target}/include/kept.h` holds the header of `kept`. | `--set place=.`: the folder of the project has no `include/kept.h`. |
+| a step that runs in a folder | `build` on `placed` builds `placed{exe}`: from the folder `side`, the step finds `side.c`, `src/main.c` and `include/placed.h`. | `--set side=.`: the folder of the project has no `side.c`. |
+| a step that runs in a folder that is not there | With `--set side=nowhere`, `build` stops: `<folder>/nowhere is not there, and a step of placed runs in it`. | No `--set`. |
+| a step that runs in a folder gets the caches of zig as whole paths | A short Python program puts `[build] cache` in `{case}/proj`, as the case of an archive does, and builds `cached`. The step writes `{case}/proj/build/zig-cache/local`, a whole path. | The program does not move the cache, so the step writes the cache of this project. |
 
 `.toolchain/docs/build.py.md` gives the limits of these cases.

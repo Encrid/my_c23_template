@@ -1,0 +1,69 @@
+[[case]]
+name = "a project with no needs gives no command"
+run = ["{python}", "{root}/.toolchain/tools/runner.py", "--root", "{case}", "--target", "x86_64-linux-gnu"]
+files = { "{case}/.toolchain/project.toml" = "[project]\n" }
+claims = { status = 0, matches_not = ["."] }
+false = { files = { "{case}/.toolchain/project.toml" = "[ci]\nneeds = [\"vulkan\"]\n" } }
+
+[[case]]
+name = "the display on Linux"
+run = ["{python}", "{root}/.toolchain/tools/runner.py", "--root", "{case}", "--target", "x86_64-linux-gnu"]
+files = { "{case}/.toolchain/project.toml" = "[ci]\nneeds = [\"display\"]\n" }
+claims = { status = 0, order = ["sudo apt-get update", "sudo apt-get install -y openbox weston xvfb", "Xvfb :99 -screen 0 1920x1080x24 > /dev/null 2>&1 &", "timeout 10 sh -c 'until [ -S /tmp/.X11-unix/X99 ]; do sleep 0.1; done'", "DISPLAY=:99 openbox > /dev/null 2>&1 &", "mkdir -p -m 700 \"$RUNNER_TEMP/wayland\"", "XDG_RUNTIME_DIR=\"$RUNNER_TEMP/wayland\" weston --backend=headless --renderer=pixman --socket=wayland-1 --no-config > /dev/null 2>&1 &", "timeout 10 sh -c 'until [ -S \"$RUNNER_TEMP/wayland/wayland-1\" ]; do sleep 0.1; done'", "echo \"DISPLAY=:99\" >> \"$GITHUB_ENV\"", "echo \"WAYLAND_DISPLAY=wayland-1\" >> \"$GITHUB_ENV\"", "echo \"XDG_RUNTIME_DIR=$RUNNER_TEMP/wayland\" >> \"$GITHUB_ENV\""] }
+false = { run = ["{python}", "{root}/.toolchain/tools/runner.py", "--root", "{case}", "--target", "x86_64-windows-gnu"] }
+
+[[case]]
+name = "Vulkan on Linux"
+run = ["{python}", "{root}/.toolchain/tools/runner.py", "--root", "{case}", "--target", "aarch64-linux-gnu"]
+files = { "{case}/.toolchain/project.toml" = "[ci]\nneeds = [\"vulkan\"]\n" }
+claims = { status = 0, line = ["sudo apt-get update", "sudo apt-get install -y libvulkan1 mesa-vulkan-drivers"], lacks = ["Xvfb"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/runner.py", "--root", "{case}", "--target", "aarch64-macos"] }
+
+[[case]]
+name = "OpenGL on Linux"
+run = ["{python}", "{root}/.toolchain/tools/runner.py", "--root", "{case}", "--target", "x86_64-linux-gnu"]
+files = { "{case}/.toolchain/project.toml" = "[ci]\nneeds = [\"gl\"]\n" }
+claims = { status = 0, line = ["sudo apt-get install -y libgl1 libgl1-mesa-dri libglx-mesa0"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/runner.py", "--root", "{case}", "--target", "x86_64-macos"] }
+
+[[case]]
+name = "the packages of each need in one install"
+run = ["{python}", "{root}/.toolchain/tools/runner.py", "--root", "{case}", "--target", "aarch64-linux-gnu"]
+files = { "{case}/.toolchain/project.toml" = "[ci]\nneeds = [\"vulkan\", \"gl\", \"display\"]\n" }
+claims = { status = 0, line = ["sudo apt-get install -y libgl1 libgl1-mesa-dri libglx-mesa0 libvulkan1 mesa-vulkan-drivers openbox weston xvfb"] }
+false = { files = { "{case}/.toolchain/project.toml" = "[ci]\nneeds = [\"vulkan\"]\n" } }
+
+[[case]]
+name = "OpenGL on Windows for x86_64"
+run = ["{python}", "{root}/.toolchain/tools/runner.py", "--root", "{case}", "--target", "x86_64-windows-gnu"]
+files = { "{case}/.toolchain/project.toml" = "[ci]\nneeds = [\"gl\"]\n" }
+claims = { status = 0, order = ["mesa=\"$(cygpath -u \"$RUNNER_TEMP\")/mesa\"", "mkdir -p \"$mesa\"", "curl -fsSL -o \"$mesa/mesa.7z\" https://github.com/mmozeiko/build-mesa/releases/download/26.2.5/mesa-llvmpipe-x64-26.2.5.7z", "echo \"d1b713ca2a7fba47a50c058099f13c435ddb76a16a422c334e4d787f9755a31d  $mesa/mesa.7z\" | sha256sum -c", "/c/Windows/System32/tar.exe -xf \"$(cygpath -w \"$mesa/mesa.7z\")\" -C \"$(cygpath -w \"$mesa\")\" opengl32.dll", "echo \"SDL_OPENGL_LIBRARY=$(cygpath -w \"$mesa/opengl32.dll\")\" >> \"$GITHUB_ENV\""] }
+false = { run = ["{python}", "{root}/.toolchain/tools/runner.py", "--root", "{case}", "--target", "aarch64-windows-gnu"] }
+
+[[case]]
+name = "OpenGL on Windows for arm64"
+run = ["{python}", "{root}/.toolchain/tools/runner.py", "--root", "{case}", "--target", "aarch64-windows-gnu"]
+files = { "{case}/.toolchain/project.toml" = "[ci]\nneeds = [\"gl\"]\n" }
+claims = { status = 0, order = ["mesa=\"$(cygpath -u \"$RUNNER_TEMP\")/mesa\"", "mkdir -p \"$mesa\"", "curl -fsSL -o \"$mesa/mesa.7z\" https://github.com/mmozeiko/build-mesa/releases/download/26.2.5/mesa-llvmpipe-arm64-26.2.5.7z", "echo \"e7df75398d50e07a68bbffa5cff2ece4c85e5f8ef8bda497f560dd04fe60cbbd  $mesa/mesa.7z\" | sha256sum -c", "/c/Windows/System32/tar.exe -xf \"$(cygpath -w \"$mesa/mesa.7z\")\" -C \"$(cygpath -w \"$mesa\")\" opengl32.dll", "echo \"SDL_OPENGL_LIBRARY=$(cygpath -w \"$mesa/opengl32.dll\")\" >> \"$GITHUB_ENV\""] }
+false = { run = ["{python}", "{root}/.toolchain/tools/runner.py", "--root", "{case}", "--target", "x86_64-windows-gnu"] }
+
+[[case]]
+name = "no command on macOS"
+run = ["{python}", "{root}/.toolchain/tools/runner.py", "--root", "{case}", "--target", "aarch64-macos"]
+files = { "{case}/.toolchain/project.toml" = "[ci]\nneeds = [\"display\", \"vulkan\", \"gl\"]\n" }
+claims = { status = 0, matches_not = ["."] }
+false = { run = ["{python}", "{root}/.toolchain/tools/runner.py", "--root", "{case}", "--target", "aarch64-linux-gnu"] }
+
+[[case]]
+name = "a need that is not a need"
+run = ["{python}", "{root}/.toolchain/tools/runner.py", "--root", "{case}", "--target", "x86_64-linux-gnu"]
+files = { "{case}/.toolchain/project.toml" = "[ci]\nneeds = [\"sound\"]\n" }
+claims = { status = 1, has = ["[ci] needs: sound is not a need: display gl vulkan"] }
+false = { files = { "{case}/.toolchain/project.toml" = "[ci]\nneeds = [\"display\"]\n" } }
+
+[[case]]
+name = "a target that runs on no machine"
+run = ["{python}", "{root}/.toolchain/tools/runner.py", "--root", "{case}", "--target", "nowhere"]
+files = { "{case}/.toolchain/project.toml" = "[ci]\nneeds = [\"display\"]\n" }
+claims = { status = 1, has = ["no machine runs the target nowhere"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/runner.py", "--root", "{case}", "--target", "x86_64-linux-gnu"] }

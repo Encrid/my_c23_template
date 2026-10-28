@@ -1,0 +1,21 @@
+[project]
+name = "flagged"
+
+[variables]
+side = "side"
+
+[kinds.flagged]
+output = "{name}{exe}"
+flags = ["-I{root}/{side}"]
+steps = [
+    { run = ["{zig}", "cc", "-target", "{triple}", "-mcpu={cpu}", "{optimize}", "{float}", "{errno}", "{language}", "{define}", "{defines}", "{include}", "{sources}", "{link}", "{flags}", "{rpath}", "-o", "{output}", "{stack}"] },
+]
+
+[[artifact]]
+name = "flagged"
+kind = "flagged"
+sources = ["src/main.c"]
+
+[test]
+timeout = 60
+copies = 1

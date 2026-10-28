@@ -139,7 +139,7 @@ false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root
 [[case]]
 name = "a place that is not a place"
 run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/leaks/held", "--out", "{case}/out", "--leaks", "--set", "counted=tests/misfit_place.toml"]
-claims = { status = 1, has = ["[leaks.kinds.part]: part_new cannot take at 2"] }
+claims = { status = 1, has = ["[leaks.kinds.part]: part_new cannot take at 0"] }
 false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/leaks/held", "--out", "{case}/out", "--leaks", "-k", "whole"] }
 
 [[case]]
@@ -165,3 +165,27 @@ name = "a take through an argument that is not a pointer"
 run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/leaks/held", "--out", "{case}/out", "--leaks", "--set", "counted=tests/misfit_deref.toml"]
 claims = { status = 1, has = ["ticket_drop does not get a pointer as argument 1"] }
 false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/leaks/held", "--out", "{case}/out", "--leaks", "-k", "whole"] }
+
+[[case]]
+name = "a pair whose take gives a typedef of a pointer"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/leaks/held", "--out", "{case}/out", "--leaks", "-k", "handled"]
+claims = { status = 1, line = ["leaks: handled keeps 1 handle_open"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/leaks/held", "--out", "{case}/out", "--leaks", "-k", "whole"] }
+
+[[case]]
+name = "a take at a field counts what the call writes into the field"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/leaks/held", "--out", "{case}/out", "--leaks", "-k", "sheets"]
+claims = { status = 0, line = ["sheets: as written", "leaks: 1 cases, 1 give back what they take"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/leaks/held", "--out", "{case}/out", "--leaks", "-k", "stub"] }
+
+[[case]]
+name = "a callback counts what a library gives it"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/leaks/held", "--out", "{case}/out", "--leaks", "-k", "lends"]
+claims = { status = 0, line = ["lends: as written", "leaks: 1 cases, 1 give back what they take"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/leaks/held", "--out", "{case}/out", "--leaks", "-k", "stub"] }
+
+[[case]]
+name = "the tree of a source gets the flags of its kind"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/leaks/flagged", "--out", "{case}/out", "--leaks"]
+claims = { status = 0, line = ["leaks: 1 cases, 1 give back what they take"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/leaks/flagged", "--out", "{case}/out", "--leaks", "--set", "side=none"] }

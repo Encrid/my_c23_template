@@ -18,6 +18,13 @@ typedef struct text {
     char *data;
 } text_t;
 
+typedef struct handle *handle_t;
+
+typedef struct sheet {
+    unsigned id;
+    part_t *part;
+} sheet_t;
+
 char *grab(void);
 char *seize(void);
 note_t *note_new(void);
@@ -30,6 +37,10 @@ void text_fill(text_t *text);
 void text_delete(text_t *text);
 void text_join(text_t *one, text_t *two);
 int note_hand(note_t *(*make)(int ok), int ok);
+handle_t handle_open(void);
+void handle_close(handle_t handle);
+void sheet_fill(int ok, sheet_t *sheet);
+void part_lend(void (*take)(int ok, part_t *part), int ok);
 note_t *pool_refuse(int ok);
 int kinds(const char *mode);
 

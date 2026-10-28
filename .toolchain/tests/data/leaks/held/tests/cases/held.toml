@@ -88,3 +88,21 @@ name = "hands"
 run = ["{out}/held{exe}", "hands"]
 claims = { status = 0, line = ["hands"] }
 false = { run = ["{out}/held{exe}"] }
+
+[[case]]
+name = "handled"
+run = ["{out}/held{exe}", "handled"]
+claims = { line = ["handled"] }
+false = { run = ["{out}/held{exe}"] }
+
+[[case]]
+name = "sheets"
+run = ["{out}/held{exe}", "sheets"]
+claims = { status = 0, line = ["sheets"] }
+false = { run = ["{out}/held{exe}"] }
+
+[[case]]
+name = "lends"
+run = ["{out}/held{exe}", "lends"]
+claims = { status = 0, line = ["lends"] }
+false = { run = ["{out}/held{exe}"] }

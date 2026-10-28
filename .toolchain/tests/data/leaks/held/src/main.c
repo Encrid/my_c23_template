@@ -30,6 +30,7 @@ static int whole(void)
     void *wrapped = wrapped_take();
     box_t *box = box_open(3);
 
+    handle_close(handle_open());
     free(kept);
     dropped(free, moved);
     free(zeroed);
@@ -93,6 +94,8 @@ static int chosen(const char *mode)
     }
     if (!strcmp(mode, "boxed"))
         return (box_open(2) == nullptr);
+    if (!strcmp(mode, "handled"))
+        return (handle_open() == nullptr);
     if (!strcmp(mode, "spoiled"))
         return (spoiled());
     if (!strcmp(mode, "misfit"))
