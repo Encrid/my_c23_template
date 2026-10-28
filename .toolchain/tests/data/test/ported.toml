@@ -1,0 +1,5 @@
+[[case]]
+name = "ported"
+run = ["{python}", "-c", "print('at {address} of {port}')"]
+claims = { status = 0 }
+false = { run = ["{python}", "-c", "import sys; sys.exit(1)"] }

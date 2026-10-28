@@ -1,0 +1,17 @@
+[project]
+name = "placed"
+
+[variables]
+side = "side"
+
+[kinds.placed]
+output = "{name}{exe}"
+steps = [
+    { run = ["{zig}", "cc", "-target", "{triple}", "-mcpu={cpu}", "{language}", "{include}", "{sources}", "side.c", "-o", "{output}"], cwd = "{side}" },
+]
+
+[[artifact]]
+name = "placed"
+kind = "placed"
+sources = ["src/main.c"]
+include = ["include"]

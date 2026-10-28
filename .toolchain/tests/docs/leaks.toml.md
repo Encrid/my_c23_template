@@ -10,27 +10,33 @@ Each case runs `test.py` on a project of `.toolchain/tests/data/leaks`, with its
 | `excused` | The program `keep`, which keeps one block of memory, and an exemption of `project.toml` that excuses it. |
 | `badexempt` | The same program, with an exemption that states no reason and an exemption for a kind that no case keeps. |
 | `systemed` | The same program, with an exemption for the system `elsewhere`. |
+| `flagged` | The program `flagged`, whose source includes `side.h` of the folder `side`. Only the `flags` of its kind name that folder, through the variable `side`. |
 
 The case `whole` of `held` frees each block that it takes: with `free`, and with `free` given as a pointer.
-It takes a block in `src/pool.c` and frees it in `src/main.c`, and it opens and closes a box of the pair `box_open`.
+It takes a block in `src/pool.c` and frees it in `src/main.c`, and it opens and closes a box of the pair `box_open` and a handle of the pair `handle_open`.
 The last `#include` of `src/main.c` is in an `#if` that holds only lines of the preprocessor.
 The includes and the code of `src/wrapped.c` are in one `#if`. `src/plain.c` uses no counted function.
 `box_close` gives back a box and returns a number, and `free` returns nothing.
 `[leaks] with` of `held` names the file of the variable `counted`, which is `tests/leaks.toml` by default.
-That file names `grab` as a function that takes memory, and the pair `box_open` and `box_close`.
+That file names `grab` as a function that takes memory, and the pairs `box_open` and `handle_open`.
+`handle_open` gives a `handle_t`, which is a `typedef` of a pointer.
 `grab` and `seize` of `tests/grab.c` take memory with no count. The case `named` frees the result of `grab`, and `foreign` frees the result of `seize`.
 
 `tests/grab.c` also holds a small library that the count does not count. It has notes, and parts that `part_new` writes through its second argument.
 It has tickets, which are handles by value, and texts, which `text_fill` fills through a pointer and `text_join` gives back two at a time.
+`sheet_fill` writes a part into the field `part` of a sheet, and `part_lend` gives a part to a function of the code as its argument 2.
 `note_hand` calls a function of the code, and deletes the note that the function gives it.
 
-`src/kinds.c` uses the library in the cases `tickets`, `stub`, `parts`, `texts` and `hands`, and `tests/leaks.toml` names its kinds.
+`src/kinds.c` uses the library in the cases `tickets`, `stub`, `parts`, `texts`, `hands`, `sheets` and `lends`, and `tests/leaks.toml` names its kinds.
+The kind `part` takes at `*2` of `part_new`, at `*2.part` of `sheet_fill`, and at `2` of `part_got`, the callback of `src/kinds.c`.
 `refuse` of `src/kinds.c` and `pool_refuse` of `src/pool.c` give back a note at `result`, because `note_hand` deletes it.
 `project.toml` of `held` names the give `note_delete` again, with a number as its place.
 
 `tickets` drops a ticket that is 0, and `stub` keeps one ticket. `parts` calls `part_new` with a failure, with no place, and with a place.
 `texts` fills a text that is cleared and a text that is not, and deletes a text two times and a null text.
 `hands` hands over two notes, and a call of `refuse` that gives no note.
+`sheets` fills a sheet with a failure, with no sheet, and with a sheet. `lends` gets a part that is null, and a part.
+`handled` keeps one handle.
 
 | Case | Claim | False variant |
 | --- | --- | --- |
@@ -57,8 +63,12 @@ It has tickets, which are handles by value, and texts, which `text_fill` fills t
 | a take through an argument counts what the call writes | `test` on `parts` writes that the case is as written, and that 1 case gives back what it takes. | The case `stub`. |
 | a give through an argument counts what the place holds | `test` on `texts` writes that the case is as written, and that 1 case gives back what it takes. | The case `stub`. |
 | a function of the code gives back its result | `test` on `hands` writes that the case is as written, and that 1 case gives back what it takes. | The case `stub`. |
-| a place that is not a place | With `tests/misfit_place.toml`, `part_new` takes at `2`, and `test` stops: `[leaks.kinds.part]: part_new cannot take at 2`. | No `--set`. |
+| a place that is not a place | With `tests/misfit_place.toml`, `part_new` takes at `0`, and `test` stops: `[leaks.kinds.part]: part_new cannot take at 0`. | No `--set`. |
 | a kind with a key that is not known | With `tests/misfit_key.toml`, a kind has the key `hands`, and `test` stops: `[leaks.kinds.note]: a kind has no key hands`. | No `--set`. |
 | a count at a result that a function does not give | With `tests/misfit_result.toml`, `note_delete` takes at `result`, and `test` stops: `note_delete gives no result`. | No `--set`. |
 | a count at an argument that is not there | With `tests/misfit_index.toml`, `note_delete` gives back at `2`, and `test` stops: `note_delete has no argument 2`. | No `--set`. |
 | a take through an argument that is not a pointer | With `tests/misfit_deref.toml`, `ticket_drop` takes at `*1`, and `test` stops: `ticket_drop does not get a pointer as argument 1`. | No `--set`. |
+| a pair whose take gives a typedef of a pointer | `test` on `handled` writes `leaks: handled keeps 1 handle_open`, and stops. | The case `whole`, which closes its handle. |
+| a take at a field counts what the call writes into the field | `test` on `sheets` writes that the case is as written, and that 1 case gives back what it takes. | The case `stub`. |
+| a callback counts what a library gives it | `test` on `lends` writes that the case is as written, and that 1 case gives back what it takes. | The case `stub`. |
+| the tree of a source gets the flags of its kind | `test` on `flagged` reads the tree of `src/main.c`, and writes `leaks: 1 cases, 1 give back what they take`. | `--set side=none`: the tree of `src/main.c` cannot be read. |

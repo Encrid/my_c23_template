@@ -12,6 +12,13 @@ static note_t *refuse(int ok)
     return (ok ? note_new() : nullptr);
 }
 
+static part_t *lent;
+
+static void part_got([[maybe_unused]] int ok, part_t *part)
+{
+    lent = part;
+}
+
 static int tickets(bool dropped)
 {
     ticket_t ticket = ticket_make(1);
@@ -50,6 +57,25 @@ static int texts(void)
     return (0);
 }
 
+static int sheets(void)
+{
+    sheet_t sheet = {};
+
+    sheet_fill(0, &sheet);
+    sheet_fill(1, nullptr);
+    sheet_fill(1, &sheet);
+    part_delete(sheet.part);
+    return (0);
+}
+
+static int lends(void)
+{
+    part_lend(part_got, 0);
+    part_lend(part_got, 1);
+    part_delete(lent);
+    return (0);
+}
+
 static int hands(void)
 {
     int handed = note_hand(refuse, 1) + note_hand(refuse, 0) + note_hand(pool_refuse, 1);
@@ -69,5 +95,9 @@ int kinds(const char *mode)
         return (texts());
     if (!strcmp(mode, "hands"))
         return (hands());
+    if (!strcmp(mode, "sheets"))
+        return (sheets());
+    if (!strcmp(mode, "lends"))
+        return (lends());
     return (-1);
 }
