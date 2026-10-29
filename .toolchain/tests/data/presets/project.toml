@@ -5,4 +5,4 @@ name = "probe"
 name = "probe"
 kind = "native_module"
 sources = ["src/probe.c"]
-manifest = ["probe", "tick"]
+manifest = ["test:probe@1.0.0", "abi=2", "config=none", "pinned=false", "reloadable=false"]
