@@ -255,8 +255,8 @@ def measured(args):
     if args.broken or args.toolchain or args.copies or args.rounds:
         die('--branches runs each case one time: it takes no --break, --toolchain, --copies or --rounds')
     config, values, (probes, gaps), outputs, groups = changed(args, 'branches', branches.probed)
-    hits = Path(values['out']) / 'hits.txt'
-    hits.unlink(missing_ok=True)
+    hits = Path(values['out']) / 'hits.bin'
+    hits.write_bytes(bytes(branches.parts(probes)[1]))
     os.environ['C23_BRANCHES'] = str(hits)
     test(config, values, outputs, groups, False, False, 1)
     branches.reported(probes, gaps, hits, config.get('branches', {}).get('exception', []), values['system'])
