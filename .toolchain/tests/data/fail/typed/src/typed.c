@@ -6,6 +6,7 @@
 #include <stdio.h>
 
 #include "started.h"
+#include "typed.h"
 
 static unsigned long one(void *arg)
 {
@@ -31,5 +32,7 @@ int main(void)
         return (said("no first start", 1));
     if (start_two(two, &held) < 0)
         return (said("no second start", 2));
-    return (said("two starts", 0));
+    if (thread_started() < 0)
+        return (said("no thread", 3));
+    return (said("two starts and a thread", 0));
 }
