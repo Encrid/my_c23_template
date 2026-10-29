@@ -4,6 +4,7 @@
 import fnmatch
 from pathlib import Path
 
+import fail
 import rewrite
 from shared import die
 
@@ -161,8 +162,8 @@ def walked(root, path, found):
     return probing
 
 
-def rewritten(text, path, edits, prefix):
-    rows, pieces = [], []
+def rewritten(text, path, edits, prefix, outer=(0, '', '')):
+    rows, pieces = [], [((outer[0], -1, 0), outer[1])]
     for edit in sorted(edits.values(), key=lambda one: (one[1], one[0])):
         number = len(rows)
         if edit[0] == 'condition':
@@ -188,27 +189,32 @@ def rewritten(text, path, edits, prefix):
                                                                        rewrite.writer(values))
         out = block.encode() + bytes(out)
     else:
-        out = (TOP % values + '#line 1\n').encode() + bytes(out) + b'\n' + rewrite.writer(values).encode()
+        out = (TOP % values + '#line 1\n').encode() + bytes(out) + b'\n' + (outer[2] + rewrite.writer(values)).encode()
     return out, [dict(zip(('kind', 'line', 'col'), (kind,) + rewrite.placing(text, at))) for kind, at in rows]
 
 
 def probed(config, values):
-    edits, skips = {}, {}
-    for probing in rewrite.each(config, values, walked):
+    calls, root = fail.listed(config, values), Path(values['root'])
+    edits, skips, outers = {}, {}, {}
+    trees = rewrite.each(config, values, lambda top, path, tree: (walked(top, path, tree),
+                                                                  rewrite.found(top, path, tree, calls)))
+    for probing, (name, used, declared, _) in trees:
         for path, table in probing.edits.items():
             edits.setdefault(path, {}).update(table)
         for path, table in probing.skips.items():
             skips.setdefault(path, {}).update(table)
-    return written(Path(values['root']), rewrite.tree(values, 'branches'), edits, skips)
+        outers[name] = fail.layer((root / name).read_bytes(), used, declared, calls)
+    return written(root, rewrite.tree(values, 'branches'), edits, skips, outers)
 
 
-def written(root, where, edits, skips):
+def written(root, where, edits, skips, outers):
     rewrite.copied(root, where)
     headers = sorted(path for path in edits if path.endswith('.h'))
     probes = {}
     for path in sorted(edits):
         prefix = 'c23b_h%d_' % headers.index(path) if path in headers else 'c23b_'
-        out, probes[path] = rewritten((root / path).read_bytes(), path, edits[path], prefix)
+        outer = outers.get(path, (0, '', ''))
+        out, probes[path] = rewritten((root / path).read_bytes(), path, edits[path], prefix, outer)
         (where / path).write_bytes(out)
     gaps = {path: [dict(zip(('kind', 'line', 'col'), (kind,) + rewrite.placing((root / path).read_bytes(), at)))
                    for at, kind in sorted(table.items())] for path, table in skips.items()}
