@@ -144,7 +144,7 @@ The run `fail` gives `prepared`: the configuration and the variables of step 1 o
 
 1. It stops with one of these options: `--break`, `--toolchain`, `--copies` or `--rounds`.
 2. It does the steps of *A changed run*, with the run `branches` and `probed` of `branches.py`.
-3. It sets the variable `C23_BRANCHES` of the environment to `<build>/branches/<target>/hits.txt`.
+3. It writes `<build>/branches/<target>/hits.bin` with a byte 0 for each outcome. The variable `C23_BRANCHES` names it.
 4. It runs each case one time, and writes its verdict.
 5. It writes the report, with `reported` of `branches.py`.
 

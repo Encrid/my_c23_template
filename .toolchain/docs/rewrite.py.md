@@ -36,10 +36,12 @@ It stops on a function with `...`: `<name> takes a list of arguments of no fixed
 
 ## The writer
 
-`writer` gives the text that ends each changed file `.c`.
+`writer` gives the text that ends each file `.c` of the count of `leaks.py`.
+The probes of `branches.py` need no writer: `.toolchain/docs/branches.py.md`, *The hits*.
+
 A `[[gnu::destructor]]` writes one line for the file, at the exit of the program and at the close of a library.
 It writes to the file that a variable of the environment names. If the variable is not set, it writes nothing.
-The line starts with the path of the file. Each run gives the rest of the line.
+The line starts with the path of the file. The count gives the rest of the line.
 
 The writer builds each line in a buffer and writes it with one append, so parallel programs do not interleave.
 It uses the low-level file calls of the system, with no buffer of `stdio`.
@@ -61,7 +63,7 @@ The dump sets `_FORTIFY_SOURCE` to 0. Then a call that the system would fortify,
 ## Limits
 
 - A case that crashes, or that stops before its end, writes no line.
-- Every file writes with a `[[gnu::destructor]]`. A destructor of a library that `dlclose` unmaps on macOS would run at the exit of the program with its code gone. So on macOS each file keeps its own library mapped, and the destructor runs in place.
+- Every file of the count writes with a `[[gnu::destructor]]`. A destructor of a library that `dlclose` unmaps on macOS would run at the exit of the program with its code gone. So on macOS each file keeps its own library mapped, and the destructor runs in place.
 
 ## Functions
 
