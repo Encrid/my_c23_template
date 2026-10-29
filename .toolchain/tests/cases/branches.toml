@@ -41,6 +41,12 @@ claims = { status = 1, line = ["src/defend.c:10:9: no case makes this condition 
 false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/branches/excused", "--out", "{case}/out", "--branches"] }
 
 [[case]]
+name = "an outcome stays when the program ends with _Exit or abort"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/branches/ended", "--out", "{case}/out", "--branches"]
+claims = { status = 0, line = ["branches: 7 outcomes, 7 reached"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/branches/ended", "--out", "{case}/out", "--branches", "-k", "plain"] }
+
+[[case]]
 name = "a closed library keeps its outcomes"
 run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/branches/loaded", "--out", "{case}/out", "--branches"]
 claims = { status = 0, line = ["branches: 3 outcomes, 3 reached"] }

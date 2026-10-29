@@ -1,0 +1,17 @@
+[[case]]
+name = "plain"
+run = ["{out}/ender{exe}"]
+claims = { status = 0 }
+false = { run = ["{out}/ender{exe}", "exit"] }
+
+[[case]]
+name = "exit"
+run = ["{out}/ender{exe}", "exit"]
+claims = { status = 1 }
+false = { run = ["{out}/ender{exe}"] }
+
+[[case]]
+name = "abort"
+run = ["{out}/ender{exe}", "abort"]
+claims = { status_not = 0 }
+false = { run = ["{out}/ender{exe}"] }

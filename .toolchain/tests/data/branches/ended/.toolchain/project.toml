@@ -1,0 +1,11 @@
+[project]
+name = "ended"
+
+[[artifact]]
+name = "ender"
+kind = "program"
+sources = ["src/*.c"]
+
+[test]
+timeout = 60
+copies = 1
