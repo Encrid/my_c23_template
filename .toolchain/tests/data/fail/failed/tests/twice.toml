@@ -1,0 +1,4 @@
+[fail.calls]
+door_open = "-1"
+door_lock = "false"
+malloc = "nullptr"
