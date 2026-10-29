@@ -59,6 +59,30 @@ claims = { status = 0, line = ["third: as written"] }
 false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/typed", "--out", "{case}/out", "-k", "third", "--break"] }
 
 [[case]]
+name = "a listed fread fails, and its result of size_t builds"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/library", "--out", "{case}/out", "-k", "read"]
+claims = { status = 0, line = ["read: as written"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/library", "--out", "{case}/out", "-k", "read", "--break"] }
+
+[[case]]
+name = "a listed memchr fails, also where a macro of its header has its name"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/library", "--out", "{case}/out", "-k", "byte"]
+claims = { status = 0, line = ["byte: as written"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/library", "--out", "{case}/out", "-k", "byte", "--break"] }
+
+[[case]]
+name = "a listed bsearch fails, also where its declaration writes a calling convention"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/library", "--out", "{case}/out", "-k", "key"]
+claims = { status = 0, line = ["key: as written"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/library", "--out", "{case}/out", "-k", "key", "--break"] }
+
+[[case]]
+name = "a listed aligned allocation fails, also where its declaration checks the alignment"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/library", "--out", "{case}/out", "-k", "aligned"]
+claims = { status = 0, line = ["aligned: as written"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/library", "--out", "{case}/out", "-k", "aligned", "--break"] }
+
+[[case]]
 name = "a call that [fail.calls] does not list"
 run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/failed", "--out", "{case}/out", "-k", "second", "--set", "listed=tests/no_door.toml"]
 claims = { status = 1, has = ["tests/cases/failed.toml: the case door makes door_open fail, and [fail.calls] does not list it"] }
