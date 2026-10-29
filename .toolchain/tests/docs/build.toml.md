@@ -85,5 +85,6 @@ Thus each machine checks a file that holds a path of its machine without the fix
 | a step that runs in a folder | `build` on `placed` builds `placed{exe}`: from the folder `side`, the step finds `side.c`, `src/main.c` and `include/placed.h`. | `--set side=.`: the folder of the project has no `side.c`. |
 | a step that runs in a folder that is not there | With `--set side=nowhere`, `build` stops: `<folder>/nowhere is not there, and a step of placed runs in it`. | No `--set`. |
 | a step that runs in a folder gets the caches of zig as whole paths | A short Python program puts `[build] cache` in `{case}/proj`, as the case of an archive does, and builds `cached`. The step writes `{case}/proj/build/zig-cache/local`, a whole path. | The program does not move the cache, so the step writes the cache of this project. |
+| a program of a package keeps its execute bits | A short Python program runs `build --pack` on `built`, and writes `True`: the zip records an execute bit for `greeter{exe}`. On Windows, the name `greeter.exe` gives the bit. | The program reads the mode of `include/greet.h`, a header with no execute bit. |
 
 `.toolchain/docs/build.py.md` gives the limits of these cases.
