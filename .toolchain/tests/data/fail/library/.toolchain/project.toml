@@ -1,0 +1,25 @@
+[project]
+name = "library"
+
+[fail.calls]
+fread = "0"
+memchr = "nullptr"
+bsearch = "nullptr"
+aligned_alloc = "nullptr"
+_aligned_malloc = "nullptr"
+
+[leaks]
+memory = ["aligned_alloc"]
+
+[leaks.pairs]
+_aligned_malloc = "_aligned_free"
+
+[[artifact]]
+name = "library"
+kind = "program"
+sources = ["src/*.c", "src/{system}/*.c"]
+include = ["src"]
+
+[test]
+timeout = 60
+copies = 1

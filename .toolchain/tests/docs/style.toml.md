@@ -17,6 +17,7 @@ They check the files that `style.py` reads, and the exceptions.
 | an exception that excuses nothing | An exception excuses F4 for `{case}/p/src/a.c`, which has no long function. `style.py` writes `the exception for 'src/a.c' excuses nothing`. | The body of a function of the file has 21 lines. |
 | an exception for a file that is not there | An exception excuses G1 for `{case}/p/src/gone.c`, which is not there. `{case}/p/src/a.c` has its legal notice. `style.py` writes `.toolchain/project.toml:1: G1 the exception for 'src/gone.c' excuses nothing`. | `{case}/p/src/gone.c` is there, with no legal notice. |
 | a file of tests | `{case}/p/tests/a.c` has no legal notice. `style.py` ends with 0. | The file is `{case}/p/src/a.c`. |
+| a character constant with a prefix holds no code | Line 8 of `{case}/p/src/a.c` holds `L'?'`, `u'?'`, `U'?'` and `u8'?'`, and line 9 holds `1'000` and `0xFF'FF`. Line 16 holds `a?pick(a):0`. `style.py` writes `src/a.c:16: L3 no space on both sides of '?'` and `faults: 1`. | Line 16 has its spaces, thus `style.py` writes no fault. |
 
 ## Limits
 

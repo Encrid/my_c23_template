@@ -1,0 +1,38 @@
+[[case]]
+name = "whole"
+run = ["{out}/library{exe}"]
+stdin = "a"
+claims = { status = 0, line = ["each call gave its value"] }
+false = { fail = { fread = 1 } }
+
+[[case]]
+name = "read"
+run = ["{out}/library{exe}"]
+stdin = "a"
+fail = { fread = 1 }
+claims = { status = 1, line = ["no read"] }
+false = { fail = {} }
+
+[[case]]
+name = "byte"
+run = ["{out}/library{exe}"]
+stdin = "a"
+fail = { memchr = 1 }
+claims = { status = 2, line = ["no byte"] }
+false = { fail = {} }
+
+[[case]]
+name = "key"
+run = ["{out}/library{exe}"]
+stdin = "a"
+fail = { bsearch = 1 }
+claims = { status = 3, line = ["no key"] }
+false = { fail = {} }
+
+[[case]]
+name = "aligned"
+run = ["{out}/library{exe}"]
+stdin = "a"
+fail = { aligned_alloc = 1, _aligned_malloc = 1 }
+claims = { status = 4, line = ["no aligned block"] }
+false = { fail = {} }

@@ -1,7 +1,7 @@
 # .toolchain/tests/cases/fail.toml
 
 The group `fail` checks `.toolchain/tools/fail.py`, through `test`, `test --branches` and `test --leaks` of `.toolchain/tools/test.py`.
-Each case runs `test.py` on a project of `.toolchain/tests/data/fail`, with its output in `{case}/out`: `failed`, or `typed` for three cases.
+Each case runs `test.py` on a project of `.toolchain/tests/data/fail`, with its output in `{case}/out`: `failed`, `typed` for three cases, or `library` for four cases.
 
 The program `failed` takes a block with `first_block` of `src/first.c`, and a second block with `malloc` in `src/main.c`.
 Then it takes a block with `calloc`, makes it bigger with `realloc`, and opens and shuts a door.
@@ -26,6 +26,12 @@ The declaration of `pthread_create` on macOS holds `_Nullable` and `_Nonnull`, a
 Its case `both` states no `fail`. The case `first` makes `start_one` fail, and `second` makes `start_two` fail.
 The case `third` makes `pthread_create` and `CreateThread` fail, and each system calls one of them. The false variants state no `fail`.
 
+The program `library` reads a byte with `fread`, finds a byte with `memchr` and a key with `bsearch`, and takes an aligned block.
+It takes the block with `aligned_alloc` in `src/posix/aligned.c`, and with `_aligned_malloc` in `src/windows/aligned.c`.
+The result of `fread` is a `size_t`, and the compiler spells it `__size_t`. The headers of glibc make `memchr` a macro with arguments.
+The declaration of `bsearch` on Windows writes `__cdecl` in the type of its callback. The declaration of `aligned_alloc` checks its alignment.
+Each case writes `a` to the program. The cases `read`, `byte`, `key` and `aligned` each make one of these calls fail, and their false variants state no `fail`.
+
 | Case of the project | `fail` | Claim | False variant |
 | --- | --- | --- | --- |
 | `whole` | None. | `a door, opened and shut`, and the status 0. | The first call of `malloc` fails. |
@@ -49,6 +55,10 @@ The case `third` makes `pthread_create` and `CreateThread` fail, and each system
 | a listed call whose callback is a typedef with a calling convention fails | `test -k first` on `typed` builds the run `fail`, and writes `first: as written`. | `--break`. |
 | a listed call whose types hold nullability marks fails | `test -k second` on `typed` builds the run `fail`, and writes `second: as written`. | `--break`. |
 | the thread call of each system fails | `test -k third` on `typed` builds the run `fail` with the declaration of the system, and writes `third: as written`. | `--break`. |
+| a listed fread fails, and its result of size_t builds | `test -k read` on `library` writes `read: as written`. | `--break`. |
+| a listed memchr fails, also where a macro of its header has its name | `test -k byte` on `library` writes `byte: as written`. | `--break`. |
+| a listed bsearch fails, also where its declaration writes a calling convention | `test -k key` on `library` writes `key: as written`. | `--break`. |
+| a listed aligned allocation fails, also where its declaration checks the alignment | `test -k aligned` on `library` writes `aligned: as written`. | `--break`. |
 | a call that [fail.calls] does not list | With `--set listed=tests/no_door.toml`, `test` stops: `the case door makes door_open fail, and [fail.calls] does not list it`. | No `--set`. |
 | a call that two tables list | With `--set listed=tests/twice.toml`, `test` stops: `[fail.calls] lists malloc two times`. | No `--set`. |
 | a file of [fail] with that is not there | With `--set listed=tests/none.toml`, `test` stops: `[fail] with: <file> is not there`. | No `--set`. |
