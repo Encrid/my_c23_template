@@ -22,7 +22,8 @@ The measure does not probe a constant part: `static_assert`, `sizeof`, `_Generic
 
 1. `rewrite.each` gives the syntax tree of each file `.c` of `src` that the build compiles: `.toolchain/docs/rewrite.py.md`, *The steps*.
 2. In each syntax tree, `walked` finds the conditions, the labels and the functions of `src` and `include`.
-3. `written` copies `src` and `include` into `<build>/branches/tree`, and writes the probes into the copies.
+3. `rewrite.found` finds the functions of `listed` of `fail.py` that the file uses, and `fail.layer` gives the layer.
+4. `written` copies `src` and `include` into `<build>/branches/tree`, and writes the probes and the layers into the copies.
 
 A header gets the probes of each tree that includes it.
 `test.py` then builds the copies, runs the cases and calls `reported`: `.toolchain/docs/test.py.md`, *The branches*.
@@ -33,6 +34,7 @@ A header gets the probes of each tree that includes it.
 - After the `:` of a label and after the `{` of a function, `c23b_hit_(<number>);` records that it ran.
 - A file `.c` starts with an array of `_Atomic` bytes, one for each outcome, and these two functions.
 - At its end, a file `.c` has the writer of `rewrite.py`: `.toolchain/docs/rewrite.py.md`, *The writer*.
+- A file `.c` also gets its layer: `.toolchain/docs/fail.py.md`, *The layer*. Thus a case that states `fail` reaches the branch of the failed call.
 - A header starts with one block, under a guard of its own, with the same parts under names of its own.
 
 Each program writes one line `<path> <bits>` for each file, to the file that the variable `C23_BRANCHES` names.
@@ -99,9 +101,9 @@ An exemption that matches no unreached outcome is a fault, so a branch that a ca
 | `Probing.add(path, key, edit)` | Keeps one probe of a file. |
 | `Probing.skip(loc, kind)` | Keeps a branch that cannot get a probe. |
 | `walked(root, path, tree)` | Gives the probes of the syntax tree of one file and of its headers. |
-| `rewritten(text, path, edits, prefix)` | Gives a file with its probes, and the line and column of each probe. |
-| `probed(config, values)` | Writes the copies with the probes, as *The steps* tells. It gives the probes and the branches that are not measured. |
-| `written(root, where, edits, skips)` | Copies `src` and `include` with `rewrite.copied`, and writes the probes of each file. |
+| `rewritten(text, path, edits, prefix, outer)` | Gives a file with its probes and its layer `outer`, and the line and column of each probe. |
+| `probed(config, values)` | Writes the copies with the probes and the layers, as *The steps* tells. It gives the probes and the branches that are not measured. |
+| `written(root, where, edits, skips, outers)` | Copies `src` and `include` with `rewrite.copied`, and writes the probes and the layer of each file. `outers` gives the layer of each file. |
 | `joined(probes, hits)` | Gives the bits of each file, joined from all the lines of `hits`. |
 | `excused(listed, system, name, line, col, said)` | Tells if an exemption of `listed` matches this unreached outcome on this system, and counts the match. |
 | `reported(probes, gaps, hits, excepted, system)` | Writes the report, as *The report* tells. `excepted` holds the exemptions, and `system` is the system of the build. |

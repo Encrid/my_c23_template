@@ -1,8 +1,8 @@
 # .toolchain/tools/rewrite.py
 
-`rewrite.py` makes a changed copy of the code, for `test --branches` and for `test --leaks`.
-It holds the parts that the two runs share.
-`.toolchain/docs/branches.py.md` and `.toolchain/docs/leaks.py.md` tell what each run writes into the copy.
+`rewrite.py` makes a changed copy of the code, for `test --branches`, for `test --leaks` and for the cases of `test` that state `fail`.
+It holds the parts that these runs share.
+`.toolchain/docs/branches.py.md`, `.toolchain/docs/leaks.py.md` and `.toolchain/docs/fail.py.md` tell what each run writes into the copy.
 
 ## The steps
 
@@ -12,6 +12,27 @@ It holds the parts that the two runs share.
 4. `copied` copies `src` and `include` into `<build>/<run>/tree`. The run then writes its changes into the copies.
 
 `test.py` then builds the copies, and runs the cases: `.toolchain/docs/test.py.md`.
+
+## The rename
+
+A run can give a function that a file uses a new name, after the last `#include` of the file. For `free` and the count of `leaks.py`, the block is:
+
+```c
+[[maybe_unused]] static typeof(free) c23b_l_free;
+#pragma push_macro("free")
+#undef free
+#define free c23b_l_free
+```
+
+Each later use of the name calls the function of the new name, also a use of the name as a pointer.
+No header sees the new name, because the headers come before the block.
+If the last `#include` is in an `#if` that holds only lines of the preprocessor, the block comes after the `#endif` of that `#if`.
+A `#line` after the block keeps the numbers of the lines.
+At the end of the file, `#pragma pop_macro` gives each name its first meaning again. Then the run writes the function of each new name.
+
+`found` finds the functions that a file uses, and their declarations. A function that the file defines does not count, unless it is in `callbacks`.
+`signed` gives the start of the function of a new name, with the parameters of the declaration and with each `typedef` replaced.
+It stops on a function with `...`: `<name> takes a list of arguments of no fixed length`.
 
 ## The writer
 
@@ -54,5 +75,11 @@ The dump sets `_FORTIFY_SOURCE` to 0. Then a call that the system would fortify,
 | `sources(config, values)` | Gives each file `.c` of `src` that an artifact of this target compiles, with its command `dump`. |
 | `each(config, values, use)` | Gives the result of `use(root, path, tree)` for each file of `sources`, 8 files at the same time. |
 | `copied(root, where)` | Empties `where`, and copies `src` and `include` into it. |
+| `plain(kind)` | Gives a type of the syntax tree with each `typedef` replaced, if the dump gives it. A header can use a name that the end of the file does not know. |
+| `declaration(node, typedefs)` | Gives the type of the result and the types of the parameters of the declaration of a function. A result whose type is a name of `typedefs` gets the type of that `typedef`. |
+| `found(root, path, tree, names, callbacks)` | Gives the functions of `names` that a file uses, as *The rename* tells, and the declaration of each of them. It also gives the end of the definition of each function of `callbacks` that the file defines and uses. |
+| `directive(line)` | Gives the name of the directive of a line, an empty text for a blank line, or `None` for a line of code. |
+| `included(text)` | Gives the byte after the last `#include` of a file, or after the `#endif` of the `#if` that holds it. |
+| `signed(name, declaration, prefix)` | Gives the start of the function with the new name, and the call of the function `name` in it. The new name is `prefix`, then `name`. |
 | `placing(text, at)` | Gives the line and the column of a byte. |
 | `writer(values)` | Gives the text of the writer of a file, as *The writer* tells. `values` gives the variable, the rest of the line and the array that the macOS constructor finds. |
