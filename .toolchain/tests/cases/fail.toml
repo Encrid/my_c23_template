@@ -41,6 +41,18 @@ claims = { status = 0, line = ["taken: door, package door"], matches_not = ["tak
 false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/failed", "--out", "{case}/out", "-k", "second", "--set", "lists=none"] }
 
 [[case]]
+name = "a listed call whose callback is a typedef with a calling convention fails"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/typed", "--out", "{case}/out", "-k", "first"]
+claims = { status = 0, line = ["first: as written"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/typed", "--out", "{case}/out", "-k", "first", "--break"] }
+
+[[case]]
+name = "a listed call whose types hold nullability marks fails"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/typed", "--out", "{case}/out", "-k", "second"]
+claims = { status = 0, line = ["second: as written"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/typed", "--out", "{case}/out", "-k", "second", "--break"] }
+
+[[case]]
 name = "a call that [fail.calls] does not list"
 run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/failed", "--out", "{case}/out", "-k", "second", "--set", "listed=tests/no_door.toml"]
 claims = { status = 1, has = ["tests/cases/failed.toml: the case door makes door_open fail, and [fail.calls] does not list it"] }
