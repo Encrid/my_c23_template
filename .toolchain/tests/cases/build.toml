@@ -211,3 +211,9 @@ run = ["{python}", "-c", "import sys; from pathlib import Path; sys.path.insert(
 folders = { "{case}/proj/.toolchain" = [".toolchain/tests/data/build/cached/.toolchain/project.toml"] }
 claims = { status = 0, line = ["{case}/proj/build/zig-cache/local"] }
 false = { run = ["{python}", "-c", "import sys; sys.path.insert(0, sys.argv[1]); import build, shared; sys.argv = ['build.py', '--root', sys.argv[2]]; build.build(shared.arguments())", "{root}/.toolchain/tools", "{case}/proj"] }
+
+[[case]]
+name = "a program of a package keeps its execute bits"
+run = ["{python}", "-c", "import subprocess, sys, zipfile; subprocess.run([sys.executable, sys.argv[1], '--root', sys.argv[2], '--out', sys.argv[3], '--pack'], check=True, capture_output=True); print(zipfile.ZipFile(sys.argv[4]).getinfo(sys.argv[5]).external_attr >> 16 & 0o100 != 0)", "{root}/.toolchain/tools/build.py", "{root}/.toolchain/tests/data/build/built", "{case}/out", "{case}/out/built-{target}.zip", "greeter{exe}"]
+claims = { status = 0, line = ["True"] }
+false = { run = ["{python}", "-c", "import subprocess, sys, zipfile; subprocess.run([sys.executable, sys.argv[1], '--root', sys.argv[2], '--out', sys.argv[3], '--pack'], check=True, capture_output=True); print(zipfile.ZipFile(sys.argv[4]).getinfo(sys.argv[5]).external_attr >> 16 & 0o100 != 0)", "{root}/.toolchain/tools/build.py", "{root}/.toolchain/tests/data/build/built", "{case}/out", "{case}/out/built-{target}.zip", "include/greet.h"] }
