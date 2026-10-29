@@ -212,3 +212,53 @@ why = "The case needs an exception for a file that is not there."
 
 [case.false.files]
 "{case}/p/src/gone.c" = ""
+
+[[case]]
+name = "a character constant with a prefix holds no code"
+run = ["{python}", "{root}/.toolchain/tools/style.py", "--root", "{case}/p"]
+claims = { status = 1, line = ["src/a.c:16: L3 no space on both sides of '?'", "faults: 1"] }
+
+[case.files]
+"{case}/p/.toolchain/project.toml" = '''
+[project]
+'''
+"{case}/p/src/a.c" = '''
+/*
+** Copyright (C) 2026 Enkrid
+**
+** Under the GNU Affero General Public License, version 3 only: see license.
+*/
+static int pick(int a)
+{
+    int wide = L'?' + u'?' + U'?' + u8'?';
+    long many = 1'000 + 0xFF'FF;
+
+    return (a ? wide : (int)many);
+}
+
+static int use(int a)
+{
+    return (a?pick(a):0);
+}
+'''
+
+[case.false.files]
+"{case}/p/src/a.c" = '''
+/*
+** Copyright (C) 2026 Enkrid
+**
+** Under the GNU Affero General Public License, version 3 only: see license.
+*/
+static int pick(int a)
+{
+    int wide = L'?' + u'?' + U'?' + u8'?';
+    long many = 1'000 + 0xFF'FF;
+
+    return (a ? wide : (int)many);
+}
+
+static int use(int a)
+{
+    return (a ? pick(a) : 0);
+}
+'''
