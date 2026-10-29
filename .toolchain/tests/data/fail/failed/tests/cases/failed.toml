@@ -1,0 +1,54 @@
+[[case]]
+name = "whole"
+run = ["{out}/failed{exe}"]
+claims = { status = 0, line = ["a door, opened and shut"] }
+false = { fail = { malloc = 1 } }
+
+[[case]]
+name = "first"
+run = ["{out}/failed{exe}"]
+fail = { malloc = 1 }
+claims = { status = 1, line = ["no first block"] }
+false = { fail = {} }
+
+[[case]]
+name = "second"
+run = ["{out}/failed{exe}"]
+fail = { malloc = 2 }
+claims = { status = 2, line = ["no second block"] }
+false = { fail = { malloc = 1 } }
+
+[[case]]
+name = "leaky"
+run = ["{out}/failed{exe}", "keep"]
+fail = { malloc = 2 }
+claims = { status = 2, line = ["no second block, and the first is kept"] }
+false = { fail = {} }
+
+[[case]]
+name = "lost calloc"
+run = ["{out}/failed{exe}"]
+fail = { calloc = 1 }
+claims = { status = 3, line = ["no zeroed block"] }
+false = { fail = {} }
+
+[[case]]
+name = "lost realloc"
+run = ["{out}/failed{exe}"]
+fail = { realloc = 1 }
+claims = { status = 4, line = ["no bigger block"] }
+false = { fail = {} }
+
+[[case]]
+name = "door"
+run = ["{out}/failed{exe}"]
+fail = { door_open = 1 }
+claims = { status = 5, line = ["no door"] }
+false = { fail = {} }
+
+[[case]]
+name = "nowhere"
+run = ["{out}/failed{exe}"]
+fail = { door_lock = 1 }
+claims = { status = 0, line = ["a door, opened and shut"] }
+false = { fail = { malloc = 1 } }

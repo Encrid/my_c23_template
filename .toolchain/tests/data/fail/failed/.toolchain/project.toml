@@ -1,0 +1,25 @@
+[project]
+name = "failed"
+
+[variables]
+listed = "tests/fail.toml"
+lists = "tests"
+
+[fail]
+with = ["{listed}"]
+
+[[dependency]]
+name = "door"
+from = "{lists}"
+list = "door.txt"
+into = "{build}/taken/door"
+
+[[artifact]]
+name = "failed"
+kind = "program"
+sources = ["src/*.c", "tests/door.c"]
+include = ["src"]
+
+[test]
+timeout = 60
+copies = 1

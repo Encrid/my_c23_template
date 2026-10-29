@@ -1,0 +1,89 @@
+[[case]]
+name = "a listed call fails in a case, and the files of a program share one count"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/failed", "--out", "{case}/out", "-k", "second"]
+claims = { status = 0, line = ["second: as written"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/failed", "--out", "{case}/out", "-k", "second", "--break"] }
+
+[[case]]
+name = "a false variant makes a different call fail"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/failed", "--out", "{case}/out", "-k", "second", "--break"]
+claims = { status = 0, line = ["second, made false: fails, as it must"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/failed", "--out", "{case}/out", "-k", "second"] }
+
+[[case]]
+name = "calloc and realloc fail with nullptr"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/failed", "--out", "{case}/out", "-k", "lost"]
+claims = { status = 0, line = ["lost calloc: as written", "lost realloc: as written"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/failed", "--out", "{case}/out", "-k", "lost", "--break"] }
+
+[[case]]
+name = "a call of a different project fails with its own value"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/failed", "--out", "{case}/out", "-k", "door"]
+claims = { status = 0, line = ["door: as written"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/failed", "--out", "{case}/out", "-k", "door", "--break"] }
+
+[[case]]
+name = "a listed call that the code does not make fails nothing"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/failed", "--out", "{case}/out", "-k", "nowhere"]
+claims = { status = 0, line = ["nowhere: as written"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/failed", "--out", "{case}/out", "-k", "nowhere", "--break"] }
+
+[[case]]
+name = "cases with and without failed calls in one run"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/failed", "--out", "{case}/out"]
+claims = { status = 0, line = ["whole: as written", "failed: 8 cases: 8 as written"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/failed", "--out", "{case}/out", "--break"] }
+
+[[case]]
+name = "a case that states fail prepares the build one time"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/failed", "--out", "{case}/out", "-k", "second"]
+claims = { status = 0, line = ["taken: door, package door"], matches_not = ["taken: door.*taken: door"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/failed", "--out", "{case}/out", "-k", "second", "--set", "lists=none"] }
+
+[[case]]
+name = "a call that [fail.calls] does not list"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/failed", "--out", "{case}/out", "-k", "second", "--set", "listed=tests/no_door.toml"]
+claims = { status = 1, has = ["tests/cases/failed.toml: the case door makes door_open fail, and [fail.calls] does not list it"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/failed", "--out", "{case}/out", "-k", "second"] }
+
+[[case]]
+name = "a call that two tables list"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/failed", "--out", "{case}/out", "-k", "second", "--set", "listed=tests/twice.toml"]
+claims = { status = 1, has = ["[fail.calls] lists malloc two times"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/failed", "--out", "{case}/out", "-k", "second"] }
+
+[[case]]
+name = "a file of [fail] with that is not there"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/failed", "--out", "{case}/out", "-k", "second", "--set", "listed=tests/none.toml"]
+claims = { status = 1, has = ["[fail] with: ", "none.toml is not there"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/failed", "--out", "{case}/out", "-k", "second"] }
+
+[[case]]
+name = "a listed call with no fixed list of arguments"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/failed", "--out", "{case}/out", "-k", "second", "--set", "listed=tests/misfit_list.toml"]
+claims = { status = 1, has = ["say takes a list of arguments of no fixed length"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/failed", "--out", "{case}/out", "-k", "second"] }
+
+[[case]]
+name = "a listed call that gives no result"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/failed", "--out", "{case}/out", "-k", "second", "--set", "listed=tests/misfit_result.toml"]
+claims = { status = 1, has = ["door_shut gives no result"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/failed", "--out", "{case}/out", "-k", "second"] }
+
+[[case]]
+name = "test --branches reaches the branch of each failed call"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/failed", "--out", "{case}/out", "--branches"]
+claims = { status = 0, line = ["branches: 19 outcomes, 19 reached"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/failed", "--out", "{case}/out", "--branches", "-k", "whole"] }
+
+[[case]]
+name = "test --leaks counts the path of a failed call"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/failed", "--out", "{case}/out", "--leaks", "-k", "leaky"]
+claims = { status = 1, line = ["leaks: leaky keeps 1 memory"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/failed", "--out", "{case}/out", "--leaks", "-k", "second"] }
+
+[[case]]
+name = "a failed call takes nothing in test --leaks"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/failed", "--out", "{case}/out", "--leaks", "-k", "second"]
+claims = { status = 0, line = ["second: as written", "leaks: 1 cases, 1 give back what they take"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/fail/failed", "--out", "{case}/out", "--leaks", "-k", "leaky"] }
