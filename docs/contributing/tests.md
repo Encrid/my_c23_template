@@ -139,6 +139,7 @@ A condition in an argument or in the body of a macro cannot get a probe. The run
 Thus write such a condition outside the macro.
 
 The probes change the program, thus the run does not judge the claims. It writes the verdicts only for information.
+An outcome counts as soon as a case reaches it, also if the program then ends with `_Exit` or `abort`.
 `.toolchain/docs/branches.py.md` tells how the probes work.
 
 ## The leaks
