@@ -1,0 +1,26 @@
+[[case]]
+name = "both"
+run = ["{out}/typed{exe}"]
+claims = { status = 0, line = ["two starts and a thread"] }
+false = { fail = { start_one = 1 } }
+
+[[case]]
+name = "first"
+run = ["{out}/typed{exe}"]
+fail = { start_one = 1 }
+claims = { status = 1, line = ["no first start"] }
+false = { fail = {} }
+
+[[case]]
+name = "second"
+run = ["{out}/typed{exe}"]
+fail = { start_two = 1 }
+claims = { status = 2, line = ["no second start"] }
+false = { fail = {} }
+
+[[case]]
+name = "third"
+run = ["{out}/typed{exe}"]
+fail = { pthread_create = 1, CreateThread = 1 }
+claims = { status = 3, line = ["no thread"] }
+false = { fail = {} }
