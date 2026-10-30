@@ -1,0 +1,23 @@
+[project]
+name = "everywhere"
+
+[variables]
+place = "{target}"
+
+[[source]]
+name = "everywhere"
+url = "everywhere.zip"
+sha256 = "b70dc21662e34f6681d3d7c072ef6cc9928778b19da30dfb7cba5fe1f888b4eb"
+into = "{build}/third_party/everywhere"
+top = "{place}"
+
+[kinds.taken]
+output = "{name}"
+steps = [
+    { copy = ["{everywhere}/name.txt", "{output}"] },
+]
+
+[[artifact]]
+name = "name.txt"
+kind = "taken"
+sources = ["note.txt"]
