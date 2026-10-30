@@ -34,3 +34,9 @@ name = "a zip keeps the execute bits of its programs"
 run = ["{python}", "{root}/.toolchain/tests/data/fetch/moded.py", "{root}/.toolchain/tools", "{case}", "tool{exe}"]
 claims = { status = 0, line = ["True"] }
 false = { run = ["{python}", "{root}/.toolchain/tests/data/fetch/moded.py", "{root}/.toolchain/tools", "{case}", "note.txt"] }
+
+[[case]]
+name = "a source with a folder for each target"
+run = ["{python}", "-c", "import subprocess, sys; fetch, build, root, out, *more = sys.argv[1:]; subprocess.run([sys.executable, fetch, '--root', root, '--out', out] + more, check=True); [subprocess.run([sys.executable, build, '--root', root, '--out', out, '--target', target] + more, check=True) for target in ('aarch64-macos', 'x86_64-linux-gnu')]", "{root}/.toolchain/tools/fetch.py", "{root}/.toolchain/tools/build.py", "{root}/.toolchain/tests/data/fetch/everywhere", "{case}/out"]
+claims = { status = 0, files = { "{case}/out/aarch64-macos/scratch/name.txt" = "aarch64-macos", "{case}/out/x86_64-linux-gnu/scratch/name.txt" = "x86_64-linux-gnu" } }
+false = { run = ["{python}", "-c", "import subprocess, sys; fetch, build, root, out, *more = sys.argv[1:]; subprocess.run([sys.executable, fetch, '--root', root, '--out', out] + more, check=True); [subprocess.run([sys.executable, build, '--root', root, '--out', out, '--target', target] + more, check=True) for target in ('aarch64-macos', 'x86_64-linux-gnu')]", "{root}/.toolchain/tools/fetch.py", "{root}/.toolchain/tools/build.py", "{root}/.toolchain/tests/data/fetch/everywhere", "{case}/out", "--set", "place=aarch64-macos"] }

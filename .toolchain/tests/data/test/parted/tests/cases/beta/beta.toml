@@ -1,0 +1,5 @@
+[[case]]
+name = "beta"
+run = ["{out}/beta{exe}"]
+claims = { status = 0, line = ["beta"] }
+false = { run = ["{out}/beta{exe}", "more"] }

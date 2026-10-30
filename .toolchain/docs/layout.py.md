@@ -49,6 +49,9 @@ The messages are:
 ## The documents
 
 `shared.document` gives the document of a file: `.toolchain/docs/shared.py.md`, *The documents*.
+Each document keeps the path of its file below the first folder. Thus the documents of a part are in the folders of the part.
+For example, the document of `include/<part>/<name>.h` is `docs/extern/<part>/<name>.h.md`, and the document of `src/<part>/<name>.c` is `docs/intern/<part>/<name>.c.md`.
+`.toolchain/docs/project.toml.md`, *[parts]*, tells the parts of a project.
 
 The first line of a document is `#`, a space, and the path of its file.
 A document of `docs/extern`, of `docs/intern` or of `docs/tools` is a fault if its file is not there.

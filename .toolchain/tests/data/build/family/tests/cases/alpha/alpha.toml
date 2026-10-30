@@ -1,0 +1,5 @@
+[[case]]
+name = "alpha"
+run = ["{python}", "-c", "import sys; print(open(sys.argv[1]).read().strip())", "{out}/alpha.txt"]
+claims = { status = 0, line = ["alpha"] }
+false = { run = ["{python}", "-c", "import sys; print(open(sys.argv[1]).read().strip())", "{root}/src/beta/beta.txt"] }

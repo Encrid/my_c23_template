@@ -23,7 +23,7 @@ The project of the case `a full project` has these files, and the document of ea
 
 | Case | Claim | False variant |
 | --- | --- | --- |
-| a full project | `layout.py` writes `no fault in 34 files`, and ends with 0. `ours` leaves out the files of `tests` and of `.toolchain/tests`. | The project also has `notes.txt`. |
+| a full project | `layout.py` writes `no fault in 36 files`, and ends with 0. `ours` leaves out the files of `tests` and of `.toolchain/tests`. | The project also has `notes.txt`. |
 | a path that the layout does not allow | `notes.txt: the layout does not allow this file`. | No `notes.txt`. |
 | a file that the layout needs | A project with no `license`: `license: the layout needs this file`. | The project has `license`. |
 | the folder that the layout needs | A project with no file in `.toolchain/tools`: `.toolchain/tools/: the layout needs this folder`. No line names `src/`. | The project has a file in `.toolchain/tools`. |
@@ -31,6 +31,7 @@ The project of the case `a full project` has these files, and the document of ea
 | a header without its document | `include/a.h: no document docs/extern/a.h.md`. | The project has the document. |
 | a document without its file | `docs/intern/gone.c.md: no file has this document`. | The project has the source `gone.c` in `src`. |
 | a document in the wrong folder | A source has a document in `docs/extern`: `docs/extern/a.c.md: no file has this document`. | The source has no document in `docs/extern`. |
+| the documents of a part are in the folders of the part | The parts `video` and `mouse` each have `window.c`, with its document in the folder of the part. No line names `video` or `mouse`. | The document of the source of `mouse` starts with `# src/video/window.c`. |
 | an extra document in docs | `docs/contributing/notes.md: the layout does not allow this file`. | No `notes.md`. |
 | the first line of a document | The document of a source starts with `# a.c`: `the first line is not # src/a.c`. | The first line is `# src/a.c`. |
 | a name that is not in snake_case | `src/Notes.c: 'Notes.c' is not in snake_case`. | `notes.c` in place of `Notes.c`. |
