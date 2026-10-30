@@ -9,8 +9,9 @@ The tools import it. It does not run alone.
 | --- | --- |
 | `HERE` | The folder of `project.py`, which holds `.toolchain`, zig and the caches of zig. It is the default root. |
 | `NAME` | The pattern of a variable: a name in braces, with an optional separator after a colon. |
-| `KEYS` | The keys that a step, a case, a false variant, a helper, a step of a script, the claims and a source can have. It also gives the keys of a kind of `[leaks.kinds]`. |
-| `SIDES` | The folder of `docs` that holds the documents of a folder: `extern` for `include`, and `intern` for `src`. |
+| `KEYS` | The keys of a step, a case, a false variant, a helper, a step of a script, the claims, a source and a part. It also gives the keys of a kind of `[leaks.kinds]`. |
+| `TAG` | The pattern of the tag of a release: `v<major>.<minor>.<patch>`, after an optional part in snake_case and `-`. |
+| `SIDES` | The folder of `docs` that holds the documents of a folder: `extern` for `include`, `intern` for `src`, and `tools` for `tools`. |
 
 ## Functions
 
@@ -76,13 +77,18 @@ A list value in a text needs a separator: `{<name>:<separator>}`. `expand` joins
 
 ## The options
 
-`arguments` reads the options `--root`, `--target`, `--debug`, `--out` and `--set`.
+`arguments` reads the options `--root`, `--target`, `--part`, `--tag`, `--debug`, `--out` and `--set`.
 A tool adds its own options:
 
 - `arguments('--commits')` adds the option `--commits <value>`. Its value is in `args.commits`, or `None` if the option is not given.
 - `arguments(pack='--pack')` adds the option `--pack`, with no value. `args.pack` tells if the option is given.
 
 The default of `--root` is `HERE`. `arguments` makes the root an absolute path.
+`--part` can be given more than one time. `args.part` is the list of its values, or `None`.
+
+`--tag <tag>` takes the tag of a release, and matches it with `TAG`.
+A tag `<part>-v<major>.<minor>.<patch>` adds `<part>` to `args.part`. A tag `v<major>.<minor>.<patch>` adds no part.
+`arguments` stops on a different tag: `the tag <tag> is not v<major>.<minor>.<patch> or <part>-v<major>.<minor>.<patch>`.
 
 ## The legal notice
 
