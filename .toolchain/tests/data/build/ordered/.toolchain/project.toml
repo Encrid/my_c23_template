@@ -1,0 +1,6 @@
+[project]
+name = "ordered"
+
+[test]
+timeout = 60
+copies = 1

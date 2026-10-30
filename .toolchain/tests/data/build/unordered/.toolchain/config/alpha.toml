@@ -1,0 +1,11 @@
+[parts.alpha]
+name = "Alpha"
+uses = []
+third_party = []
+
+[[artifact]]
+name = "alpha.txt"
+kind = "file"
+part = "alpha"
+sources = ["src/alpha/alpha.txt"]
+link = ["{out}/zeta.txt"]

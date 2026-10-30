@@ -1,0 +1,10 @@
+[parts.zeta]
+name = "Zeta"
+uses = []
+third_party = []
+
+[[artifact]]
+name = "zeta.txt"
+kind = "file"
+part = "zeta"
+sources = ["src/zeta/zeta.txt"]
