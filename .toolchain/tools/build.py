@@ -1,6 +1,7 @@
 # Copyright (C) 2026 Enkrid
 #
 # Under the GNU Affero General Public License, version 3 only: see license.
+import graphlib
 import os
 import platform
 import shutil
@@ -139,16 +140,19 @@ def packed(config, values, kit):
 
 
 def artifacts(config):
-    defaults = config.get('module', {})
-    for module in config.get('modules', []):
-        base = dict(defaults, **module)
-        yield base
-        for variant in base.get('variants', []):
-            yield dict(base, **variant)
-    for artifact in config.get('artifact', []):
-        yield artifact
-        for variant in artifact.get('variants', []):
-            yield dict(artifact, **variant)
+    defaults, found = config.get('module', {}), []
+    for row in [dict(defaults, **module) for module in config.get('modules', [])] + config.get('artifact', []):
+        found += [row] + [dict(row, **variant) for variant in row.get('variants', [])]
+    rank = ranked(config)
+    return sorted(found, key=lambda artifact: rank.get(artifact.get('part'), 0))
+
+
+def ranked(config):
+    uses = {part: table.get('uses', []) for part, table in config.get('parts', {}).items()}
+    try:
+        return {part: rank for rank, part in enumerate(graphlib.TopologicalSorter(uses).static_order())}
+    except graphlib.CycleError as cycle:
+        die('the uses of the parts make a cycle: %s' % ' '.join(cycle.args[1]))
 
 
 def path_defines(config):
@@ -231,8 +235,9 @@ def composed(config, values):
 
 def part_table(config, part):
     parts = config.get('parts', {})
-    if part not in parts:
-        die('no part %s; the parts: %s' % (part, ' '.join(parts)))
+    for name in [part] + parts.get(part, {}).get('uses', []):
+        if name not in parts:
+            die('no part %s; the parts: %s' % (name, ' '.join(parts)))
     table = known(parts[part], 'part', '[parts.%s]' % part)
     missing = [key for key in ('name', 'uses', 'third_party') if key not in table]
     if missing:
@@ -315,8 +320,8 @@ def prepared(args, here=False):
     os.environ.update({name: str(cache / leaf) for name, leaf in CACHES.items()})
     zig = fetch.zig_found(config['zig']) or die('zig %s is neither fetched nor on the path' % config['zig']['version'])
     values = shared.variables(config, args, target, zig)
-    values['paths'] = path_defines(config)
     owned(config)
+    values['paths'] = path_defines(config)
     return (kept(config, needed(config, args.part)) if args.part else config), values
 
 
