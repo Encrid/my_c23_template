@@ -84,6 +84,7 @@ A part that they use is built from its own sources.
 `--branches` and `--leaks` then read only the exemptions that match the files and the cases of the run.
 
 With no `--part`, `build` and `test` act on all the parts, and `pack` writes the zip of each part. `join` joins nothing.
+With or without `--part`, each build makes the artifacts of a part after the artifacts of the parts of its `uses`.
 The workflow `release.yml` gives `--tag` in place of `--part`: `.toolchain/docs/workflows.py.md`, *The release*.
 
 ## Output

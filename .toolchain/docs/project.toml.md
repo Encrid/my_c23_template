@@ -298,7 +298,7 @@ It is also the name of the folder of the part in `src`, `include`, `docs/extern`
 | Key | Value |
 | --- | --- |
 | `name` | The name of the zips of the part, in place of `[project] name`, for example `Sample-Video`. |
-| `uses` | The parts whose artifacts the part uses in the output folder, for example a library that it links. A build of the part also makes them. Write `[]` for a part that uses no part. |
+| `uses` | The parts whose artifacts the part uses in the output folder, for example a library that it links. A build of the part also makes them, before the artifacts of the part. Write `[]` for a part that uses no part. |
 | `third_party` | The folders of `third_party` whose licence the zip of the part holds. Write `[]` for a part that ships no work of a different maker. |
 | `package` | Optional. The package proof of the part: a table with the keys `proof`, `link` and `include`, as `[package]` has. `.toolchain/docs/build.py.md`, *The package proof*, tells them. |
 
@@ -336,6 +336,7 @@ The tools stop with these messages:
 - `[parts.<part>] states no <key>`, if `name`, `uses` or `third_party` is not there.
 - `[parts.<part>]: a part has no key <keys>`, for a key that the table above does not give.
 - `no part <part>; the parts: <parts>`, if `--part` or `uses` names a part that `[parts]` does not have.
+- `the uses of the parts make a cycle: <parts>`, if a part uses itself, directly or through a different part.
 
 A project with no `[parts]` states no part, and each command acts on the full project.
 `.toolchain/docs/build.py.md`, *Parts*, tells how the tools check and keep the parts.
