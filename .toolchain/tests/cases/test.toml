@@ -172,14 +172,14 @@ claims = { status = 0, line = ["round 2 of 2"] }
 false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{case}", "--out", "{case}/out"] }
 
 [[case]]
-name = "the cases of a part of a name"
+name = "the cases whose name holds a text"
 run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{case}", "--out", "{case}/out", "-k", "second"]
 folders = { "{case}/.toolchain" = [".toolchain/tests/data/test/project.toml"], "{case}/tests/cases" = [".toolchain/tests/data/test/two.toml"] }
 claims = { status = 0, has = ["second case: as written"], lacks = ["first case"] }
 false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{case}", "--out", "{case}/out", "-k", "first"] }
 
 [[case]]
-name = "a part of no name"
+name = "a text that no name holds"
 run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{case}", "--out", "{case}/out", "-k", "nothing"]
 folders = { "{case}/.toolchain" = [".toolchain/tests/data/test/project.toml"], "{case}/tests/cases" = [".toolchain/tests/data/test/two.toml"] }
 claims = { status_not = 0, has = ["no case has nothing in its name"] }
@@ -198,3 +198,27 @@ run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{case}", "--out
 folders = { "{case}/.toolchain" = [".toolchain/tests/data/test/port/project.toml"], "{case}/tests/cases" = [".toolchain/tests/data/test/unported.toml"] }
 claims = { status_not = 0, matches = ["no variable .port. for 127[.]0[.]0[.]1:.port."] }
 false = { folders = { "{case}/tests/cases" = [".toolchain/tests/data/test/ported.toml"] } }
+
+[[case]]
+name = "the groups of a part"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/build/family", "--out", "{case}/out", "--part", "alpha"]
+claims = { status = 0, line = ["alpha/alpha: 1 cases: 1 as written"], lacks = ["beta/beta"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/build/family", "--out", "{case}/out", "--part", "beta"] }
+
+[[case]]
+name = "a part with no group"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/build/family", "--out", "{case}/out", "--part", "gamma"]
+claims = { status_not = 0, has = ["no case group is in the parts gamma"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/build/family", "--out", "{case}/out", "--part", "alpha"] }
+
+[[case]]
+name = "the branches of a part"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/test/parted", "--out", "{case}/out", "--branches", "--part", "alpha"]
+claims = { status = 0, line = ["branches: 3 outcomes, 3 reached"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/test/parted", "--out", "{case}/out", "--branches"] }
+
+[[case]]
+name = "the leaks of a part"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/test/parted", "--out", "{case}/out", "--leaks", "--part", "alpha"]
+claims = { status = 0, line = ["leaks: 2 cases, 2 give back what they take"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/test/parted", "--out", "{case}/out", "--leaks"] }

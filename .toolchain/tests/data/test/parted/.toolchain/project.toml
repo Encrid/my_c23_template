@@ -1,0 +1,40 @@
+[project]
+name = "parted"
+
+[parts.alpha]
+name = "Parted-Alpha"
+uses = []
+third_party = []
+
+[parts.beta]
+name = "Parted-Beta"
+uses = []
+third_party = []
+
+[[artifact]]
+name = "alpha"
+kind = "program"
+part = "alpha"
+sources = ["src/alpha/alpha.c"]
+
+[[artifact]]
+name = "beta"
+kind = "program"
+part = "beta"
+sources = ["src/beta/beta.c"]
+
+[[branches.exception]]
+path = "src/beta/beta.c"
+line = 11
+col = 9
+side = "true"
+why = "The case of beta gives no word, so that a run of alpha meets an exemption of a different part."
+
+[[leaks.exception]]
+case = "beta"
+kind = "memory"
+why = "The case of beta keeps one block, so that a run of alpha meets an exemption of a different part."
+
+[test]
+timeout = 60
+copies = 1

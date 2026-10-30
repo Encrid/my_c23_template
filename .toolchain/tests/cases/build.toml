@@ -217,3 +217,111 @@ name = "a program of a package keeps its execute bits"
 run = ["{python}", "-c", "import subprocess, sys, zipfile; subprocess.run([sys.executable, sys.argv[1], '--root', sys.argv[2], '--out', sys.argv[3], '--pack'], check=True, capture_output=True); print(zipfile.ZipFile(sys.argv[4]).getinfo(sys.argv[5]).external_attr >> 16 & 0o100 != 0)", "{root}/.toolchain/tools/build.py", "{root}/.toolchain/tests/data/build/built", "{case}/out", "{case}/out/built-{target}.zip", "greeter{exe}"]
 claims = { status = 0, line = ["True"] }
 false = { run = ["{python}", "-c", "import subprocess, sys, zipfile; subprocess.run([sys.executable, sys.argv[1], '--root', sys.argv[2], '--out', sys.argv[3], '--pack'], check=True, capture_output=True); print(zipfile.ZipFile(sys.argv[4]).getinfo(sys.argv[5]).external_attr >> 16 & 0o100 != 0)", "{root}/.toolchain/tools/build.py", "{root}/.toolchain/tests/data/build/built", "{case}/out", "{case}/out/built-{target}.zip", "include/greet.h"] }
+
+[[case]]
+name = "a build of a part makes the parts that it uses, and their uses"
+run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/family", "--out", "{case}/out", "--part", "gamma"]
+claims = { status = 0, has = ["scratch/alpha.txt", "scratch/beta.txt", "scratch/gamma.txt"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/family", "--out", "{case}/out", "--part", "beta"] }
+
+[[case]]
+name = "a build of a part makes no other part"
+run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/family", "--out", "{case}/out", "--part", "alpha"]
+claims = { status = 0, has = ["scratch/alpha.txt"], lacks = ["beta.txt", "gamma.txt"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/family", "--out", "{case}/out"] }
+
+[[case]]
+name = "a part that the project does not have"
+run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/family", "--out", "{case}/out", "--part", "nowhere"]
+claims = { status_not = 0, has = ["no part nowhere; the parts: alpha beta gamma"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/family", "--out", "{case}/out", "--part", "alpha"] }
+
+[[case]]
+name = "an artifact with no part, in a project with parts"
+run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{case}/p", "--out", "{case}/out"]
+files = { "{case}/p/.toolchain/project.toml" = "[project]\nname = \"p\"\n\n[parts.a]\nname = \"A\"\nuses = []\nthird_party = []\n\n[[artifact]]\nname = \"note\"\nkind = \"file\"\nsources = [\"note.txt\"]\n", "{case}/p/note.txt" = "note\n" }
+claims = { status_not = 0, has = ["note states no part, and the project has parts"] }
+false = { files = { "{case}/p/.toolchain/project.toml" = "[project]\nname = \"p\"\n\n[parts.a]\nname = \"A\"\nuses = []\nthird_party = []\n\n[[artifact]]\nname = \"note\"\nkind = \"file\"\npart = \"a\"\nsources = [\"note.txt\"]\n" } }
+
+[[case]]
+name = "a table of [compose] with no part, in a project with parts"
+run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{case}/p", "--out", "{case}/out"]
+files = { "{case}/p/.toolchain/project.toml" = "[project]\nname = \"p\"\n\n[parts.a]\nname = \"A\"\nuses = []\nthird_party = []\n\n[compose.headers]\nheaders = []\n", "{case}/p/note.txt" = "note\n" }
+claims = { status_not = 0, has = ["[compose.headers] states no part, and the project has parts"] }
+false = { files = { "{case}/p/.toolchain/project.toml" = "[project]\nname = \"p\"\n\n[parts.a]\nname = \"A\"\nuses = []\nthird_party = []\n\n[compose.headers]\npart = \"a\"\nheaders = []\n" } }
+
+[[case]]
+name = "an artifact of a part that [parts] does not have"
+run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{case}/p", "--out", "{case}/out"]
+files = { "{case}/p/.toolchain/project.toml" = "[project]\nname = \"p\"\n\n[[artifact]]\nname = \"note\"\nkind = \"file\"\npart = \"a\"\nsources = [\"note.txt\"]\n", "{case}/p/note.txt" = "note\n" }
+claims = { status_not = 0, has = ["note states the part a, and [parts] does not have it"] }
+false = { files = { "{case}/p/.toolchain/project.toml" = "[project]\nname = \"p\"\n\n[[artifact]]\nname = \"note\"\nkind = \"file\"\nsources = [\"note.txt\"]\n" } }
+
+[[case]]
+name = "a part that states no uses"
+run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{case}/p", "--out", "{case}/out"]
+files = { "{case}/p/.toolchain/project.toml" = "[project]\nname = \"p\"\n\n[parts.a]\nname = \"A\"\nthird_party = []\n\n[[artifact]]\nname = \"note\"\nkind = \"file\"\npart = \"a\"\nsources = [\"note.txt\"]\n", "{case}/p/note.txt" = "note\n" }
+claims = { status_not = 0, has = ["[parts.a] states no uses"] }
+false = { files = { "{case}/p/.toolchain/project.toml" = "[project]\nname = \"p\"\n\n[parts.a]\nname = \"A\"\nuses = []\nthird_party = []\n\n[[artifact]]\nname = \"note\"\nkind = \"file\"\npart = \"a\"\nsources = [\"note.txt\"]\n" } }
+
+[[case]]
+name = "a key that a part does not have"
+run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{case}/p", "--out", "{case}/out"]
+files = { "{case}/p/.toolchain/project.toml" = "[project]\nname = \"p\"\n\n[parts.a]\nname = \"A\"\nuses = []\nuse = []\nthird_party = []\n\n[[artifact]]\nname = \"note\"\nkind = \"file\"\npart = \"a\"\nsources = [\"note.txt\"]\n", "{case}/p/note.txt" = "note\n" }
+claims = { status_not = 0, has = ["[parts.a]: a part has no key use"] }
+false = { files = { "{case}/p/.toolchain/project.toml" = "[project]\nname = \"p\"\n\n[parts.a]\nname = \"A\"\nuses = []\nthird_party = []\n\n[[artifact]]\nname = \"note\"\nkind = \"file\"\npart = \"a\"\nsources = [\"note.txt\"]\n" } }
+
+[[case]]
+name = "a pack of a part writes the zip of the part"
+run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/family", "--out", "{case}/out", "--pack", "--part", "beta"]
+claims = { status = 0, line = ["{case}/out/Family-Beta-{target}.zip", "beta.txt", "include/beta.h", "license", "package proof: Family-Beta ran"], matches_not = ["(?m)^alpha[.]txt$", "(?m)^third_party/"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/family", "--out", "{case}/out", "--pack", "--part", "alpha"] }
+
+[[case]]
+name = "the zip of a part holds the licences of its third_party"
+run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/family", "--out", "{case}/out", "--pack", "--part", "alpha"]
+claims = { status = 0, line = ["{case}/out/Family-Alpha-{target}.zip", "third_party/sample/license"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/family", "--out", "{case}/out", "--pack", "--part", "gamma"] }
+
+[[case]]
+name = "a folder of third_party with no licence"
+run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{case}/p", "--out", "{case}/out"]
+files = { "{case}/p/.toolchain/project.toml" = "[project]\nname = \"p\"\n\n[parts.a]\nname = \"A\"\nuses = []\nthird_party = [\"sample\"]\n\n[[artifact]]\nname = \"note\"\nkind = \"file\"\npart = \"a\"\nsources = [\"note.txt\"]\n", "{case}/p/note.txt" = "note\n" }
+claims = { status_not = 0, has = ["third_party/sample/license is not there, and the deliverable needs it"] }
+false = { files = { "{case}/p/third_party/sample/license" = "The licence of sample.\n" } }
+
+[[case]]
+name = "a pack with no part writes the zip of each part"
+run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/family", "--out", "{case}/out", "--pack"]
+claims = { status = 0, line = ["{case}/out/Family-Alpha-{target}.zip", "{case}/out/Family-Beta-{target}.zip", "{case}/out/Family-Gamma-{target}.zip", "package proof: Family-Beta ran"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/family", "--out", "{case}/out", "--pack", "--part", "alpha"] }
+
+[[case]]
+name = "the headers of a table go into the folder into"
+run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/family", "--out", "{case}/out", "--part", "alpha"]
+claims = { status = 0, line = ["include/alpha.h"], files = { "{case}/out/{target}/include/alpha.h" = "ALPHA_VALUE" } }
+false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/family", "--out", "{case}/out", "--part", "alpha", "--set", "place=other"] }
+
+[[case]]
+name = "a join makes one zip with a folder for each target"
+run = ["{python}", "-c", "import subprocess, sys, zipfile; tool, root, out, *targets = sys.argv[1:]; [subprocess.run([sys.executable, tool, '--root', root, '--out', out, '--pack', '--part', 'alpha', '--target', target], check=True, capture_output=True) for target in targets]; subprocess.run([sys.executable, tool, '--root', root, '--out', out, '--join', '--part', 'alpha'], check=True); print('\\n'.join(zipfile.ZipFile(out + '/Family-Alpha.zip').namelist()))", "{root}/.toolchain/tools/build.py", "{root}/.toolchain/tests/data/build/family", "{case}/out", "x86_64-windows-gnu", "x86_64-linux-gnu", "aarch64-macos", "aarch64-linux-gnu", "x86_64-macos", "aarch64-windows-gnu"]
+claims = { status = 0, line = ["{case}/out/Family-Alpha.zip", "x86_64-windows-gnu/alpha.txt", "x86_64-linux-gnu/alpha.txt", "aarch64-macos/alpha.txt", "aarch64-linux-gnu/alpha.txt", "x86_64-macos/alpha.txt", "aarch64-windows-gnu/alpha.txt", "aarch64-windows-gnu/include/alpha.h", "aarch64-windows-gnu/third_party/sample/license"] }
+false = { run = ["{python}", "-c", "import subprocess, sys, zipfile; tool, root, out, *targets = sys.argv[1:]; [subprocess.run([sys.executable, tool, '--root', root, '--out', out, '--pack', '--part', 'alpha', '--target', target], check=True, capture_output=True) for target in targets]; subprocess.run([sys.executable, tool, '--root', root, '--out', out, '--join', '--part', 'alpha'], check=True); print('\\n'.join(zipfile.ZipFile(out + '/Family-Alpha.zip').namelist()))", "{root}/.toolchain/tools/build.py", "{root}/.toolchain/tests/data/build/family", "{case}/out", "x86_64-windows-gnu", "x86_64-linux-gnu", "aarch64-macos", "aarch64-linux-gnu", "x86_64-macos"] }
+
+[[case]]
+name = "a join with no part joins nothing"
+run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/family", "--out", "{case}/out", "--join"]
+claims = { status = 0, lacks = ["zip"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/family", "--out", "{case}/out", "--join", "--part", "alpha"] }
+
+[[case]]
+name = "the tag of a part names the part"
+run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/family", "--out", "{case}/out", "--tag", "alpha-v0.1.0"]
+claims = { status = 0, has = ["scratch/alpha.txt"], lacks = ["beta.txt"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/family", "--out", "{case}/out", "--tag", "v0.1.0"] }
+
+[[case]]
+name = "a tag that is not the tag of a release"
+run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/family", "--out", "{case}/out", "--tag", "alpha-0.1.0"]
+claims = { status_not = 0, has = ["the tag alpha-0.1.0 is not v<major>.<minor>.<patch> or <part>-v<major>.<minor>.<patch>"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/family", "--out", "{case}/out", "--tag", "alpha-v0.1.0"] }

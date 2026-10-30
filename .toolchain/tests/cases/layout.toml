@@ -108,6 +108,13 @@ claims = { status = 1, line = ["docs/extern/a.c.md: no file has this document"] 
 false = { run = ["{python}", "{root}/.toolchain/tools/layout.py", "--root", "{case}/fixed"], files = { "{case}/fixed/.toolchain/project.toml" = "", "{case}/fixed/src/a.c" = "", "{case}/fixed/docs/intern/a.c.md" = "# src/a.c\n" } }
 
 [[case]]
+name = "the documents of a part are in the folders of the part"
+run = ["{python}", "{root}/.toolchain/tools/layout.py", "--root", "{case}/project"]
+files = { "{case}/project/.toolchain/project.toml" = "", "{case}/project/include/video/video.h" = "", "{case}/project/docs/extern/video/video.h.md" = "# include/video/video.h\n", "{case}/project/src/video/window.c" = "", "{case}/project/docs/intern/video/window.c.md" = "# src/video/window.c\n", "{case}/project/src/mouse/window.c" = "", "{case}/project/docs/intern/mouse/window.c.md" = "# src/mouse/window.c\n" }
+claims = { status = 1, line = ["license: the layout needs this file"], lacks = ["video", "mouse"] }
+false = { files = { "{case}/project/docs/intern/mouse/window.c.md" = "# src/video/window.c\n" } }
+
+[[case]]
 name = "an extra document in docs"
 run = ["{python}", "{root}/.toolchain/tools/layout.py", "--root", "{case}/project"]
 files = { "{case}/project/.toolchain/project.toml" = "", "{case}/project/docs/contributing/notes.md" = "" }

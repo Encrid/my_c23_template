@@ -1,0 +1,11 @@
+[[case]]
+name = "alpha"
+run = ["{out}/alpha{exe}"]
+claims = { status = 0, line = ["alpha"] }
+false = { run = ["{out}/alpha{exe}", "more"] }
+
+[[case]]
+name = "alpha words"
+run = ["{out}/alpha{exe}", "more"]
+claims = { status = 0, line = ["alpha words"] }
+false = { run = ["{out}/alpha{exe}"] }

@@ -17,6 +17,12 @@ claims = { status = 0, line = ["{case}/out/taken-{target}.zip"] }
 false = { run = ["{python}", "{root}/project.py", "build", "--root", "{root}/.toolchain/tests/data/take", "--out", "{case}/out"] }
 
 [[case]]
+name = "the command join"
+run = ["{python}", "{root}/project.py", "join", "--root", "{root}/.toolchain/tests/data/build/family", "--out", "{case}/out", "--part", "alpha"]
+claims = { status_not = 0, has = ["build.py: ", "Family-Alpha-x86_64-windows-gnu.zip is not there: pack alpha for x86_64-windows-gnu first"] }
+false = { run = ["{python}", "{root}/project.py", "build", "--root", "{root}/.toolchain/tests/data/build/family", "--out", "{case}/out", "--part", "alpha"] }
+
+[[case]]
 name = "the command test"
 run = ["{python}", "{root}/project.py", "test", "--root", "{root}/.toolchain/tests/data/take", "--out", "{case}/out"]
 claims = { status = 0, line = ["no case: tests/cases holds no case"] }
@@ -25,7 +31,7 @@ false = { run = ["{python}", "{root}/project.py", "build", "--root", "{root}/.to
 [[case]]
 name = "a command that project.py does not know"
 run = ["{python}", "{root}/project.py", "nothing"]
-claims = { status_not = 0, has = ["project.py: name a command: fetch build pack test check clean distclean cla"] }
+claims = { status_not = 0, has = ["project.py: name a command: fetch build pack join test check clean distclean cla"] }
 false = { run = ["{python}", "{root}/project.py", "test", "--root", "{root}/.toolchain/tests/data/take", "--out", "{case}/out"] }
 
 [[case]]

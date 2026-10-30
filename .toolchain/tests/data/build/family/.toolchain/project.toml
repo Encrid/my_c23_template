@@ -1,0 +1,59 @@
+[project]
+name = "family"
+
+[variables]
+place = "include"
+
+[parts.alpha]
+name = "Family-Alpha"
+uses = []
+third_party = ["sample"]
+
+[parts.beta]
+name = "Family-Beta"
+uses = ["alpha"]
+third_party = []
+
+[parts.beta.package]
+proof = "tests/beta/package/proof.c"
+
+[parts.gamma]
+name = "Family-Gamma"
+uses = ["beta"]
+third_party = []
+
+[compose.alpha]
+part = "alpha"
+from = "include/alpha"
+headers = ["*.h"]
+into = "{place}"
+
+[compose.beta]
+part = "beta"
+from = "include/beta"
+headers = ["*.h"]
+into = "{place}"
+
+[[artifact]]
+name = "alpha.txt"
+kind = "file"
+part = "alpha"
+sources = ["src/alpha/alpha.txt"]
+
+[[artifact]]
+name = "beta.txt"
+kind = "file"
+part = "beta"
+sources = ["src/beta/beta.txt"]
+link = ["{out}/alpha.txt"]
+
+[[artifact]]
+name = "gamma.txt"
+kind = "file"
+part = "gamma"
+sources = ["src/gamma/gamma.txt"]
+link = ["{out}/beta.txt"]
+
+[test]
+timeout = 60
+copies = 1

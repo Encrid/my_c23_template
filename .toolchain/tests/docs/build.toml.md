@@ -24,6 +24,7 @@ The cases of the options, of the report and of the files of a project run a shor
 | `placed` | The program `placed`, whose kind compiles `src/main.c` with the folder `include`, and `side.c` by its bare name, in the folder `{side}`. `side` is `side`, the folder that holds `side.c`. |
 | `cached` | The test artifact `cached`, whose kind writes the cache of zig of its step, in the folder `{build}`. |
 | `composed` | No artifact, and the table `[compose.base]`, whose `from` is the variable `place`. `place` is `kept`, the folder that holds `include/kept.h`. |
+| `family` | The parts `alpha`, `beta` and `gamma`, each with one artifact `<part>.txt` of the kind `file`. `beta` uses `alpha`, and `gamma` uses `beta`. |
 
 In `built`, `greet` gets its greeting from `defines`.
 `greeter` includes `.toolchain/tests/data/build/built/include/greet.h`, links `greet`, and has `greet` beside it in its folder.
@@ -44,6 +45,12 @@ The kind `stamped` copies `.toolchain/tests/data/build/built/src/note.txt` to a 
 Then it checks that the output contains `{said}`. The default of `said` is `written`, a word of `note.txt`.
 The section holds the items of `manifest` with commas between them: `first,second`.
 The variant `plain` is unstamped.
+
+In `family`, `beta.txt` links `alpha.txt`, and `gamma.txt` links `beta.txt`. Thus a build of a part fails if a part of its `uses` is not built.
+`[compose.alpha]` and `[compose.beta]` take `<part>.h` from `include/<part>`, into the folder of the variable `place`, which is `include`.
+The `third_party` of `alpha` is `sample`, and the other parts have none. `beta` has the package proof `tests/beta/package/proof.c`, which includes `beta.h`.
+The groups `alpha/alpha` and `beta/beta` each have one case. `gamma` has no group.
+The cases of the checks of the parts write a project in `{case}/p` with `files`, with one part `a` and the artifact `note`.
 
 The case of an archive of a release copies `archived` into `{case}/proj`, and runs `build.main` from a short Python program.
 The program puts `[build] cache` in that folder, as in a project. A project in `.toolchain/tests/data/build` does not hold the cache.
@@ -86,5 +93,22 @@ Thus each machine checks a file that holds a path of its machine without the fix
 | a step that runs in a folder that is not there | With `--set side=nowhere`, `build` stops: `<folder>/nowhere is not there, and a step of placed runs in it`. | No `--set`. |
 | a step that runs in a folder gets the caches of zig as whole paths | A short Python program puts `[build] cache` in `{case}/proj`, as the case of an archive does, and builds `cached`. The step writes `{case}/proj/build/zig-cache/local`, a whole path. | The program does not move the cache, so the step writes the cache of this project. |
 | a program of a package keeps its execute bits | A short Python program runs `build --pack` on `built`, and writes `True`: the zip records an execute bit for `greeter{exe}`. On Windows, the name `greeter.exe` gives the bit. | The program reads the mode of `include/greet.h`, a header with no execute bit. |
+| a build of a part makes the parts that it uses, and their uses | `build --part gamma` on `family` builds `alpha.txt`, `beta.txt` and `gamma.txt`. | `--part beta`, which does not build `gamma.txt`. |
+| a build of a part makes no other part | `build --part alpha` on `family` builds `alpha.txt`, and not `beta.txt` or `gamma.txt`. | No `--part`. |
+| a part that the project does not have | `build --part nowhere` on `family` stops: `no part nowhere; the parts: alpha beta gamma`. | `--part alpha`. |
+| an artifact with no part, in a project with parts | The artifact `note` states no part: `note states no part, and the project has parts`. | `note` states the part `a`. |
+| a table of [compose] with no part, in a project with parts | `[compose.headers]` states no part: `[compose.headers] states no part, and the project has parts`. | The table states the part `a`. |
+| an artifact of a part that [parts] does not have | In a project with no `[parts]`, `note` states the part `a`: `note states the part a, and [parts] does not have it`. | `note` states no part. |
+| a part that states no uses | `[parts.a]` has no `uses`: `[parts.a] states no uses`. | `uses = []`. |
+| a key that a part does not have | `[parts.a]` has the key `use`: `[parts.a]: a part has no key use`. | No `use`. |
+| a pack of a part writes the zip of the part | `pack --part beta` on `family` writes `Family-Beta-{target}.zip` with `beta.txt`, `include/beta.h` and `license`, and runs the proof of `beta`. The zip holds no `alpha.txt` and no licence of `third_party`. | `--part alpha`. |
+| the zip of a part holds the licences of its third_party | `pack --part alpha` on `family` writes `Family-Alpha-{target}.zip` with `third_party/sample/license`. | `--part gamma`. |
+| a folder of third_party with no licence | The `third_party` of `a` is `sample`, which has no licence: `third_party/sample/license is not there, and the deliverable needs it`. | The project has the licence. |
+| a pack with no part writes the zip of each part | `pack` on `family` writes `Family-Alpha-{target}.zip`, `Family-Beta-{target}.zip` and `Family-Gamma-{target}.zip`, and runs the proof of `beta`. | `--part alpha`. |
+| the headers of a table go into the folder into | `build --part alpha` on `family` writes `include/alpha.h`, and `{case}/out/{target}/include/alpha.h` holds the header. | `--set place=other`. |
+| a join makes one zip with a folder for each target | A short Python program packs `alpha` of `family` for each of the 6 targets, then runs `build --join --part alpha`. `Family-Alpha.zip` holds `<target>/alpha.txt` for each target. | The program packs 5 targets, thus `join` stops. |
+| a join with no part joins nothing | `build --join` on `family` writes no zip and ends with 0. | `--part alpha`: the zips of the targets are not there. |
+| the tag of a part names the part | `build --tag alpha-v0.1.0` on `family` builds `alpha.txt` and not `beta.txt`. The name of the part does not start with `v`. | `--tag v0.1.0`, the tag of the project. |
+| a tag that is not the tag of a release | `build --tag alpha-0.1.0` stops: `the tag alpha-0.1.0 is not v<major>.<minor>.<patch> or <part>-v<major>.<minor>.<patch>`. | `--tag alpha-v0.1.0`. |
 
 `.toolchain/docs/build.py.md` gives the limits of these cases.
