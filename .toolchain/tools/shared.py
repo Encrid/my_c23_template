@@ -20,8 +20,10 @@ KEYS = {'step': {'run', 'cwd', 'section', 'text', 'contains', 'copy', 'rename'},
         'script': {'wait', 'put', 'remove', 'type'},
         'claims': {'status', 'status_not', 'line', 'has', 'lacks', 'matches', 'matches_not', 'order', 'output', 'files'},
         'source': {'name', 'url', 'sha256', 'into', 'top', 'patches'},
+        'part': {'name', 'uses', 'third_party', 'package'},
         'kind': {'takes', 'gives'}}
 SIDES = {'include': 'docs/extern', 'src': 'docs/intern', 'tools': 'docs/tools'}
+TAG = re.compile(r'(?:([a-z0-9_]+)-)?v\d+\.\d+\.\d+')
 
 
 def die(why):
@@ -151,6 +153,8 @@ def arguments(*valued, **flags):
     ap = argparse.ArgumentParser(prog=Path(sys.argv[0]).name)
     ap.add_argument('--root', type=Path, default=HERE)
     ap.add_argument('--target')
+    ap.add_argument('--part', action='append')
+    ap.add_argument('--tag')
     ap.add_argument('--debug', action='store_true')
     ap.add_argument('--out', type=Path)
     ap.add_argument('--set', action='append', default=[], metavar='NAME=VALUE')
@@ -161,6 +165,10 @@ def arguments(*valued, **flags):
         ap.add_argument(flag, dest=name, action='store_true')
     args = ap.parse_args()
     args.root = args.root.resolve()
+    tag = args.tag and (TAG.fullmatch(args.tag) or die('the tag %s is not v<major>.<minor>.<patch> or '
+                                                       '<part>-v<major>.<minor>.<patch>' % args.tag))
+    if tag and tag.group(1):
+        args.part = (args.part or []) + [tag.group(1)]
     return args
 
 

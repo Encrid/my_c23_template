@@ -210,19 +210,96 @@ def composed(config, values):
     for table in config.get('compose', {}).values():
         if not isinstance(table, dict):
             continue
-        start = located(table.get('from', ''), values)
+        start, into = located(table.get('from', ''), values), expand(table.get('into', ''), values)
         for name in files(start, table.get('headers', [])):
-            put(dist / name, start / name)
-            kit.append(name)
+            put(dist / into / name, start / name)
+            kit.append((Path(into) / name).as_posix())
         for asset in table.get('assets', []):
             put(dist / Path(asset).name, out / asset)
             kit.append(Path(asset).name)
-    for name in files(root, ['license', 'third_party/*/license']):
+    named = ['third_party/%s/license' % folder for folder in config.get('third_party', ['*'])]
+    missing = [name for name in named if '*' not in name and not (root / name).is_file()]
+    if missing:
+        die('%s is not there, and the deliverable needs it' % missing[0])
+    for name in files(root, ['license'] + named):
         put(dist / name, root / name)
         kit.append(name)
     kit = list(dict.fromkeys(kit))
     print('\n'.join(kit))
     return kit
+
+
+def part_table(config, part):
+    parts = config.get('parts', {})
+    if part not in parts:
+        die('no part %s; the parts: %s' % (part, ' '.join(parts)))
+    table = known(parts[part], 'part', '[parts.%s]' % part)
+    missing = [key for key in ('name', 'uses', 'third_party') if key not in table]
+    if missing:
+        die('[parts.%s] states no %s' % (part, missing[0]))
+    return table
+
+
+def owned(config):
+    parts = config.get('parts', {})
+    for part in parts:
+        part_table(config, part)
+    tables = [(artifact['name'], artifact) for artifact in artifacts(config)]
+    tables += [('[compose.%s]' % name, table) for name, table in config.get('compose', {}).items()
+               if isinstance(table, dict)]
+    for name, table in tables:
+        if parts and 'part' not in table:
+            die('%s states no part, and the project has parts' % name)
+        if 'part' in table and table['part'] not in parts:
+            die('%s states the part %s, and [parts] does not have it' % (name, table['part']))
+
+
+def needed(config, parts):
+    found, waiting = set(), list(parts)
+    while waiting:
+        part = waiting.pop()
+        if part not in found:
+            found.add(part)
+            waiting += part_table(config, part)['uses']
+    return found
+
+
+def kept(config, parts):
+    return dict(config, module={}, modules=[],
+                artifact=[dict(artifact, variants=[]) for artifact in artifacts(config) if artifact.get('part') in parts],
+                compose={name: table for name, table in config.get('compose', {}).items()
+                         if isinstance(table, dict) and table.get('part') in parts})
+
+
+def viewed(config, part):
+    table = part_table(config, part)
+    return dict(kept(config, {part}), project={'name': table['name']}, package=table.get('package', {}),
+                third_party=table['third_party'])
+
+
+def views(config, parts):
+    return [viewed(config, part) for part in parts or config.get('parts', {})] or [config]
+
+
+def joined(args):
+    config = shared.config(args.root)
+    target = args.target or shared.this_target(config['targets']) or die('no target runs here: name one')
+    build = Path(shared.variables(config, args, target, '')['build'])
+    for part in args.part or []:
+        name = part_table(config, part)['name']
+        zips = {each: build / ('%s-%s.zip' % (name, each)) for each in config['targets']}
+        missing = [each for each, zipped in zips.items() if not zipped.is_file()]
+        if missing:
+            die('%s is not there: pack %s for %s first' % (zips[missing[0]].as_posix(), part, missing[0]))
+        archive = build / (name + '.zip')
+        with zipfile.ZipFile(archive, 'w', zipfile.ZIP_DEFLATED) as joining:
+            for each, zipped in zips.items():
+                with zipfile.ZipFile(zipped) as packing:
+                    for member in packing.infolist():
+                        copy = zipfile.ZipInfo('%s/%s' % (each, member.filename), member.date_time)
+                        copy.external_attr = member.external_attr
+                        joining.writestr(copy, packing.read(member), zipfile.ZIP_DEFLATED)
+        print(archive.as_posix())
 
 
 def prepared(args, here=False):
@@ -239,7 +316,8 @@ def prepared(args, here=False):
     zig = fetch.zig_found(config['zig']) or die('zig %s is neither fetched nor on the path' % config['zig']['version'])
     values = shared.variables(config, args, target, zig)
     values['paths'] = path_defines(config)
-    return config, values
+    owned(config)
+    return (kept(config, needed(config, args.part)) if args.part else config), values
 
 
 def ready(args, here=False):
@@ -267,13 +345,16 @@ def build(args, here=False, tests=True):
 
 
 def main():
-    args = shared.arguments(pack='--pack')
+    args = shared.arguments(pack='--pack', join='--join')
+    if args.join:
+        return joined(args)
     config, values, made = build(args, tests=False)
     print('\n'.join(paths[0].as_posix() for _, paths in made if paths))
-    kit = composed(config, values)
-    if args.pack:
-        packed(config, values, kit)
-        prove(config, values)
+    for view in views(config, args.part):
+        kit = composed(view, values)
+        if args.pack:
+            packed(view, values, kit)
+            prove(view, values)
 
 
 if __name__ == '__main__':
