@@ -222,3 +222,9 @@ name = "the leaks of a part"
 run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/test/parted", "--out", "{case}/out", "--leaks", "--part", "alpha"]
 claims = { status = 0, line = ["leaks: 2 cases, 2 give back what they take"] }
 false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/test/parted", "--out", "{case}/out", "--leaks"] }
+
+[[case]]
+name = "a changed run makes each part after the parts that it uses"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/build/ordered", "--out", "{case}/out", "--branches"]
+claims = { status = 0, line = ["branches: 0 outcomes, 0 reached"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/build/unordered", "--out", "{case}/out", "--branches"] }

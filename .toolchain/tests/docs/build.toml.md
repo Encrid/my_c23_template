@@ -25,6 +25,8 @@ The cases of the options, of the report and of the files of a project run a shor
 | `cached` | The test artifact `cached`, whose kind writes the cache of zig of its step, in the folder `{build}`. |
 | `composed` | No artifact, and the table `[compose.base]`, whose `from` is the variable `place`. `place` is `kept`, the folder that holds `include/kept.h`. |
 | `family` | The parts `alpha`, `beta` and `gamma`, each with one artifact `<part>.txt` of the kind `file`. `beta` uses `alpha`, and `gamma` uses `beta`. |
+| `ordered` | The parts `alpha` and `zeta`, in `alpha.toml` and `zeta.toml` of `.toolchain/config`. `alpha.txt` links `zeta.txt`, and `alpha` uses `zeta`. |
+| `unordered` | The same parts, but `alpha` uses no part. |
 
 In `built`, `greet` gets its greeting from `defines`.
 `greeter` includes `.toolchain/tests/data/build/built/include/greet.h`, links `greet`, and has `greet` beside it in its folder.
@@ -110,5 +112,9 @@ Thus each machine checks a file that holds a path of its machine without the fix
 | a join with no part joins nothing | `build --join` on `family` writes no zip and ends with 0. | `--part alpha`: the zips of the targets are not there. |
 | the tag of a part names the part | `build --tag alpha-v0.1.0` on `family` builds `alpha.txt` and not `beta.txt`. The name of the part does not start with `v`. | `--tag v0.1.0`, the tag of the project. |
 | a tag that is not the tag of a release | `build --tag alpha-0.1.0` stops: `the tag alpha-0.1.0 is not v<major>.<minor>.<patch> or <part>-v<major>.<minor>.<patch>`. | `--tag alpha-v0.1.0`. |
+| a build makes each part after the parts that it uses | `build` on `ordered` builds `zeta.txt`, then `alpha.txt`, though `alpha.toml` comes first. | `unordered`: `alpha.txt` comes first, and its link is not there. |
+| a build of a part makes the parts that it uses first | `build --part alpha` on `ordered` builds `zeta.txt`, then `alpha.txt`. | `unordered`, which builds only `alpha.txt`. |
+| parts that use each other | `a` uses `b`, and `b` uses `a`: `the uses of the parts make a cycle: `, and the parts. | `b` uses no part. |
+| a part that uses a part that [parts] does not have | With no `--part`, `uses = ["nowhere"]` stops: `no part nowhere; the parts: a`. | `uses = []`. |
 
 `.toolchain/docs/build.py.md` gives the limits of these cases.

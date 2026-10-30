@@ -60,3 +60,4 @@ The project exempts that side and that block, so a run of `alpha` meets two exem
 | a part with no group | `test --part gamma` on `family` stops: `no case group is in the parts gamma`. | `--part alpha`. |
 | the branches of a part | `test --branches --part alpha` on `parted` probes only `alpha`, and does not read the exemption of `beta`: `branches: 3 outcomes, 3 reached`. | No `--part`: 6 outcomes. |
 | the leaks of a part | `test --leaks --part alpha` on `parted` runs the 2 cases of `alpha`, and does not read the exemption of `beta`: `leaks: 2 cases, 2 give back what they take`. | No `--part`: 3 cases. |
+| a changed run makes each part after the parts that it uses | `test --branches` on `.toolchain/tests/data/build/ordered` builds `zeta.txt` before `alpha.txt`, and writes `branches: 0 outcomes, 0 reached`. | `unordered`: the link of `alpha.txt` is not there. |
