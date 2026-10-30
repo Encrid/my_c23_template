@@ -3,7 +3,7 @@
 `build.py` builds the artifacts of the project into the scratch folder, and lists them in `package.txt`.
 It then composes the deliverable into the folder `dist`.
 With `--pack`, it also puts the deliverable into a zip file. With `--join`, it joins the zips of the targets of a part.
-`test.py` uses its functions `build`, `prepared`, `ready`, `made` and `kept`. `branches.py` uses `artifacts` and `planned`.
+`test.py` uses its functions `build`, `prepared`, `ready`, `made` and `kept`. `rewrite.py` uses `artifacts` and `planned`.
 
 ## Functions
 
@@ -20,12 +20,13 @@ With `--pack`, it also puts the deliverable into a zip file. With `--join`, it j
 | `packaged(config, values, made)` | Writes `package.txt`. |
 | `leaked(values, kit)` | Stops if a file of the deliverable `kit` holds the folder of the project or of the build, as *The zip* tells. |
 | `packed(config, values, kit)` | Writes the zip of the deliverable `kit`, after `leaked`. Then it writes the path of the zip and the names in it. |
-| `artifacts(config)` | Gives each module of `[[modules]]` over the defaults of `[module]`, then each artifact of `[[artifact]]`, and after each one its variants. |
+| `artifacts(config)` | Gives each module of `[[modules]]` over the defaults of `[module]`, then each artifact of `[[artifact]]`, and after each one its variants. In a project with parts, it gives them in the order of `ranked`. |
+| `ranked(config)` | Gives the rank of each part in the order of the build, as *Parts* tells. |
 | `path_defines(config)` | Gives the `*_PATH` macros of the test libraries, for the variable `paths`. |
 | `archives(config, values)` | Gives the path of each shipped archive, from the output folder. |
 | `prove(config, values)` | Proves the package, as *The package proof* tells. It does nothing if `[package]` has no `proof`. |
 | `composed(config, values)` | Composes the deliverable, as *The deliverable* tells. It gives the files of the deliverable. |
-| `part_table(config, part)` | Gives the table `[parts.<part>]`, as *Parts* tells. It stops if the part is not there, or if the table is not complete. |
+| `part_table(config, part)` | Gives the table `[parts.<part>]`, as *Parts* tells. It stops if the part or a part of its `uses` is not there, or if the table is not complete. |
 | `owned(config)` | Stops if an artifact or a table of `[compose]` does not state its part as *Parts* tells. |
 | `needed(config, parts)` | Gives `parts`, and each part that they use, directly or through a different part. |
 | `kept(config, parts)` | Gives the configuration with only the artifacts and the tables of `[compose]` of `parts`. |
@@ -222,9 +223,15 @@ Such a folder holds headers that the headers of the package include, for example
 
 `.toolchain/docs/project.toml.md`, *[parts]*, gives the messages of steps 1 and 2.
 
-`part_table` stops if a part is not in `[parts]`: `no part <part>; the parts: <parts>`. `needed` uses it for each part.
+`part_table` stops if a part, or a part of its `uses`, is not in `[parts]`: `no part <part>; the parts: <parts>`. `needed` uses it for each part.
 `kept` keeps each module and each variant by its own `part`. Thus each later step, also `test`, reads only these artifacts.
 `prepared` sets the variable `paths` before step 4, so the macros of a build do not change with `--part`.
+
+`artifacts` gives the artifacts in the order of `ranked`, so `made` builds each part after the parts of its `uses`.
+`ranked` gives this order with `TopologicalSorter` of the module `graphlib` of Python. Inside a part, the order is the order of the configuration.
+Thus a part can link a library of a part that it uses, also when the file of the part sorts first in `.toolchain/config`.
+`kept` and the changed runs of `test` read `artifacts`, so they keep this order.
+`ranked` stops on a cycle of `uses`, with the message that `.toolchain/docs/project.toml.md`, *[parts]*, gives.
 
 `viewed` gives the configuration of one part as the configuration of a project:
 
