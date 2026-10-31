@@ -351,3 +351,27 @@ run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{case}/p", "--
 files = { "{case}/p/.toolchain/project.toml" = "[project]\nname = \"p\"\n\n[parts.a]\nname = \"A\"\nuses = [\"nowhere\"]\nthird_party = []\n" }
 claims = { status_not = 0, has = ["no part nowhere; the parts: a"] }
 false = { files = { "{case}/p/.toolchain/project.toml" = "[project]\nname = \"p\"\n\n[parts.a]\nname = \"A\"\nuses = []\nthird_party = []\n" } }
+
+[[case]]
+name = "the variable toolchain names the toolchain of the tools"
+run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/toolchained", "--out", "{case}/out"]
+claims = { status = 0, files = { "{case}/out/{target}/notice.txt" = "Under the GNU Affero General Public License" } }
+false = { run = ["{python}", "{root}/.toolchain/tools/build.py", "--root", "{root}/.toolchain/tests/data/build/toolchained", "--out", "{case}/out", "--set", "place=.toolchain"] }
+
+[[case]]
+name = "a library of x86_64-windows-gnu links no compiler_rt"
+run = ["{python}", "{root}/.toolchain/tests/data/build/runtime/tools/inspect.py", "size", "{root}", "{case}/out", "small"]
+claims = { status = 0, line = ["small.dll: under 16 KB"] }
+false = { run = ["{python}", "{root}/.toolchain/tests/data/build/runtime/tools/inspect.py", "size", "{root}", "{case}/out", "bare"] }
+
+[[case]]
+name = "a library of x86_64-windows-gnu takes its moves and its fills from Windows"
+run = ["{python}", "{root}/.toolchain/tests/data/build/runtime/tools/inspect.py", "imports", "{root}", "{case}/out", "small"]
+claims = { status = 0, line = ["KERNEL32.dll: RtlMoveMemory", "KERNEL32.dll: RtlFillMemory"] }
+false = { run = ["{python}", "{root}/.toolchain/tests/data/build/runtime/tools/inspect.py", "imports", "{root}", "{case}/out", "bare"] }
+
+[[case]]
+name = "a library moves, fills, compares and counts each byte, and touches no byte outside its buffers"
+run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/build/runtime", "--out", "{case}/out"]
+claims = { status = 0, line = ["checker: 1 cases: 1 as written"] }
+false = { run = ["{python}", "{root}/.toolchain/tools/test.py", "--root", "{root}/.toolchain/tests/data/build/runtime", "--out", "{case}/out", "--break"] }

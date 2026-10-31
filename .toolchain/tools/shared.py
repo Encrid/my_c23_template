@@ -133,7 +133,7 @@ def variables(config, args, target, zig):
     sub = target + ('-debug' if args.debug else '')
     values = {'root': args.root.as_posix(), 'build': build.as_posix(), 'home': this_target(config['targets']) or '',
               'dist': (build / sub).as_posix(), 'out': (build / sub / 'scratch').as_posix(), 'target': target,
-              'python': Path(sys.executable).as_posix(), 'zig': zig}
+              'python': Path(sys.executable).as_posix(), 'zig': zig, 'toolchain': (HERE / '.toolchain').as_posix()}
     values.update(config['targets'][target])
     own = config.get('variables', {})
     if set(own) & set(values):

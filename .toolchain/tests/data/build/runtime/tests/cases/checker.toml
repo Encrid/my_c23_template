@@ -1,0 +1,5 @@
+[[case]]
+name = "checker"
+run = ["{out}/checker/checker{exe}"]
+claims = { status = 0, line = ["bad 0"] }
+false = { run = ["{out}/checker/checker{exe}", "wrong"] }

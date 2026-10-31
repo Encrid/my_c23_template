@@ -1,0 +1,17 @@
+[project]
+name = "toolchained"
+
+[variables]
+place = "{toolchain}"
+
+[kinds.taken]
+output = "{name}.txt"
+steps = [
+    { copy = ["{place}/header.txt", "{work}.txt"] },
+    { rename = ["{work}.txt", "{output}"] },
+]
+
+[[artifact]]
+name = "notice"
+kind = "taken"
+sources = [".toolchain/project.toml"]

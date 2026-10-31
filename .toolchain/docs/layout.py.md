@@ -35,6 +35,7 @@ The layout allows only the paths of this table.
 | `.toolchain/config/<name>.toml` | A file of the configuration of the project. |
 | `.toolchain/docs/<name>.md` | A document of the toolchain. |
 | `.toolchain/presets/<name>/<name>.toml` | A file of a preset. `.toolchain/docs/presets.md` tells the presets. |
+| `.toolchain/runtime/<name>.c`, `.toolchain/runtime/<name>.h` | A source or a header that the toolchain adds to the shared libraries of a target: `.toolchain/docs/toolchain.toml.md`, *[targets.\<target\>]*. |
 | `<folder>/.gitkeep`, in `docs/extern`, `docs/intern`, `include` or `src` | An empty file that keeps an empty folder in git. |
 
 `layout.py` does not read `tests`, and does not read `.toolchain/tests` of the repository `my_c23_template`. Thus they can hold any file.
