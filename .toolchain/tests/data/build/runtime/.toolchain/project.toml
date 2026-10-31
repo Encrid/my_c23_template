@@ -1,0 +1,37 @@
+[project]
+name = "runtime"
+
+[test]
+timeout = 60
+copies = 1
+
+[kinds.bare_library]
+output = "{name}{library}"
+steps = [
+    { run = ["{zig}", "cc", "-target", "{triple}", "-mcpu={cpu}", "-shared", "{pic}", "{soname}", "{optimize}", "{float}", "{errno}", "{language}", "{define}", "{defines}", "{include}", "{sources}", "{link}", "{flags}", "-o", "{output}"] },
+]
+
+[[artifact]]
+name = "small"
+kind = "library"
+sources = ["src/small.c"]
+
+[[artifact]]
+name = "bare"
+kind = "bare_library"
+sources = ["src/small.c"]
+
+[[artifact]]
+name = "checked"
+kind = "library"
+sources = ["src/checked.c"]
+include = ["src"]
+
+[[artifact]]
+name = "checker"
+kind = "program"
+folder = "checker"
+sources = ["src/checker.c", "src/{system}/guard.c"]
+include = ["src"]
+link = ["{out}/checked{library}"]
+beside = ["{out}/checked{library}"]
