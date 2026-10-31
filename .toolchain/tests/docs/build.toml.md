@@ -27,6 +27,8 @@ The cases of the options, of the report and of the files of a project run a shor
 | `family` | The parts `alpha`, `beta` and `gamma`, each with one artifact `<part>.txt` of the kind `file`. `beta` uses `alpha`, and `gamma` uses `beta`. |
 | `ordered` | The parts `alpha` and `zeta`, in `alpha.toml` and `zeta.toml` of `.toolchain/config`. `alpha.txt` links `zeta.txt`, and `alpha` uses `zeta`. |
 | `unordered` | The same parts, but `alpha` uses no part. |
+| `toolchained` | The artifact `notice.txt` of the kind `taken`, which copies `{place}/header.txt`. `[variables] place` is `{toolchain}`. |
+| `runtime` | The library `small` of the kind `library`, the same library `bare` of the kind `bare_library`, which adds no `runtime`, the library `checked`, and the program `checker`, which links `checked`. `tools/inspect.py` builds the project for `x86_64-windows-gnu`, and gives the size or the imports of one library. |
 
 In `built`, `greet` gets its greeting from `defines`.
 `greeter` includes `.toolchain/tests/data/build/built/include/greet.h`, links `greet`, and has `greet` beside it in its folder.
@@ -116,5 +118,9 @@ Thus each machine checks a file that holds a path of its machine without the fix
 | a build of a part makes the parts that it uses first | `build --part alpha` on `ordered` builds `zeta.txt`, then `alpha.txt`. | `unordered`, which builds only `alpha.txt`. |
 | parts that use each other | `a` uses `b`, and `b` uses `a`: `the uses of the parts make a cycle: `, and the parts. | `b` uses no part. |
 | a part that uses a part that [parts] does not have | With no `--part`, `uses = ["nowhere"]` stops: `no part nowhere; the parts: a`. | `uses = []`. |
+| the variable toolchain names the toolchain of the tools | `build` on `toolchained` copies `header.txt` of the toolchain that runs, though the root holds no toolchain. | `--set place=.toolchain`: the `.toolchain` of the root has no `header.txt`, thus `build` stops. |
+| a library of x86_64-windows-gnu links no compiler_rt | `inspect.py size` writes `small.dll: under 16 KB`. | `bare.dll`, which links compiler_rt: `16 KB or more`. |
+| a library of x86_64-windows-gnu takes its moves and its fills from Windows | `inspect.py imports` writes `KERNEL32.dll: RtlMoveMemory` and `KERNEL32.dll: RtlFillMemory` for `small.dll`. | `bare.dll`, which imports neither. |
+| a library moves, fills, compares and counts each byte, and touches no byte outside its buffers | `test` on `runtime` builds for the target of the machine, and the case `checker` writes `bad 0`: `checker: 1 cases: 1 as written`. | `--break`: `checker` gets the argument `wrong`, and writes `bad 1`. |
 
 `.toolchain/docs/build.py.md` gives the limits of these cases.
